@@ -20,6 +20,8 @@ set(LIBRARY_NAME game)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Custom/Warden
+  ${CMAKE_CURRENT_SOURCE_DIR}/Custom
   ${CMAKE_CURRENT_SOURCE_DIR}/vmap
   ${CMAKE_CURRENT_SOURCE_DIR}/AuctionHouseBot
   ${CMAKE_CURRENT_SOURCE_DIR}/BattleGround
@@ -34,6 +36,23 @@ include_directories(
   ${CMAKE_BINARY_DIR}/src/shared
   ${MYSQL_INCLUDE_DIR}
   ${ACE_INCLUDE_DIR}
+)
+
+set(SRC_GRP_CUSTOM
+
+)
+
+set(SRC_GRP_WARDEN
+    Custom/Warden/WardenBase.cpp
+    Custom/Warden/WardenBase.h
+    Custom/Warden/WardenDataStorage.cpp
+    Custom/Warden/WardenDataStorage.h
+    Custom/Warden/WardenMac.cpp
+    Custom/Warden/WardenMac.h
+    Custom/Warden/WardenModuleMac.h
+    Custom/Warden/WardenModuleWin.h
+    Custom/Warden/WardenWin.cpp
+    Custom/Warden/WardenWin.h
 )
 
 set(SRC_GRP_AHBOT
@@ -394,6 +413,8 @@ set(SRC_GRP_WORLD_HANDLERS
 )
 
 set(LIBRARY_SRCS
+    ${SRC_GRP_CUSTOM}
+    ${SRC_GRP_WARDEN}
     ${SRC_GRP_AHBOT}
     ${SRC_GRP_BATTLEGROUND}
     ${SRC_GRP_CHAT_COMMANDS}
@@ -410,9 +431,14 @@ set(LIBRARY_SRCS
     pchdef.h
 )
 
-source_group("AhBot"
+source_group("Custom"
   FILES
-    ${SRC_GRP_AHBOT}
+    ${SRC_GRP_CUSTOM}
+)
+
+source_group("Warden"
+  FILES
+    ${SRC_GRP_WARDEN}
 )
 
 source_group("BattleGround"

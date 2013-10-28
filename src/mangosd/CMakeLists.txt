@@ -46,6 +46,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/dep/include/gsoap
   ${CMAKE_SOURCE_DIR}/src/framework
   ${CMAKE_SOURCE_DIR}/src/game
+  ${CMAKE_SOURCE_DIR}/src/game/Custom
+  ${CMAKE_SOURCE_DIR}/src/game/Custom/Warden
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/src/shared
   ${ACE_INCLUDE_DIR}

@@ -19,15 +19,22 @@
 set(LIBRARY_NAME shared)
 
 set(SRC_GRP_AUTH
+   
     Auth/AuthCrypt.cpp
     Auth/AuthCrypt.h
     Auth/BigNumber.cpp
     Auth/BigNumber.h
     Auth/HMACSHA1.cpp
     Auth/HMACSHA1.h
-    Auth/md5.h
+    Auth/Hmac.cpp
+    Auth/Hmac.h
+    Auth/SARC4.cpp
+    Auth/SARC4.h
     Auth/Sha1.cpp
     Auth/Sha1.h
+    Auth/WardenKeyGeneration.h
+    Auth/md5.c
+    Auth/md5.h
 )
 
 set(SRC_GRP_CONFIG

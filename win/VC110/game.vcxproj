@@ -153,7 +153,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MANGOS_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -186,7 +186,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MANGOS_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -215,7 +215,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -248,7 +248,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -277,7 +277,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoPCH|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MANGOS_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -310,7 +310,7 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\dep\include;..\..\src\framework;..\..\src\shared;..\..\src\game\vmap;..\..\dep\ACE_wrappers;..\..\dep\include\g3dlite;..\..\src\game;..\..\src\game\Custom;..\..\src\game\Custom\Warden;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;MANGOS_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -375,6 +375,12 @@
     <ClCompile Include="..\..\src\game\CreatureEventAI.cpp" />
     <ClCompile Include="..\..\src\game\CreatureEventAIMgr.cpp" />
     <ClCompile Include="..\..\src\game\CreatureLinkingMgr.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenDataStorage.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenMac.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenWin.cpp" />
     <ClCompile Include="..\..\src\game\DBCStores.cpp" />
     <ClCompile Include="..\..\src\game\debugcmds.cpp" />
     <ClCompile Include="..\..\src\game\DuelHandler.cpp" />
@@ -541,6 +547,12 @@
     <ClInclude Include="..\..\src\game\CreatureEventAI.h" />
     <ClInclude Include="..\..\src\game\CreatureEventAIMgr.h" />
     <ClInclude Include="..\..\src\game\CreatureLinkingMgr.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenMac.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenModuleMac.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenModuleWin.h" />
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h" />
     <ClInclude Include="..\..\src\game\DBCEnums.h" />
     <ClInclude Include="..\..\src\game\DBCfmt.h" />
     <ClInclude Include="..\..\src\game\DBCStores.h" />

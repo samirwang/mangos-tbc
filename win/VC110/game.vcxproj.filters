@@ -37,6 +37,12 @@
     <Filter Include="BattleGround">
       <UniqueIdentifier>{0af4d063-6d01-4546-a429-59bd828ab270}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom">
+      <UniqueIdentifier>{e0fd42ff-5639-4a1e-a762-bbb6246faaf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\Warden">
+      <UniqueIdentifier>{6c93fca1-b19a-488c-80b4-f9125e1f0fd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -526,6 +532,24 @@
     <ClCompile Include="..\..\src\game\TransportSystem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp">
+      <Filter>Custom\Warden</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenDataStorage.cpp">
+      <Filter>Custom\Warden</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenMac.cpp">
+      <Filter>Custom\Warden</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Warden\WardenWin.cpp">
+      <Filter>Custom\Warden</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Misc.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1002,6 +1026,24 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\TransportSystem.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h">
+      <Filter>Custom\Warden</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h">
+      <Filter>Custom\Warden</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenMac.h">
+      <Filter>Custom\Warden</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenModuleMac.h">
+      <Filter>Custom\Warden</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenModuleWin.h">
+      <Filter>Custom\Warden</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h">
+      <Filter>Custom\Warden</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
