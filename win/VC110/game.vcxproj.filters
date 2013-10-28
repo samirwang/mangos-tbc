@@ -1045,5 +1045,8 @@
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h">
       <Filter>Custom\Warden</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Custom.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
