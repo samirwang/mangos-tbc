@@ -1,6 +1,12 @@
 #include "Custom.h"
 #include "Log.h"
 
+Custom::~Custom()
+{
+    for (CachedSpellContainer::const_iterator itr = m_CachedSpellContainer.begin(); itr != m_CachedSpellContainer.end(); ++itr)
+        delete itr->second;
+}
+
 bool Custom::HasFlag(uint32& var, int32 flag)
 {
     return var & flag;
@@ -62,6 +68,38 @@ uint32 Custom::GetCRFlag(uint8 pclass, uint8 prace)
 
     return flag;
 }
+
+Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
+{
+    SpellContainer spellContainer;
+
+    if (TrainerSpellData const* spelldata = sObjectMgr.GetNpcTrainerSpells(entry))
+        for (TrainerSpellMap::const_iterator itr = spelldata->spellList.begin(); itr != spelldata->spellList.end(); ++itr)
+            spellContainer.push_back(itr->second);
+
+    const CreatureInfo* creature = sObjectMgr.GetCreatureTemplate(entry);
+
+    if (!creature)
+        return spellContainer;
+
+    uint32 trainertemplate = creature->trainerId;
+
+    if (trainertemplate)
+        if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))
+            for (TrainerSpellMap::const_iterator itr = spelldata2->spellList.begin(); itr != spelldata2->spellList.end(); ++itr)
+                spellContainer.push_back(itr->second);
+
+    return spellContainer;
+}
+
+Custom::SpellContainer* Custom::GetSpellContainerByCR(uint32 crval)
+{
+    if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.end())
+        return m_CachedSpellContainer[crval];
+
+    return NULL;
+}
+
 
 const std::string Custom::m_ClassColor[] =
 {

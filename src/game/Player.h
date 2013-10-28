@@ -908,6 +908,17 @@ class TradeData
 
 class MANGOS_DLL_SPEC Player : public Unit
 {
+    // Custom
+public:
+    typedef std::vector<uint32> DelayedSpellLearn;
+
+    void CUpdate(uint32 diff);
+    void LearnGreenSpells();
+    void OnLogin();
+    void OnFirstLogin();
+private:
+    DelayedSpellLearn m_DelayedSpellLearn;
+    // !Custom
         friend class WorldSession;
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);

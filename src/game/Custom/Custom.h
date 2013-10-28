@@ -1,6 +1,7 @@
 #ifndef _CUSTOM_H
 #define _CUSTOM_H
 
+#include "Policies/Singleton.h"
 #include "Player.h"
 
 #define MSG_COLOR_LIGHTRED     "|cffff6060"
@@ -59,7 +60,10 @@ class Custom
 {
 public:
     Custom() { };
-    ~Custom() { };
+    ~Custom();
+
+    typedef std::vector<TrainerSpell> SpellContainer;
+    typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
 
     // Flip all the bits to get highest possible value!
     static const uint32 maxuint32 = ~0;
@@ -71,6 +75,19 @@ public:
 
     uint32 GetCRFlag(Player* player);
     uint32 GetCRFlag(uint8 pclass, uint8 prace);
+
+    SpellContainer GetSpellContainerByCreatureEntry(uint32 entry);
+    SpellContainer* GetSpellContainerByCR(uint32 crval);
+
+    void AddCachedSpellContainerByCR(uint32 crval, SpellContainer* container)
+    {
+        m_CachedSpellContainer.insert(std::make_pair(crval, container));
+    }
+
+    void ClearCachedSpellContainer()
+    {
+        m_CachedSpellContainer.clear();
+    }
 
     template <class T>
     std::string stringReplace(T istr, T ioldStr, T inewStr)
@@ -93,6 +110,8 @@ private:
     static const std::string m_ItemColor[];
     static const std::string StaffText[];
     static const std::string m_SlotNames[];
+
+    CachedSpellContainer m_CachedSpellContainer;
 
 };
 
