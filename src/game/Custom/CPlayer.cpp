@@ -14,16 +14,28 @@ void Player::CUpdate(uint32 diff)
             LearnGreenSpells();
     }
 
-//      BoxChat << "Faction: " << getFaction() << " OFaction: " << getOFaction() << " FFaction: " << getFFaction() << std::endl;
-//      BoxChat << "Race: " << uint32(getRace()) << " ORace: " << uint32(getORace()) << " FRace: " << uint32(getFRace()) <<  std::endl;
+//     BoxChat << "Faction: " << getFaction() << " OFaction: " << getOFaction() << " FFaction: " << getFFaction() << std::endl;
+//     BoxChat << "Race: " << uint32(getRace()) << " ORace: " << uint32(getORace()) << " FRace: " << uint32(getFRace()) <<  std::endl;
 
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
 }
 
+void Player::Sometimes()
+{
+    if (GetRecache())
+    {
+        RecachePlayersFromList();
+        RecachePlayersFromBG();
+    }
+
+}
+
 void Player::OnLogin()
 {
+    SetFakeValues();
+
     if (GetTotalPlayedTime() < 1)
     {
         m_Played_time[PLAYED_TIME_TOTAL] += 1;
@@ -32,7 +44,12 @@ void Player::OnLogin()
         OnFirstLogin();
     }
 
-    SetFakeValues();
+    if (!NativeTeam())
+    {
+        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
+        setFaction(getFFaction());
+        FakeDisplayID();
+    }
 }
 
 void Player::OnFirstLogin()
@@ -42,7 +59,7 @@ void Player::OnFirstLogin()
 
 void Player::SetFakeValues()
 {
-    m_fRace = 0;
+    m_fRace = m_oRace;
 
     switch (getORace())
     {
@@ -283,4 +300,29 @@ Team Player::GetTeam() const
         return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
 
     return GetOTeam();
+}
+
+void Player::CJoinBattleGround(BattleGround* bg)
+{
+    if (!NativeTeam())
+        m_FakedPlayers.push_back(GetObjectGuid());
+
+    if (!NativeTeam())
+    {
+        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
+        setFaction(getFFaction());
+    }
+
+    SetRecache();
+    FakeDisplayID();
+}
+
+void Player::CLeaveBattleGround(BattleGround* /*bg*/)
+{
+    SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
+    setFaction(getOFaction());
+    InitDisplayIds();
+
+    SetFakedPlayers(m_FakedPlayers);
+    SetRecache();
 }

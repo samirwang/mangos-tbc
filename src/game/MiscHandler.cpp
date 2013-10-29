@@ -1277,22 +1277,7 @@ void WorldSession::HandleSetTitleOpcode(WorldPacket& recv_data)
 void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
 {
     if (Player* player = GetPlayer())
-    {
-        uint8 reflag = player->GetRecacheFlag();
-        if (sCustom.HasFlag(reflag, RECACHE_LIST) && !player->InBattleGround())
-        {
-            player->RecachePlayersFromList();
-            sCustom.DelFlag(reflag, RECACHE_LIST);
-            player->InitDisplayIds();
-        }
-        if (sCustom.HasFlag(reflag, RECACHE_BG) && player->InBattleGround())
-        {
-            player->RecachePlayersFromBG();
-            sCustom.DelFlag(reflag, RECACHE_BG);
-            player->FakeDisplayID();
-        }
-        player->SetRecacheFlag(reflag);
-    }
+        player->Sometimes();
 
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;

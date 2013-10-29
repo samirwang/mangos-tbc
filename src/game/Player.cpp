@@ -807,6 +807,9 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     }
     // all item positions resolved
 
+    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
+    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
+
     return true;
 }
 
@@ -15131,6 +15134,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
     }
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
+
+    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
+    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
 
     return true;
 }

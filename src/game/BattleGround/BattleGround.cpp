@@ -976,11 +976,7 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
 
     if (plr)
     {
-        plr->SetFakedPlayers(m_FakedPlayers);
-
-        uint8 recacheflag = plr->GetRecacheFlag();
-        sCustom.SetFlag(recacheflag, RECACHE_LIST);
-        plr->SetRecacheFlag(recacheflag);
+        plr->CLeaveBattleGround(this);
 
         // should remove spirit of redemption
         if (plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
@@ -1136,12 +1132,7 @@ void BattleGround::StartBattleGround()
 
 void BattleGround::AddPlayer(Player* plr)
 {
-    if (!plr->NativeTeam())
-        m_FakedPlayers.push_back(plr->GetObjectGuid());
-
-    uint8 recacheflag = plr->GetRecacheFlag();
-    sCustom.SetFlag(recacheflag, RECACHE_BG);
-    plr->SetRecacheFlag(recacheflag);
+    plr->CJoinBattleGround(this);
 
     // remove afk from player
     if (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK))

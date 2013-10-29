@@ -913,12 +913,6 @@ enum MessageTypes
     CHAT_BOTH
 };
 
-enum RecachePlayers
-{
-    RECACHE_LIST = 0x00000000,
-    RECACHE_BG   = 0x00000001,
-};
-
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
@@ -927,6 +921,7 @@ public:
     typedef std::vector<ObjectGuid> FakedPlayers;
 
     void CUpdate(uint32 diff);
+    void Sometimes();
     void OnLogin();
     void OnFirstLogin();
 
@@ -936,16 +931,19 @@ public:
 
     bool NativeTeam() const { return GetTeam() == GetOTeam(); }
     uint8 getFRace() const { return m_fRace; }
-    uint8 getORace() const { return GetByteValue(UNIT_FIELD_BYTES_0, 0); }
-    uint32 getOFaction() const { return GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE); }
+    uint8 getORace() const { return m_oRace; }
+    uint32 getOFaction() const { return m_oFaction; }
     uint32 getFFaction() const { return m_fFaction; }
 
     void RecachePlayersFromList();
     void RecachePlayersFromBG();
     WorldPacket BuildNameQuery();
-    uint8 GetRecacheFlag() { return m_RecacheFlag; }
-    void SetRecacheFlag(uint8 value) { m_RecacheFlag = value; }
+    bool GetRecache() { return m_Recache; }
+    void SetRecache() { m_Recache = true; }
     void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
+
+    void CJoinBattleGround(BattleGround* bg);
+    void CLeaveBattleGround(BattleGround* bg);
 
     void FakeDisplayID();
 
@@ -955,10 +953,12 @@ public:
 private:
     DelayedSpellLearn m_DelayedSpellLearn;
     FakedPlayers m_FakedPlayers;
-    uint8 m_RecacheFlag;
+    bool m_Recache;
 
     uint8 m_fRace;
+    uint8 m_oRace;
     uint32 m_fFaction;
+    uint32 m_oFaction;
 
     // !Custom
         friend class WorldSession;

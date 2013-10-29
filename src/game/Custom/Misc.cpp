@@ -29,23 +29,6 @@ bool ChatHandler::HandleReloadWarden(char* /*args*/)
     return true;
 }
 
-uint8 Unit::getRace() const
-{
-    if (GetTypeId() == TYPEID_PLAYER)
-        return ((Player*)this)->NativeTeam() ? GetByteValue(UNIT_FIELD_BYTES_0, 0) : ((Player*)this)->getFRace();
-
-    return GetByteValue(UNIT_FIELD_BYTES_0, 0);
-}
-
-uint32 Unit::getFaction() const
-{
-    if (GetTypeId() == TYPEID_PLAYER)
-        return ((Player*)this)->NativeTeam() ? GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE) : ((Player*)this)->getFFaction();
-
-    return GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
-}
-
-
 bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundBracketId bracket_id, uint32 minPlayers, uint32 maxPlayers)
 {
     if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) || !bg_template->isBattleGround())
