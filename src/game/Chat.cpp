@@ -692,6 +692,9 @@ ChatCommand* ChatHandler::getCommandTable()
 
     static ChatCommand commandTable[] =
     {
+        { "battlestart",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStartCommand,             "", NULL },
+        { "battlestop",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStopCommand,              "", NULL },
+
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
         { "auction",        SEC_ADMINISTRATOR,  false, NULL,                                           "", auctionCommandTable  },
         { "ahbot",          SEC_ADMINISTRATOR,  true,  NULL,                                           "", ahbotCommandTable    },

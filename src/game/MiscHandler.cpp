@@ -1279,13 +1279,13 @@ void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
     if (Player* player = GetPlayer())
     {
         uint8 reflag = player->GetRecacheFlag();
-        if (sCustom.HasFlag(reflag, RECACHE_LIST))
+        if (sCustom.HasFlag(reflag, RECACHE_LIST) && !player->InBattleGround())
         {
             player->RecachePlayersFromList();
             sCustom.DelFlag(reflag, RECACHE_LIST);
             player->InitDisplayIds();
         }
-        if (sCustom.HasFlag(reflag, RECACHE_BG))
+        if (sCustom.HasFlag(reflag, RECACHE_BG) && player->InBattleGround())
         {
             player->RecachePlayersFromBG();
             sCustom.DelFlag(reflag, RECACHE_BG);

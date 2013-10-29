@@ -316,6 +316,9 @@ void BattleGroundQueue::RemovePlayer(ObjectGuid guid, bool decreaseInvitedCount)
     // variable index removes useless searching in other team's queue
     uint32 index = BattleGround::GetTeamIndexByTeamId(group->GroupTeam);
 
+    if (sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+        index = 0;
+
     for (int8 bracket_id_tmp = MAX_BATTLEGROUND_BRACKETS - 1; bracket_id_tmp >= 0 && bracket_id == -1; --bracket_id_tmp)
     {
         // we must check premade and normal team's queue - because when players from premade are joining bg,
@@ -642,8 +645,8 @@ bool BattleGroundQueue::CheckPremadeMatch(BattleGroundBracketId bracket_id, uint
 // this method tries to create battleground or arena with MinPlayersPerTeam against MinPlayersPerTeam
 bool BattleGroundQueue::CheckNormalMatch(BattleGround* bg_template, BattleGroundBracketId bracket_id, uint32 minPlayers, uint32 maxPlayers)
 {
-    m_SelectionPools[BG_TEAM_ALLIANCE].Init();
-    m_SelectionPools[BG_TEAM_HORDE].Init();
+    if (sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+        return false;
 
     GroupsQueueType::const_iterator itr_team[BG_TEAMS_COUNT];
     for (uint8 i = 0; i < BG_TEAMS_COUNT; ++i)
