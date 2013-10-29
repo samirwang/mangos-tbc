@@ -1283,11 +1283,13 @@ void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
         {
             player->RecachePlayersFromList();
             sCustom.DelFlag(reflag, RECACHE_LIST);
+            player->InitDisplayIds();
         }
         if (sCustom.HasFlag(reflag, RECACHE_BG))
         {
             player->RecachePlayersFromBG();
             sCustom.DelFlag(reflag, RECACHE_BG);
+            player->FakeDisplayID();
         }
         player->SetRecacheFlag(reflag);
     }

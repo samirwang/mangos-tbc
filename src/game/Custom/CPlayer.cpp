@@ -14,8 +14,8 @@ void Player::CUpdate(uint32 diff)
             LearnGreenSpells();
     }
 
-//     BoxChat << "Faction: " << getFaction() << " OFaction: " << getOFaction() << " FFaction: " << getFFaction() << std::endl;
-//     BoxChat << "Race: " << uint32(getRace()) << " ORace: " << uint32(getORace()) << " FRace: " << uint32(getFRace()) <<  std::endl;
+//      BoxChat << "Faction: " << getFaction() << " OFaction: " << getOFaction() << " FFaction: " << getFFaction() << std::endl;
+//      BoxChat << "Race: " << uint32(getRace()) << " ORace: " << uint32(getORace()) << " FRace: " << uint32(getFRace()) <<  std::endl;
 
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
@@ -233,4 +233,54 @@ WorldPacket Player::BuildNameQuery()
         data << uint8(0);                                   // is not declined
 
     return data;
+}
+
+void Player::FakeDisplayID()
+{
+    if (!NativeTeam())
+    {
+        PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
+        if (!info)
+        {
+            for (int i = 1; i <= CLASS_DRUID; i++)
+            {
+                info = sObjectMgr.GetPlayerInfo(getRace(), i);
+                if (info)
+                    break;
+            }
+        }
+
+        if (!info)
+        {
+            sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", GetGUIDLow());
+            return;
+        }
+
+        // reset scale before reapply auras
+        SetObjectScale(DEFAULT_OBJECT_SCALE);
+
+        uint8 gender = getGender();
+        switch (gender)
+        {
+        case GENDER_FEMALE:
+            SetDisplayId(info->displayId_f);
+            SetNativeDisplayId(info->displayId_f);
+            break;
+        case GENDER_MALE:
+            SetDisplayId(info->displayId_m);
+            SetNativeDisplayId(info->displayId_m);
+            break;
+        default:
+            sLog.outError("Invalid gender %u for player", gender);
+            return;
+        }
+    }
+}
+
+Team Player::GetTeam() const
+{
+    if (GetBattleGround() && GetBattleGround()->isBattleGround())
+        return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
+
+    return GetOTeam();
 }

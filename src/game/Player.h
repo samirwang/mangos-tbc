@@ -947,6 +947,8 @@ public:
     void SetRecacheFlag(uint8 value) { m_RecacheFlag = value; }
     void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
 
+    void FakeDisplayID();
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
@@ -2009,7 +2011,7 @@ private:
         void SetBattleGroundEntryPoint(Player* leader = NULL);
 
         void SetTeam(Team team) { m_bgData.bgTeam = team; m_bgData.m_needSave = true; }
-        Team GetTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam(); }
+        Team GetTeam() const/* { return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam(); }*/;
 
         void LeaveBattleground(bool teleportToEntryPoint = true);
         bool CanJoinToBattleground() const;

@@ -61,18 +61,20 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
     for (GroupsQueueType::const_iterator itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].begin();
         itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].end(); ++itr)
     {
-        if (!(*itr)->IsInvitedToBGInstanceGUID)
+        GroupQueueInfo* ginfo = *itr;
+        if (!ginfo->IsInvitedToBGInstanceGUID)
         {
             bool makeally = addedally < addedhorde;
 
             if (addedally == addedhorde)
                 makeally = urand(0,1);
 
-            makeally ? ++addedally : ++addedhorde;
+            ginfo->GroupTeam = makeally ? ALLIANCE : HORDE;
 
-            (*itr)->GroupTeam = makeally ? ALLIANCE : HORDE;
-
-            m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(*itr, maxPlayers);
+            if (m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(*itr, maxPlayers))
+                makeally ? addedally += ginfo->Players.size() : addedhorde += ginfo->Players.size();
+            else
+                break;
 
             if (m_SelectionPools[BG_TEAM_ALLIANCE].GetPlayerCount() >= minPlayers &&
                 m_SelectionPools[BG_TEAM_HORDE].GetPlayerCount() >= minPlayers)
@@ -101,7 +103,8 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
     for (GroupsQueueType::const_iterator itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].begin();
         itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].end(); ++itr)
     {
-        if (!(*itr)->IsInvitedToBGInstanceGUID)
+        GroupQueueInfo* ginfo = *itr;
+        if (!ginfo->IsInvitedToBGInstanceGUID)
         {
             bool makeally = addedally < addedhorde;
 
@@ -110,9 +113,11 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
 
             makeally ? ++addedally : ++addedhorde;
 
-            (*itr)->GroupTeam = makeally ? ALLIANCE : HORDE;
+            ginfo->GroupTeam = makeally ? ALLIANCE : HORDE;
 
-            if (!m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(*itr, makeally ? allyFree : hordeFree))
+            if (m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(ginfo, makeally ? allyFree : hordeFree))
+                makeally ? addedally += ginfo->Players.size() : addedhorde += ginfo->Players.size();
+            else
                 break;
         }
     }
