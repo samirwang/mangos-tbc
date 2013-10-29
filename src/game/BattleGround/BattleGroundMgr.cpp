@@ -164,7 +164,7 @@ GroupQueueInfo* BattleGroundQueue::AddGroup(Player* leader, Group* grp, BattleGr
     if (!isRated && !isPremade)
         index += BG_TEAMS_COUNT;                            // BG_QUEUE_PREMADE_* -> BG_QUEUE_NORMAL_*
 
-    if (ginfo->GroupTeam == HORDE)
+    if (ginfo->GroupTeam == HORDE && !sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
         ++index;                                            // BG_QUEUE_*_ALLIANCE -> BG_QUEUE_*_HORDE
 
     DEBUG_LOG("Adding Group to BattleGroundQueue bgTypeId : %u, bracket_id : %u, index : %u", BgTypeId, bracketId, index);
@@ -503,6 +503,9 @@ large groups are disadvantageous, because they will be kicked first if invitatio
 */
 void BattleGroundQueue::FillPlayersToBG(BattleGround* bg, BattleGroundBracketId bracket_id)
 {
+    if (MixPlayersToBG(bg, bracket_id))
+        return;
+
     int32 hordeFree = bg->GetFreeSlotsForTeam(HORDE);
     int32 aliFree   = bg->GetFreeSlotsForTeam(ALLIANCE);
 
@@ -863,7 +866,8 @@ void BattleGroundQueue::Update(BattleGroundTypeId bgTypeId, BattleGroundBracketI
     if (!isRated)
     {
         // if there are enough players in pools, start new battleground or non rated arena
-        if (CheckNormalMatch(bg_template, bracket_id, MinPlayersPerTeam, MaxPlayersPerTeam)
+        if (CheckMixedMatch(bg_template, bracket_id, MinPlayersPerTeam, MaxPlayersPerTeam) ||
+            CheckNormalMatch(bg_template, bracket_id, MinPlayersPerTeam, MaxPlayersPerTeam)
                 || (bg_template->isArena() && CheckSkirmishForSameFaction(bracket_id, MinPlayersPerTeam)))
         {
             // we successfully created a pool

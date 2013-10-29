@@ -875,6 +875,9 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_UINT32_WARDEN_CLIENT_CHECK_HOLDOFF, "Warden.ClientCheckHoldOff", 30);
     setConfig(CONFIG_UINT32_WARDEN_CLIENT_RESPONSE_DELAY, "Warden.ClientResponseDelay", 15);
     setConfig(CONFIG_UINT32_WARDEN_BAN_TIME, "Warden.BanLength", 900000);
+
+    // CFBG
+    setConfig(CONFIG_BOOL_CFBG_ENABLED, "CrossBattlegrounds.Enabled", true);
 }
 
 /// Initialize the World
