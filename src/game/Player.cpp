@@ -16178,7 +16178,7 @@ void Player::SaveToDB()
     uberInsert.addUInt32(GetGUIDLow());
     uberInsert.addUInt32(GetSession()->GetAccountId());
     uberInsert.addString(m_name);
-    uberInsert.addUInt8(getRace());
+    uberInsert.addUInt8(getORace());
     uberInsert.addUInt8(getClass());
     uberInsert.addUInt8(getGender());
     uberInsert.addUInt32(getLevel());
