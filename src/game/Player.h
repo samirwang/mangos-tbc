@@ -947,6 +947,8 @@ public:
 
     void FakeDisplayID();
 
+    bool SendBattleGroundChat(uint32 msgtype, std::string message);
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;

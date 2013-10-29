@@ -2,6 +2,7 @@
 #include "Custom.h"
 #include "Chat.h"
 #include "WorldPacket.h"
+#include "World.h"
 
 void Player::CUpdate(uint32 diff)
 {
@@ -325,4 +326,37 @@ void Player::CLeaveBattleGround(BattleGround* /*bg*/)
 
     SetFakedPlayers(m_FakedPlayers);
     SetRecache();
+}
+
+bool Player::SendBattleGroundChat(uint32 msgtype, std::string message)
+{
+    // Select distance to broadcast to.
+    float distance = msgtype == CHAT_MSG_SAY ? sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY) : sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_YELL);
+
+    if (BattleGround* pBattleGround = GetBattleGround())
+    {
+        if (pBattleGround->isArena()) // Only fake chat in BG's. CFBG should not interfere with arenas.
+            return false;
+
+        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = pBattleGround->GetPlayers().begin(); itr != pBattleGround->GetPlayers().end(); ++itr)
+        {
+            if (Player* pPlayer = sObjectMgr.GetPlayer(itr->first))
+            {
+                if (GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
+                {
+                    WorldPacket data(SMSG_MESSAGECHAT, 200);
+
+                    if (GetTeam() == pPlayer->GetTeam())
+                        BuildPlayerChat(&data, msgtype, message, LANG_UNIVERSAL);
+                    else if (msgtype != CHAT_MSG_EMOTE)
+                        BuildPlayerChat(&data, msgtype, message, pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON);
+
+                    pPlayer->GetSession()->SendPacket(&data);
+                }
+            }
+        }
+        return true;
+    }
+    else
+        return false;
 }
