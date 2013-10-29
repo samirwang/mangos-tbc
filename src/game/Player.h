@@ -906,6 +906,13 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
+enum MessageTypes
+{
+    CHAT_BOX,
+    CHAT_WIDE,
+    CHAT_BOTH
+};
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
@@ -913,11 +920,28 @@ public:
     typedef std::vector<uint32> DelayedSpellLearn;
 
     void CUpdate(uint32 diff);
-    void LearnGreenSpells();
     void OnLogin();
     void OnFirstLogin();
+
+    void SetFakeValues();
+    void SendSavedChat(MessageTypes type, std::stringstream &ss);
+    void LearnGreenSpells();
+
+    bool NativeTeam() const { return GetTeam() == GetOTeam(); }
+    uint8 getFRace() const { return m_fRace; }
+    uint8 getORace() const { return GetByteValue(UNIT_FIELD_BYTES_0, 0); }
+    uint32 getOFaction() const { return GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE); }
+    uint32 getFFaction() const { return m_fFaction; }
+
+    std::stringstream BoxChat;
+    std::stringstream WideChat;
+    std::stringstream BothChat;
 private:
     DelayedSpellLearn m_DelayedSpellLearn;
+
+    uint8 m_fRace;
+    uint32 m_fFaction;
+
     // !Custom
         friend class WorldSession;
         friend void Item::AddToUpdateQueueOf(Player* player);
@@ -1769,7 +1793,7 @@ private:
         void CheckAreaExploreAndOutdoor();
 
         static Team TeamForRace(uint8 race);
-        Team GetTeam() const { return m_team; }
+        Team GetOTeam() const { return m_team; }
         static uint32 getFactionForRace(uint8 race);
         void setFactionForRace(uint8 race);
 
@@ -1968,8 +1992,8 @@ private:
         WorldLocation const& GetBattleGroundEntryPoint() const { return m_bgData.joinPos; }
         void SetBattleGroundEntryPoint(Player* leader = NULL);
 
-        void SetBGTeam(Team team) { m_bgData.bgTeam = team; m_bgData.m_needSave = true; }
-        Team GetBGTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetTeam(); }
+        void SetTeam(Team team) { m_bgData.bgTeam = team; m_bgData.m_needSave = true; }
+        Team GetTeam() const { return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam(); }
 
         void LeaveBattleground(bool teleportToEntryPoint = true);
         bool CanJoinToBattleground() const;

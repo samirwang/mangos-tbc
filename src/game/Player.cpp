@@ -6117,7 +6117,7 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, float honor)
         if (!uVictim || uVictim == this || uVictim->GetTypeId() != TYPEID_PLAYER)
             return false;
 
-        if (GetBGTeam() == ((Player*)uVictim)->GetBGTeam())
+        if (GetTeam() == ((Player*)uVictim)->GetTeam())
             return false;
 
         return true;

@@ -139,7 +139,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
             // We're not in BG
             _player->SetBattleGroundId(0, BATTLEGROUND_TYPE_NONE);
             // reset destination bg team
-            _player->SetBGTeam(TEAM_NONE);
+            _player->SetTeam(TEAM_NONE);
         }
         // join to bg case
         else if (BattleGround* bg = _player->GetBattleGround())

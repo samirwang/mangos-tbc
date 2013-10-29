@@ -1069,7 +1069,7 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
         // Do next only if found in battleground
         plr->SetBattleGroundId(0, BATTLEGROUND_TYPE_NONE);  // We're not in BG.
         // reset destination bg team
-        plr->SetBGTeam(TEAM_NONE);
+        plr->SetTeam(TEAM_NONE);
 
         if (Transport)
             plr->TeleportToBGEntryPoint();
@@ -1136,7 +1136,7 @@ void BattleGround::AddPlayer(Player* plr)
     // score struct must be created in inherited class
 
     ObjectGuid guid = plr->GetObjectGuid();
-    Team team = plr->GetBGTeam();
+    Team team = plr->GetTeam();
 
     BattleGroundPlayer bp;
     bp.OfflineRemoveTime = 0;
