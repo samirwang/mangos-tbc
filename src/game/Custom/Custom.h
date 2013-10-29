@@ -3,6 +3,7 @@
 
 #include "Policies/Singleton.h"
 #include "Player.h"
+#include "Creature.h"
 
 #define MSG_COLOR_LIGHTRED     "|cffff6060"
 #define MSG_COLOR_LIGHTBLUE    "|cff00ccff"
@@ -56,22 +57,36 @@ enum ClassRaceFlags
     CRFLAG_DRAENEI  = 0x00020000,
 };
 
+typedef std::vector<TrainerSpell> SpellContainer;
+typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
+
 class Custom
 {
 public:
     Custom() { };
     ~Custom();
 
-    typedef std::vector<TrainerSpell> SpellContainer;
-    typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
-
     // Flip all the bits to get highest possible value!
     static const uint32 maxuint32 = ~0;
 
     // Bitwise functions simplified!
-    bool HasFlag(uint32& var, int32 flag);
-    void SetFlag(uint32& var, int32 flag, std::string description = "");
-    void DelFlag(uint32& var, int32 flag, std::string description = "");
+    template <class T1, class T2>
+    bool HasFlag(T1& var, T2 flag)
+    {
+        return var & flag;
+    }
+
+    template <class T1, class T2>
+    void SetFlag(T1& var, T2 flag)
+    {
+        var |= flag;
+    }
+
+    template <class T1, class T2>
+    void DelFlag(T1& var, T2 flag)
+    {
+        var &= ~flag;
+    }
 
     uint32 GetCRFlag(Player* player);
     uint32 GetCRFlag(uint8 pclass, uint8 prace);

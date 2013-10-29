@@ -41,6 +41,7 @@
 #include "OutdoorPvP/OutdoorPvP.h"
 #include "Pet.h"
 #include "SocialMgr.h"
+#include "Custom.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
 {
@@ -1275,6 +1276,22 @@ void WorldSession::HandleSetTitleOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
 {
+    if (Player* player = GetPlayer())
+    {
+        uint8 reflag = player->GetRecacheFlag();
+        if (sCustom.HasFlag(reflag, RECACHE_LIST))
+        {
+            player->RecachePlayersFromList();
+            sCustom.DelFlag(reflag, RECACHE_LIST);
+        }
+        if (sCustom.HasFlag(reflag, RECACHE_BG))
+        {
+            player->RecachePlayersFromBG();
+            sCustom.DelFlag(reflag, RECACHE_BG);
+        }
+        player->SetRecacheFlag(reflag);
+    }
+
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;
 

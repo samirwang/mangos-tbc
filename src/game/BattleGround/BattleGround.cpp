@@ -33,6 +33,7 @@
 #include "Util.h"
 #include "Formulas.h"
 #include "GridNotifiersImpl.h"
+#include "Custom.h"
 
 namespace MaNGOS
 {
@@ -975,6 +976,12 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
 
     if (plr)
     {
+        plr->SetFakedPlayers(m_FakedPlayers);
+
+        uint8 recacheflag = plr->GetRecacheFlag();
+        sCustom.SetFlag(recacheflag, RECACHE_LIST);
+        plr->SetRecacheFlag(recacheflag);
+
         // should remove spirit of redemption
         if (plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
             plr->RemoveSpellsCausingAura(SPELL_AURA_MOD_SHAPESHIFT);
@@ -1129,6 +1136,13 @@ void BattleGround::StartBattleGround()
 
 void BattleGround::AddPlayer(Player* plr)
 {
+    if (!plr->NativeTeam())
+        m_FakedPlayers.push_back(plr->GetObjectGuid());
+
+    uint8 recacheflag = plr->GetRecacheFlag();
+    sCustom.SetFlag(recacheflag, RECACHE_BG);
+    plr->SetRecacheFlag(recacheflag);
+
     // remove afk from player
     if (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK))
         plr->ToggleAFK();

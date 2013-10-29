@@ -7,25 +7,6 @@ Custom::~Custom()
         delete itr->second;
 }
 
-bool Custom::HasFlag(uint32& var, int32 flag)
-{
-    return var & flag;
-}
-void Custom::SetFlag(uint32& var, int32 flag, std::string description)
-{
-    if (HasFlag(var, flag))
-        sLog.outDebug("Custom::SetFlag already set: %s", description.c_str());
-
-    var |= flag;
-}
-void Custom::DelFlag(uint32& var, int32 flag, std::string description)
-{
-    if (!HasFlag(var, flag))
-        sLog.outDebug("Custom::DelFlag not set: %s", description.c_str());
-
-    var &= ~flag;
-}
-
 uint32 Custom::GetCRFlag(Player* player)
 {
     return GetCRFlag(player->getClass(), player->getRace());
@@ -69,7 +50,7 @@ uint32 Custom::GetCRFlag(uint8 pclass, uint8 prace)
     return flag;
 }
 
-Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
+SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 {
     SpellContainer spellContainer;
 
@@ -92,7 +73,7 @@ Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     return spellContainer;
 }
 
-Custom::SpellContainer* Custom::GetSpellContainerByCR(uint32 crval)
+SpellContainer* Custom::GetSpellContainerByCR(uint32 crval)
 {
     if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.end())
         return m_CachedSpellContainer[crval];

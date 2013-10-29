@@ -913,11 +913,18 @@ enum MessageTypes
     CHAT_BOTH
 };
 
+enum RecachePlayers
+{
+    RECACHE_LIST = 0x00000000,
+    RECACHE_BG   = 0x00000001,
+};
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
+    typedef std::vector<ObjectGuid> FakedPlayers;
 
     void CUpdate(uint32 diff);
     void OnLogin();
@@ -933,11 +940,20 @@ public:
     uint32 getOFaction() const { return GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE); }
     uint32 getFFaction() const { return m_fFaction; }
 
+    void RecachePlayersFromList();
+    void RecachePlayersFromBG();
+    WorldPacket BuildNameQuery();
+    uint8 GetRecacheFlag() { return m_RecacheFlag; }
+    void SetRecacheFlag(uint8 value) { m_RecacheFlag = value; }
+    void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
 private:
     DelayedSpellLearn m_DelayedSpellLearn;
+    FakedPlayers m_FakedPlayers;
+    uint8 m_RecacheFlag;
 
     uint8 m_fRace;
     uint32 m_fFaction;

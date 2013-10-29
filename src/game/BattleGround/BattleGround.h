@@ -268,6 +268,9 @@ This class is used to:
 */
 class BattleGround
 {
+private:
+    std::vector<ObjectGuid> m_FakedPlayers;
+    // !Custom
         friend class BattleGroundMgr;
 
     public:

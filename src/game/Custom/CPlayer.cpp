@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Custom.h"
 #include "Chat.h"
+#include "WorldPacket.h"
 
 void Player::CUpdate(uint32 diff)
 {
@@ -112,15 +113,15 @@ void Player::LearnGreenSpells()
 
     uint32 CRFlag = sCustom.GetCRFlag(getClass(), getRace());
 
-    Custom::SpellContainer* allSpellContainer = sCustom.GetSpellContainerByCR(CRFlag);
+    SpellContainer* allSpellContainer = sCustom.GetSpellContainerByCR(CRFlag);
 
     if (!allSpellContainer)
     {
-        allSpellContainer = new Custom::SpellContainer;
+        allSpellContainer = new SpellContainer;
 
-        Custom::SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
+        SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
 
-        for (Custom::SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
+        for (SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
             allSpellContainer->push_back(*itr);
 
         sCustom.AddCachedSpellContainerByCR(CRFlag, allSpellContainer);
@@ -136,7 +137,7 @@ void Player::LearnGreenSpells()
     while(taughtspell)
     {
         taughtspell = false;
-        for (Custom::SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
+        for (SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
         {
             TrainerSpell const* tSpell = &*itr;
 
@@ -154,4 +155,82 @@ void Player::LearnGreenSpells()
             }
         }
     }
+}
+
+void Player::RecachePlayersFromList()
+{
+    for (FakedPlayers::const_iterator itr = m_FakedPlayers.begin(); itr != m_FakedPlayers.end(); ++itr)
+    {
+        WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
+        data << *itr;
+        GetSession()->SendPacket(&data);
+
+        if (Player* player = sObjectMgr.GetPlayer(*itr))
+        {
+            WorldPacket data = player->BuildNameQuery();
+            GetSession()->SendPacket(&data);
+        }
+    }
+
+    m_FakedPlayers.clear();
+}
+
+void Player::RecachePlayersFromBG()
+{
+    if (BattleGround* bg = GetBattleGround())
+    {
+        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = bg->GetPlayers().begin();
+            itr != bg->GetPlayers().end(); ++itr)
+        {
+            if (Player* player = sObjectMgr.GetPlayer(itr->first))
+            {
+                if (!player->NativeTeam())
+                {
+                    WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
+                    data << player->GetObjectGuid();
+                    GetSession()->SendPacket(&data);
+
+                    data = player->BuildNameQuery();
+                    GetSession()->SendPacket(&data);
+                }
+
+                if (!NativeTeam())
+                {
+                    WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
+                    data << GetObjectGuid();
+                    player->GetSession()->SendPacket(&data);
+
+                    data = BuildNameQuery();
+                    player->GetSession()->SendPacket(&data);
+                }
+            }
+            else
+            {
+                WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
+                data << itr->first;
+                GetSession()->SendPacket(&data);
+            }
+        }
+    }
+}
+
+WorldPacket Player::BuildNameQuery()
+{
+    WorldPacket data(SMSG_NAME_QUERY_RESPONSE, (8 + 1 + 4 + 4 + 4 + 10));
+    data << GetObjectGuid();                             // player guid
+    data << GetName();                                   // played name
+    data << uint8(0);                                       // realm name for cross realm BG usage
+    data << uint32(getRace());
+    data << uint32(getGender());
+    data << uint32(getClass());
+    if (DeclinedName const* names = GetDeclinedNames())
+    {
+        data << uint8(1);                                   // is declined
+        for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+            data << names->name[i];
+    }
+    else
+        data << uint8(0);                                   // is not declined
+
+    return data;
 }
