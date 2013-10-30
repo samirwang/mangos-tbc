@@ -37,6 +37,7 @@
 #include "BattleGround/BattleGround.h"
 #include "DBCStores.h"
 #include "SharedDefines.h"
+#include "GossipDef.h"
 
 #include<string>
 #include<vector>
@@ -948,6 +949,11 @@ public:
     void FakeDisplayID();
 
     bool SendBattleGroundChat(uint32 msgtype, std::string message);
+
+    void AddGossipMenuItem(uint8 icon, std::string message, uint32 sender, uint32 action)
+    {
+        PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
+    }
 
     std::stringstream BoxChat;
     std::stringstream WideChat;

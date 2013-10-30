@@ -57,6 +57,35 @@ enum ClassRaceFlags
     CRFLAG_DRAENEI  = 0x00020000,
 };
 
+enum
+{
+    // Gossip senders
+    GOSSIP_SENDER_MAIN             = 1,
+    GOSSIP_SENDER_INN_INFO         = 2,
+    GOSSIP_SENDER_INFO             = 3,
+    GOSSIP_SENDER_SEC_PROFTRAIN    = 4,
+    GOSSIP_SENDER_SEC_CLASSTRAIN   = 5,
+    GOSSIP_SENDER_SEC_BATTLEINFO   = 6,
+    GOSSIP_SENDER_SEC_BANK         = 7,
+    GOSSIP_SENDER_SEC_INN          = 8,
+    GOSSIP_SENDER_SEC_MAILBOX      = 9,
+    GOSSIP_SENDER_SEC_STABLEMASTER = 10,
+    GOSSIP_SENDER_MULTIVENDOR      = 11,
+
+    // Gossip icons
+    ICON_CHAT_BUBBLE               = 0,
+    ICON_BAG                       = 1,
+    ICON_FLY                       = 2,
+    ICON_BOOK                      = 3,
+    ICON_GEAR1                     = 4,
+    ICON_GEAR2                     = 5,
+    ICON_BAG_COIN                  = 6,
+    ICON_CHAT_BUBBLE_DOTS          = 7,
+    ICON_TABARD                    = 8,
+    ICON_CROSSING_SWORDS           = 9,
+    ICON_YELLOW_DOT                = 10
+};
+
 typedef std::vector<TrainerSpell> SpellContainer;
 typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
 
@@ -93,6 +122,8 @@ public:
 
     SpellContainer GetSpellContainerByCreatureEntry(uint32 entry);
     SpellContainer* GetSpellContainerByCR(uint32 crval);
+
+    std::string ChatNameWrapper(std::string cName);
 
     void AddCachedSpellContainerByCR(uint32 crval, SpellContainer* container)
     {

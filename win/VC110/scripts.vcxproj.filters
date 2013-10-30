@@ -14,6 +14,9 @@
     <ClCompile Include="..\..\src\scripts\Precompiled.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\scripts\Battlegrounds.cpp" />
+    <ClCompile Include="..\..\src\scripts\npc_spirit_guide.cpp" />
+    <ClCompile Include="..\..\src\scripts\npc_teleporter.cpp" />
+    <ClCompile Include="..\..\src\scripts\sc_default.cpp" />
+    <ClCompile Include="..\..\src\scripts\ScriptLoader.cpp" />
   </ItemGroup>
 </Project>

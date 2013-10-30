@@ -22,7 +22,8 @@ include_directories(
 )
 
 set(LIBRARY_SRCS
-  Battlegrounds.cpp
+  npc_spirit_guide.cpp
+
   Precompiled.cpp
   Precompiled.h
 )

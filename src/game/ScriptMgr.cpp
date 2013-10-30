@@ -52,15 +52,6 @@ ScriptVec m_scripts;
 
 void FillSpellSummary();
 
-// Scriptloader
-void AddSC_battleground();
-
-void AddScripts()
-{
-    AddSC_battleground();
-}
-// !Scriptloader
-
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
 ScriptMgr::ScriptMgr() :
