@@ -43,6 +43,9 @@
     <Filter Include="Custom\Warden">
       <UniqueIdentifier>{6c93fca1-b19a-488c-80b4-f9125e1f0fd5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom\ScriptSystem">
+      <UniqueIdentifier>{8b64df98-ecf2-401f-9a18-95f609bcade6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -556,6 +559,12 @@
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp">
+      <Filter>Custom\ScriptSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp">
+      <Filter>Custom\ScriptSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1053,6 +1062,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Custom.h">
       <Filter>Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\sc_creature.h">
+      <Filter>Custom\ScriptSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h">
+      <Filter>Custom\ScriptSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
