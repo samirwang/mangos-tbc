@@ -39,7 +39,16 @@ include_directories(
 )
 
 set(SRC_GRP_CUSTOM
-
+    Custom/CChat.cpp
+    Custom/CPlayer.cpp
+    Custom/Custom.cpp
+    Custom/Custom.h
+    Custom/Misc.cpp
+    Custom/Warden
+    Custom/sc_creature.cpp
+    Custom/sc_creature.h
+    Custom/sc_grid_searchers.cpp
+    Custom/sc_grid_searchers.h
 )
 
 set(SRC_GRP_WARDEN

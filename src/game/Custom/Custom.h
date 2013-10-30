@@ -107,11 +107,12 @@ public:
     template <class T>
     std::string stringReplace(T istr, T ioldStr, T inewStr)
     {
-        std::string str = std::to_string(istr);
-        std::string oldStr = std::to_string(ioldStr);
-        std::string newStr = std::to_string(inewStr);
-
         size_t pos = 0;
+
+        std::string str = std::string(istr);
+        std::string oldStr = std::string(ioldStr);
+        std::string newStr = std::string(inewStr);
+
         while((pos = str.find(oldStr, pos)) != std::string::npos)
         {
             str.replace(pos, oldStr.length(), newStr);
