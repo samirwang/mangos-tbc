@@ -2087,8 +2087,19 @@ Creature* Player::GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask)
     if (unit->IsHostileTo(this))
         return NULL;
 
+    // Here we check if the NPC was spawned in air, if he were it is because he is going to stand on
+    // a gameobject, and without air spawning he would fall trough it, and we do not want that.
+    // But they should still be able to talk to the npc if he is spawned high in air.
+    bool use3D = true;
+    float x, y, z, mapz;
+    unit->GetRespawnCoord(x, y, z);
+    mapz = unit->GetMap()->GetHeight(x, y, z);
+
+    if (abs(z - mapz) >= INTERACTION_DISTANCE)
+        use3D = false;
+
     // not too far
-    if (!unit->IsWithinDistInMap(this, INTERACTION_DISTANCE))
+    if (!unit->IsWithinDistInMap(this, INTERACTION_DISTANCE, use3D))
         return NULL;
 
     return unit;
