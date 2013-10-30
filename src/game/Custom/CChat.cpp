@@ -1,4 +1,7 @@
 #include "Chat.h"
+#include "WorldSession.h"
+#include "Player.h"
+#include "BattleGround/BattleGround.h"
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {

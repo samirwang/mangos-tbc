@@ -1,5 +1,6 @@
 #include "Custom.h"
 #include "Log.h"
+#include "ObjectMgr.h"
 
 Custom::~Custom()
 {

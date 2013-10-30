@@ -3,6 +3,7 @@
 #include "Chat.h"
 #include "WorldPacket.h"
 #include "World.h"
+#include "ObjectMgr.h"
 
 void Player::CUpdate(uint32 diff)
 {

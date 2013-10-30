@@ -7,6 +7,7 @@
 #include "World.h"
 #include "Unit.h"
 #include "BattleGround/BattleGroundMgr.h"
+#include "Util.h"
 
 void WorldSession::InitWarden(BigNumber *K, std::string os)
 {
