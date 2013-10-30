@@ -52,6 +52,7 @@ struct GroupQueueInfo                                       // stores informatio
 {
     GroupQueueInfoPlayers Players;                          // player queue info map
     Team  GroupTeam;                                        // Player team (ALLIANCE/HORDE)
+    Team  OGroupTeam;                                       // OPlayer team (ALLIANCE/HORDE)
     BattleGroundTypeId BgTypeId;                            // battleground type id
     bool    IsRated;                                        // rated
     ArenaType arenaType;                                    // 2v2, 3v3, 5v5 or 0 when BG
