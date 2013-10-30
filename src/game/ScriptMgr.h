@@ -24,6 +24,7 @@
 #include "ObjectGuid.h"
 #include "DBCEnums.h"
 #include "ace/Atomic_Op.h"
+#include "sc_creature.h"
 
 struct AreaTriggerEntry;
 struct SpellEntry;
@@ -447,6 +448,8 @@ enum ScriptLoadResult
 };
 
 #define VISIBLE_RANGE       (166.0f)  // MAX visible range (size of grid)
+
+void AddScripts();
 
 struct Script
 {

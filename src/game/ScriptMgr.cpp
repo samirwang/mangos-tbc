@@ -52,6 +52,15 @@ ScriptVec m_scripts;
 
 void FillSpellSummary();
 
+// Scriptloader
+void AddSC_battleground();
+
+void AddScripts()
+{
+    AddSC_battleground();
+}
+// !Scriptloader
+
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
 ScriptMgr::ScriptMgr() :
@@ -1886,6 +1895,22 @@ void ScriptMgr::LoadScriptNames()
     sLog.outString(">> Loaded %d Script Names", count);
 }
 
+void Script::RegisterSelf(bool bReportError)
+{
+    if (uint32 id = GetScriptId(Name.c_str()))
+    {
+        m_scripts[id] = this;
+        ++num_sc_scripts;
+    }
+    else
+    {
+        if (bReportError)
+            script_error_log("Script registering but ScriptName %s is not assigned in database. Script will not be used.", Name.c_str());
+
+        delete this;
+    }
+}
+
 void ScriptMgr::InitScriptLibrary()
 {
     outstring_log(" ");
@@ -1900,7 +1925,7 @@ void ScriptMgr::InitScriptLibrary()
 
     FillSpellSummary();
 
-    //AddScripts();
+    AddScripts();
 
     // Check existance scripts for all registered by core script names
     for (uint32 i = 1; i < GetScriptIdsCount(); ++i)
