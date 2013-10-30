@@ -156,7 +156,7 @@ bool ChatHandler::HandleSaveCommand(char* /*args*/)
     }
 
     // save or plan save after 20 sec (logout delay) if current next save time more this value and _not_ output any messages to prevent cheat planning
-    uint32 save_interval = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
+    uint32 save_interval = sWorld.GetSaveInterval();
     if (save_interval == 0 || (save_interval > 20 * IN_MILLISECONDS && player->GetSaveTimer() <= save_interval - 20 * IN_MILLISECONDS))
         player->SaveToDB();
 

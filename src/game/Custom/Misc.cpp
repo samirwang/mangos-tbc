@@ -107,3 +107,12 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
 
     return true;
 }
+
+uint32 World::GetSaveInterval()
+{
+    if (sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE))
+        return sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
+
+    uint32 hardtime = ceil(float((1.f/sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC))*sWorld.GetActiveSessionCount()*IN_MILLISECONDS)+2*IN_MILLISECONDS);
+    return urand(hardtime / 2, hardtime * 3 / 2);
+}

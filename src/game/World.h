@@ -86,6 +86,7 @@ enum eConfigUInt32Values
     CONFIG_UINT32_WARDEN_CLIENT_CHECK_HOLDOFF,
     CONFIG_UINT32_WARDEN_CLIENT_RESPONSE_DELAY,
     CONFIG_UINT32_WARDEN_BAN_TIME,
+    CONFIG_UINT32_INTERVAL_SAVEPERSEC,
     // !Custom
     CONFIG_UINT32_INTERVAL_SAVE,
     CONFIG_UINT32_INTERVAL_GRIDCLEAN,
@@ -438,6 +439,9 @@ struct CliCommandHolder
 /// The World
 class World
 {
+public:
+    uint32 GetSaveInterval();
+    // !Custom
     public:
         static volatile uint32 m_worldLoopCounter;
 

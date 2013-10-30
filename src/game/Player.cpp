@@ -415,7 +415,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
 
     m_areaUpdateId = 0;
 
-    m_nextSave = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
+    m_nextSave = sWorld.GetSaveInterval();
 
     // randomize first save time in range [CONFIG_UINT32_INTERVAL_SAVE] around [CONFIG_UINT32_INTERVAL_SAVE]
     // this must help in case next save after mass player load after server startup
@@ -16141,7 +16141,7 @@ void Player::SaveToDB()
 {
     // we should assure this: ASSERT((m_nextSave != sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE)));
     // delay auto save at any saves (manual, in code, or autosave)
-    m_nextSave = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
+    m_nextSave = sWorld.GetSaveInterval();
 
     // lets allow only players in world to be saved
     if (IsBeingTeleportedFar())

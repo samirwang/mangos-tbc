@@ -878,6 +878,9 @@ void World::LoadConfigSettings(bool reload)
 
     // CFBG
     setConfig(CONFIG_BOOL_CFBG_ENABLED, "CrossBattlegrounds.Enabled", true);
+
+    // Saving
+    setConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC, "PlayerSave.PerSecond", 2);
 }
 
 /// Initialize the World
