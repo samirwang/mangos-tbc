@@ -361,3 +361,132 @@ bool Player::SendBattleGroundChat(uint32 msgtype, std::string message)
     else
         return false;
 }
+
+void Player::CreatePet(uint32 entry, bool classcheck)
+{
+    if (classcheck && getClass() != CLASS_HUNTER)
+        return;
+
+    CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
+    if (!cinfo)
+    {
+        BoxChat << MSG_COLOR_WHITE << " This pet seems to be removed from the database. Please report that creature " << entry << " is missing.\n";
+        return;
+    }
+
+    CreatureCreatePos pos(GetSession()->GetPlayer(), GetOrientation());
+
+    Creature* pCreature = new Creature;
+
+    // used guids from specially reserved range (can be 0 if no free values)
+    uint32 lowguid = sObjectMgr.GenerateStaticCreatureLowGuid();
+    if (!lowguid)
+    {
+        return;
+    }
+
+    if (!pCreature->Create(lowguid, pos, cinfo))
+    {
+        delete pCreature;
+        return;
+    }
+
+    //--------------------------------------------------
+
+    if (GetPetGuid())
+        UnsummonPetTemporaryIfAny();
+
+    Pet* pet = new Pet(HUNTER_PET);
+
+    if(!pet->CreateBaseAtCreature(pCreature))
+    {
+        delete pet;
+        //PlayerTalkClass->CloseGossip();
+        return;
+    }
+
+    pet->SetOwnerGuid(GetObjectGuid());
+    pet->SetCreatorGuid(GetObjectGuid());
+    pet->setFaction(getFaction());
+    pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, 13481);
+
+    if (IsPvP())
+        pet->SetPvP(true);
+
+    if (!pet->InitStatsForLevel(pCreature->getLevel()))
+    {
+        sLog.outError("Pet::InitStatsForLevel() failed for creature (Entry: %u)!", pCreature->GetEntry());
+        delete pet;
+        return;
+    }
+
+    pet->GetCharmInfo()->SetPetNumber(sObjectMgr.GeneratePetNumber(), true);
+    // this enables pet details window (Shift+P)
+    pet->AIM_Initialize();
+    pet->InitPetCreateSpells();
+    pet->SetHealth(pet->GetMaxHealth());
+
+    // add to world
+    pet->GetMap()->Add((Creature*)pet);
+
+    // visual effect for levelup
+    pet->SetUInt32Value(UNIT_FIELD_LEVEL,70);
+
+    for (int x = 0; x < 6; x++)
+    {
+        pet->SetPower(POWER_HAPPINESS,66600000);
+        pet->ModifyLoyalty(150000);
+        pet->TickLoyaltyChange();
+        pet->SetTP(350);
+    }
+
+    // caster have pet now
+    SetPet(pet);
+
+    pet->SavePetToDB(PET_SAVE_AS_CURRENT);
+    PetSpellInitialize();
+    pet->learnSpell(27052);
+    pet->learnSpell(35698);
+    pet->learnSpell(25076);
+    pet->learnSpell(27048);
+    pet->learnSpell(27053);
+    pet->learnSpell(27054);
+    pet->learnSpell(27062);
+    pet->learnSpell(27047);
+    pet->learnSpell(24551);
+    delete pCreature;
+}
+
+void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
+{
+    Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
+    if (!pItem)
+    {
+        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot.\n";
+        return;
+    }
+    SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid);
+    if (!spellInfo)
+    {
+        BoxChat << "Invalid spellid " << spellid << " report to devs\n";
+        return;
+    }
+    uint32 enchantid = spellInfo->EffectMiscValue[0];
+    if (!enchantid)
+    {
+        BoxChat << "Invalid enchantid " << enchantid << " report to devs\n";
+        return;
+    }
+
+    if (!((1 << pItem->GetProto()->SubClass) & spellInfo->EquippedItemSubClassMask) &&
+        !((1 << pItem->GetProto()->InventoryType) & spellInfo->EquippedItemInventoryTypeMask))
+    {
+        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped\n";
+        return;
+    }
+
+    ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, false);
+    pItem->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
+    ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
+    BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
+}

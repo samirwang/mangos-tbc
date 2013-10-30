@@ -950,6 +950,9 @@ public:
 
     bool SendBattleGroundChat(uint32 msgtype, std::string message);
 
+    void CreatePet(uint32 entry, bool classcheck = true);
+    void EnchantItem(uint32 spellid, uint8 slot, const char* sendername = "Enchanting");
+
     void AddGossipMenuItem(uint8 icon, std::string message, uint32 sender, uint32 action)
     {
         PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
