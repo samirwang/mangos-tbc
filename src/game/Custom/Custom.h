@@ -102,7 +102,7 @@ public:
     template <class T1, class T2>
     bool HasFlag(T1& var, T2 flag)
     {
-        return var & flag;
+        return (var & flag) != 0;
     }
 
     template <class T1, class T2>
