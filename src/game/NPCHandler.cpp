@@ -354,6 +354,13 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
     uint32 sender = _player->PlayerTalkClass->GossipOptionSender(gossipListId);
     uint32 action = _player->PlayerTalkClass->GossipOptionAction(gossipListId);
 
+    if (!_player->IsAllowedGossipAction(sender, action))
+    {
+        DEBUG_LOG("WORLD: HandleGossipSelectOptionOpcode - %s used gossip action %u %u on %s .", GetPlayer()->GetObjectGuid().GetString().c_str(), sender, action, guid.GetString().c_str());
+        return;
+    }
+    _player->ClearAllowedGossipAction();
+
     if (guid.IsAnyTypeCreature())
     {
         Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);

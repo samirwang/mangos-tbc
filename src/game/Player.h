@@ -920,6 +920,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
+    typedef std::multimap<uint32, uint32> AvailableGossipOptions;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -958,6 +959,10 @@ public:
         PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
     }
 
+    void AddAllowedGossipAction(uint32 sender, uint32 action) { m_AvailableGossipOptions.insert(std::make_pair(sender, action)); }
+    bool IsAllowedGossipAction(uint32 sender, uint32 action);
+    void ClearAllowedGossipAction() { m_AvailableGossipOptions.clear(); }
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
@@ -965,6 +970,8 @@ private:
     DelayedSpellLearn m_DelayedSpellLearn;
     FakedPlayers m_FakedPlayers;
     bool m_Recache;
+
+    AvailableGossipOptions m_AvailableGossipOptions;
 
     uint8 m_fRace;
     uint8 m_oRace;

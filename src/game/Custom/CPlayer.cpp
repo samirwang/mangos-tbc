@@ -16,9 +16,6 @@ void Player::CUpdate(uint32 diff)
             LearnGreenSpells();
     }
 
-//     BoxChat << "Faction: " << getFaction() << " OFaction: " << getOFaction() << " FFaction: " << getFFaction() << std::endl;
-//     BoxChat << "Race: " << uint32(getRace()) << " ORace: " << uint32(getORace()) << " FRace: " << uint32(getFRace()) <<  std::endl;
-
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
@@ -489,4 +486,15 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     pItem->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
     BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
+}
+
+bool Player::IsAllowedGossipAction(uint32 sender, uint32 action)
+{
+    bool allowed = false;
+
+    for (AvailableGossipOptions::const_iterator itr = m_AvailableGossipOptions.begin(); itr != m_AvailableGossipOptions.end(); ++itr)
+        if (itr->first == sender && itr->second == action)
+            allowed = true;
+
+    return allowed;
 }

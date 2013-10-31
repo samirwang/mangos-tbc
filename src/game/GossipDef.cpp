@@ -151,6 +151,11 @@ bool PlayerMenu::GossipOptionCoded(unsigned int Selection)
 
 void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
 {
+    Player* player = GetMenuSession()->GetPlayer();
+
+    if (player)
+        player->ClearAllowedGossipAction();
+
     WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));           // guess size
     data << ObjectGuid(objectGuid);
     data << uint32(mGossipMenu.GetMenuId());                // new 2.4.0
@@ -166,6 +171,9 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
         data << uint32(gItem.m_gBoxMoney);                  // money required to open menu, 2.0.3
         data << gItem.m_gMessage;                           // text for gossip item, max 0x800
         data << gItem.m_gBoxMessage;                        // accept text (related to money) pop up box, 2.0.3, max 0x800
+
+        if (player)
+            player->AddAllowedGossipAction(gItem.m_gSender, gItem.m_gOptionId);
     }
 
     data << uint32(mQuestMenu.MenuItemCount());             // max count 0x20
