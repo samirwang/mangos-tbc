@@ -161,6 +161,8 @@ public:
 
     void InitializeFakePlayerBytes();
 
+    uint8 PickFakeRace(uint8 pclass, Team team);
+
     uint32 GetFakePlayerBytes(uint8 race, uint8 gender)
     {
         if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())

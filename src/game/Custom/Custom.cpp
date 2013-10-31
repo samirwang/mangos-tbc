@@ -219,3 +219,192 @@ void Custom::InitializeFakePlayerBytes()
     bytes.PlayerBytes2[GENDER_FEMALE] = 33554438;
     m_FakePlayerBytesContainer.insert(std::make_pair(RACE_BLOODELF, bytes));
 }
+
+uint8 Custom::PickFakeRace(uint8 pclass, Team team)
+{
+    uint8 m_fRace = 0;
+    if (team == ALLIANCE)
+    {
+        switch (pclass)
+        {
+        case CLASS_ROGUE:
+        case CLASS_WARRIOR:
+            {
+                switch (urand(0,3))
+                {
+                case 0: m_fRace = RACE_ORC;    break;
+                case 1: m_fRace = RACE_UNDEAD; break;
+                case 2: m_fRace = RACE_TAUREN; break;
+                case 3: m_fRace = RACE_TROLL;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_PALADIN: m_fRace = RACE_BLOODELF; break;
+        case CLASS_HUNTER:
+            {
+                switch (urand(0,3))
+                {
+                case 0: m_fRace = RACE_ORC;     break;
+                case 1: m_fRace = RACE_TAUREN;  break;
+                case 2: m_fRace = RACE_TROLL;   break;
+                case 3: m_fRace = RACE_BLOODELF;break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_PRIEST:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_UNDEAD;   break;
+                case 1: m_fRace = RACE_TROLL;    break;
+                case 2: m_fRace = RACE_BLOODELF; break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_SHAMAN:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_ORC;    break;
+                case 1: m_fRace = RACE_TAUREN; break;
+                case 2: m_fRace = RACE_TROLL;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_MAGE:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_UNDEAD;   break;
+                case 1: m_fRace = RACE_TROLL;    break;
+                case 2: m_fRace = RACE_BLOODELF; break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_WARLOCK:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_ORC;      break;
+                case 1: m_fRace = RACE_UNDEAD;   break;
+                case 2: m_fRace = RACE_BLOODELF; break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_DRUID: m_fRace = RACE_TAUREN; break;
+        default:
+            break;
+        }
+    }
+    else
+    {
+        switch (pclass)
+        {
+        case CLASS_WARRIOR:
+            {
+                switch (urand(0,4))
+                {
+                case 0: m_fRace = RACE_HUMAN;    break;
+                case 1: m_fRace = RACE_DWARF;    break;
+                case 2: m_fRace = RACE_NIGHTELF; break;
+                case 3: m_fRace = RACE_GNOME;    break;
+                case 4: m_fRace = RACE_DRAENEI;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_PALADIN:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_HUMAN;    break;
+                case 1: m_fRace = RACE_DWARF;    break;
+                case 2: m_fRace = RACE_DRAENEI;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_HUNTER:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_DWARF;    break;
+                case 1: m_fRace = RACE_NIGHTELF; break;
+                case 2: m_fRace = RACE_DRAENEI;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_ROGUE:
+            {
+                switch (urand(0,3))
+                {
+                case 0: m_fRace = RACE_HUMAN;    break;
+                case 1: m_fRace = RACE_DWARF;    break;
+                case 2: m_fRace = RACE_NIGHTELF; break;
+                case 3: m_fRace = RACE_GNOME;    break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_PRIEST:
+            {
+                switch (urand(0,3))
+                {
+                case 0: m_fRace = RACE_HUMAN;    break;
+                case 1: m_fRace = RACE_DWARF;    break;
+                case 2: m_fRace = RACE_NIGHTELF; break;
+                case 3: m_fRace = RACE_DRAENEI;  break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_SHAMAN: m_fRace = RACE_DRAENEI; break;
+        case CLASS_MAGE:
+            {
+                switch (urand(0,2))
+                {
+                case 0: m_fRace = RACE_HUMAN;   break;
+                case 1: m_fRace = RACE_GNOME;   break;
+                case 2: m_fRace = RACE_DRAENEI; break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_WARLOCK:
+            {
+                switch (urand(0,1))
+                {
+                case 0: m_fRace = RACE_HUMAN;      break;
+                case 1: m_fRace = RACE_GNOME;   break;
+                default:
+                    break;
+                }
+                break;
+            }
+        case CLASS_DRUID: m_fRace = RACE_NIGHTELF; break;
+        default:
+            break;
+        }
+    }
+
+    return m_fRace;
+}

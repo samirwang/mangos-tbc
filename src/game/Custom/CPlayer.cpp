@@ -61,24 +61,7 @@ void Player::OnFirstLogin()
 
 void Player::SetFakeValues()
 {
-    m_fRace = m_oRace;
-
-    switch (m_oRace)
-    {
-    case RACE_HUMAN   : m_fRace = RACE_ORC;         break;
-    case RACE_ORC     : m_fRace = RACE_HUMAN;       break;
-    case RACE_DWARF   : m_fRace = RACE_TROLL;       break;
-    case RACE_NIGHTELF: m_fRace = RACE_UNDEAD;      break;
-    case RACE_UNDEAD  : m_fRace = RACE_NIGHTELF;    break;
-    case RACE_TAUREN  : m_fRace = RACE_GNOME;       break;
-    case RACE_GNOME   : m_fRace = RACE_TAUREN;      break;
-    case RACE_TROLL   : m_fRace = RACE_DWARF;       break;
-    case RACE_BLOODELF: m_fRace = RACE_DRAENEI;     break;
-    case RACE_DRAENEI : m_fRace = RACE_BLOODELF;    break;
-    default:
-        sLog.outError("CFBG: Player %s has invalid race %u, cannot set fake race!", GetObjectGuid().GetString().c_str(), getORace());
-        break;
-    }
+    m_fRace = sCustom.PickFakeRace(getClass(), GetOTeam());
 
     m_fFaction = getFactionForRace(m_fRace);
 
