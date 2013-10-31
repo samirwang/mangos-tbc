@@ -8,18 +8,17 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
         return true;
     }
 
-    // if player is not in thrallmar and is horde, or is alliance and not in HH, or is gm
-    if ((pPlayer->GetAreaId() != 3536 /*Thrallmar*/   && pPlayer->GetTeam() == HORDE) ||
-        (pPlayer->GetAreaId() != 3538 /*Honor Hold*/) && pPlayer->GetTeam() == ALLIANCE ||
+    if ((pPlayer->GetAreaId() != 3536 && pPlayer->GetTeam() == HORDE) ||
+        (pPlayer->GetAreaId() != 3538 && pPlayer->GetTeam() == ALLIANCE) ||
         pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(2, "Teleport To: Shopping Mall  ", GOSSIP_SENDER_MAIN, 1  );
 
-    if (pPlayer->GetAreaId() != 3539)
+    if (pPlayer->GetAreaId() != 3539 || pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(2, "Teleport To: Neutral  Mall  ", GOSSIP_SENDER_MAIN, 2  );
 
     pPlayer->AddGossipMenuItem(2, "Teleport To: Gurubashi Arena", GOSSIP_SENDER_MAIN, 3  );
     pPlayer->AddGossipMenuItem(5, "Open Tools                  ", GOSSIP_SENDER_MAIN, 100);
-    pPlayer->AddGossipMenuItem(5, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
+    //pPlayer->AddGossipMenuItem(5, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
     pPlayer->AddGossipMenuItem(1, "Open Vendors                ", GOSSIP_SENDER_MAIN, 300);
 
     if (pPlayer->isGameMaster())
@@ -112,8 +111,8 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     {
         if (pPlayer->getLevel() != 70)
             pPlayer->AddGossipMenuItem(5 ,"Level: 70", GOSSIP_SENDER_MAIN, 201);
-        //         if (pPlayer->getLevel() != 49)
-        //             pPlayer->AddGossipMenuItem(5 ,"Level: 49", GOSSIP_SENDER_MAIN, 202);
+        if (pPlayer->getLevel() != 49)
+            pPlayer->AddGossipMenuItem(5 ,"Level: 49", GOSSIP_SENDER_MAIN, 202);
         if (pPlayer->getLevel() != 19)
             pPlayer->AddGossipMenuItem(5 ,"Level: 19", GOSSIP_SENDER_MAIN, 203);
     }
@@ -130,8 +129,8 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
 
         if (action == 201)
             pPlayer->SetLevel(70);
-        //         else if (action == 202)
-        //             pPlayer->SetLevel(49);
+        else if (action == 202)
+            pPlayer->SetLevel(49);
         else if (action == 203)
             pPlayer->SetLevel(19);
     }
@@ -205,9 +204,6 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 1337)
     {
-        if (!pPlayer->isGameMaster())
-            return true;
-
         pPlayer->AddGossipMenuItem(5, "Check how icons look", GOSSIP_SENDER_MAIN, 1338);
         pPlayer->AddGossipMenuItem(5, "Send boxmessage",  CHAT_BOX,  1339);
         pPlayer->AddGossipMenuItem(5, "Send widemessage", CHAT_WIDE, 1339);
@@ -215,9 +211,6 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 1338)
     {
-        if (!pPlayer->isGameMaster())
-            return true;
-
         pPlayer->AddGossipMenuItem(GOSSIP_ICON_CHAT         ,"0  GOSSIP_ICON_CHAT",        GOSSIP_SENDER_MAIN, 0);
         pPlayer->AddGossipMenuItem(GOSSIP_ICON_VENDOR       ,"1  GOSSIP_ICON_VENDOR",      GOSSIP_SENDER_MAIN, 0);
         pPlayer->AddGossipMenuItem(GOSSIP_ICON_TAXI         ,"2  GOSSIP_ICON_TAXI",        GOSSIP_SENDER_MAIN, 0);
