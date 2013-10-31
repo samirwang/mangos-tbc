@@ -22,10 +22,16 @@ include_directories(
 )
 
 set(LIBRARY_SRCS
-  npc_spirit_guide.cpp
+    Precompiled.cpp
+    Precompiled.h
 
-  Precompiled.cpp
-  Precompiled.h
+    ScriptLoader.cpp
+    npc_beast_master.cpp
+    npc_enchant.cpp
+    npc_spirit_guide.cpp
+    npc_teleporter.cpp
+    npc_training_dummy.cpp
+    sc_default.cpp
 )
 
 add_library(${LIBRARY_NAME} STATIC
