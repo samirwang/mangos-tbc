@@ -15,7 +15,7 @@ struct MANGOS_DLL_DECL npc_training_dummyAI : public Scripted_NoMovementAI
             m_AttackerMap[pDealer->GetObjectGuid()] = 5000;
 
         m_creature->SetHealth(m_creature->GetMaxHealth() * 0.2f);
-        m_creature->SetTargetGuid(m_creature->GetObjectGuid());
+        //m_creature->SetTargetGuid(m_creature->GetObjectGuid());
     }
 
     void UpdateAI(const uint32 diff)

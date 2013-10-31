@@ -4,7 +4,7 @@ bool GossipHello_npc_enchant(Player *pPlayer, Creature *pCreature)
 {
     if (pPlayer->isInCombat())
     {
-        pPlayer->BothChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!";
+        pPlayer->BothChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!\n";
         return true;
     }
 
@@ -38,10 +38,12 @@ bool GossipHello_npc_enchant(Player *pPlayer, Creature *pCreature)
     if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_FINGER2))
         pPlayer->AddGossipMenuItem(9, "Enchant Finger two", SLOT_FINGER2, 9);
 
-    if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_MAIN_HAND))
+    if (Item* item = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_MAIN_HAND))
     {
-        pPlayer->AddGossipMenuItem(9, "Enchant Two hand  ", SLOT_MAIN_HAND, 10);
-        pPlayer->AddGossipMenuItem(9, "Enchant Main hand ", SLOT_MAIN_HAND, 11);
+        if (item->GetProto()->InventoryType ==  INVTYPE_2HWEAPON)
+            pPlayer->AddGossipMenuItem(9, "Enchant Two hand  ", SLOT_MAIN_HAND, 10);
+        else
+            pPlayer->AddGossipMenuItem(9, "Enchant Main hand ", SLOT_MAIN_HAND, 11);
     }
     if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_OFF_HAND))
     {
@@ -247,7 +249,7 @@ void AddSC_npc_enchant()
     Script *newscript;
 
     newscript                   = new Script;
-    newscript->Name             = "npc_beast_master";
+    newscript->Name             = "npc_enchant";
     newscript->pGossipHello     = &GossipHello_npc_enchant;
     newscript->pGossipSelect    = &GossipSelect_npc_enchant;
     newscript->RegisterSelf();
