@@ -41,8 +41,8 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
 
     if (action == 0)
         GossipHello_teleporter(pPlayer,pCreature);
-//     else if (sender == GOSSIP_SENDER_MULTIVENDOR)
-//         pPlayer->SendListInventory(action, pCreature->GetObjectGuid());
+    else if (sender == GOSSIP_SENDER_MULTIVENDOR)
+        pPlayer->SendMultiVendorInventory(action, pCreature->GetObjectGuid());
     else if (action == 1) // Teleport To: Shopping Mall
     {
         if (pPlayer->GetTeam() == HORDE)

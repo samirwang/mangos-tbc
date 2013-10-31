@@ -914,6 +914,12 @@ enum MessageTypes
     CHAT_BOTH
 };
 
+struct MultiVendor
+{
+    uint32 entry;
+    ObjectGuid guid;
+};
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
@@ -963,6 +969,22 @@ public:
     bool IsAllowedGossipAction(uint32 sender, uint32 action);
     void ClearAllowedGossipAction() { m_AvailableGossipOptions.clear(); }
 
+    void SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid);
+    bool BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot);
+    bool SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count);
+    bool BuyBackItemFromMultiVendor(uint32 slot);
+
+    void SetMultiVendor(uint32 entry, ObjectGuid guid)
+    {
+        m_MultiVendor.entry = entry;
+        m_MultiVendor.guid  = guid;
+    }
+    void GetMultiVendor(uint32& entry, ObjectGuid& guid)
+    {
+        entry = m_MultiVendor.entry;
+        guid  = m_MultiVendor.guid;
+    }
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
@@ -972,6 +994,8 @@ private:
     bool m_Recache;
 
     AvailableGossipOptions m_AvailableGossipOptions;
+
+    MultiVendor m_MultiVendor;
 
     uint8 m_fRace;
     uint8 m_oRace;

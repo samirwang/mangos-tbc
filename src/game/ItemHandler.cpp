@@ -481,6 +481,10 @@ void WorldSession::HandleSellItemOpcode(WorldPacket& recv_data)
     recv_data >> itemGuid;
     recv_data >> _count;
 
+    if (vendorGuid == GetPlayer()->GetObjectGuid())
+        if (GetPlayer()->SellItemToMultiVendor(itemGuid, _count))
+            return;
+
     // prevent possible overflow, as mangos uses uint32 for item count
     uint32 count = _count;
 
@@ -592,6 +596,11 @@ void WorldSession::HandleBuybackItem(WorldPacket& recv_data)
 
     recv_data >> vendorGuid >> slot;
 
+    if (vendorGuid == GetPlayer()->GetObjectGuid())
+        if (GetPlayer()->BuyBackItemFromMultiVendor(slot))
+            return;
+        
+
     Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
     if (!pCreature)
     {
@@ -696,6 +705,8 @@ void WorldSession::HandleListInventoryOpcode(WorldPacket& recv_data)
 
 void WorldSession::SendListInventory(ObjectGuid vendorguid)
 {
+    GetPlayer()->SetMultiVendor(0, vendorguid);
+
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
 
     Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorguid, UNIT_NPC_FLAG_VENDOR);

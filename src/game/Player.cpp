@@ -18001,6 +18001,9 @@ void Player::TakeExtendedCost(uint32 extendedCostId, uint32 count)
 // Return true is the bought item has a max count to force refresh of window by caller
 bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
+    if (vendorGuid == GetObjectGuid())
+        return BuyItemFromMultiVendor(item, count, bag, slot);
+
     // cheating attempt
     if (count < 1) count = 1;
 
