@@ -62,6 +62,7 @@
 #include "Mail.h"
 #include "DBCStores.h"
 #include "SQLStorages.h"
+#include "Custom.h"
 
 #include <cmath>
 

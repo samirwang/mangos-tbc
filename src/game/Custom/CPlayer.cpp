@@ -48,6 +48,9 @@ void Player::OnLogin()
         SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
         setFaction(getFFaction());
         FakeDisplayID();
+
+        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
+        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
     }
 }
 
@@ -60,7 +63,7 @@ void Player::SetFakeValues()
 {
     m_fRace = m_oRace;
 
-    switch (getORace())
+    switch (m_oRace)
     {
     case RACE_HUMAN   : m_fRace = RACE_ORC;         break;
     case RACE_ORC     : m_fRace = RACE_HUMAN;       break;
@@ -78,6 +81,17 @@ void Player::SetFakeValues()
     }
 
     m_fFaction = getFactionForRace(m_fRace);
+
+    m_oPlayerBytes = GetUInt32Value(PLAYER_BYTES);
+    m_oPlayerBytes2 = GetUInt32Value(PLAYER_BYTES_2);
+    m_fPlayerBytes = sCustom.GetFakePlayerBytes(m_fRace, getGender());
+    m_fPlayerBytes2 = sCustom.GetFakePlayerBytes2(m_fRace, getGender());
+
+    if (!m_fPlayerBytes)
+        m_fPlayerBytes = m_oPlayerBytes;
+
+    if (!m_fPlayerBytes2)
+        m_fPlayerBytes2 = m_oPlayerBytes2;
 }
 
 void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
@@ -290,6 +304,9 @@ void Player::FakeDisplayID()
             sLog.outError("Invalid gender %u for player", gender);
             return;
         }
+
+        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
+        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
     }
 }
 
@@ -324,6 +341,9 @@ void Player::CLeaveBattleGround(BattleGround* /*bg*/)
 
     SetFakedPlayers(m_FakedPlayers);
     SetRecache();
+
+    SetUInt32Value(PLAYER_BYTES, getOPlayerBytes());
+    SetUInt32Value(PLAYER_BYTES_2, getOPlayerBytes2());
 }
 
 bool Player::SendBattleGroundChat(uint32 msgtype, std::string message)

@@ -942,6 +942,10 @@ public:
     uint8 getORace() const { return m_oRace; }
     uint32 getOFaction() const { return m_oFaction; }
     uint32 getFFaction() const { return m_fFaction; }
+    uint32 getOPlayerBytes() const { return m_oPlayerBytes; }
+    uint32 getFPlayerBytes() const { return m_fPlayerBytes; }
+    uint32 getOPlayerBytes2() const { return m_oPlayerBytes2; }
+    uint32 getFPlayerBytes2() const { return m_fPlayerBytes2; }
 
     void RecachePlayersFromList();
     void RecachePlayersFromBG();
@@ -1001,6 +1005,10 @@ private:
     uint8 m_oRace;
     uint32 m_fFaction;
     uint32 m_oFaction;
+    uint32 m_oPlayerBytes;
+    uint32 m_oPlayerBytes2;
+    uint32 m_fPlayerBytes;
+    uint32 m_fPlayerBytes2;
 
     // !Custom
         friend class WorldSession;

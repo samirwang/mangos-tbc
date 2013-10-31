@@ -86,8 +86,15 @@ enum
     ICON_YELLOW_DOT                = 10
 };
 
+struct FakePlayerBytes
+{
+    uint32 PlayerBytes[2];
+    uint32 PlayerBytes2[2];
+};
+
 typedef std::vector<TrainerSpell> SpellContainer;
 typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
+typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
 
 class Custom
 {
@@ -152,6 +159,24 @@ public:
         return str;
     }
 
+    void InitializeFakePlayerBytes();
+
+    uint32 GetFakePlayerBytes(uint8 race, uint8 gender)
+    {
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
+            return m_FakePlayerBytesContainer[race].PlayerBytes[gender];
+
+        return 0;
+    }
+
+    uint32 GetFakePlayerBytes2(uint8 race, uint8 gender)
+    {
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
+            return m_FakePlayerBytesContainer[race].PlayerBytes2[gender];
+
+        return 0;
+    }
+
 private:
     static const std::string m_ClassColor[];
     static const std::string m_ItemColor[];
@@ -160,6 +185,7 @@ private:
 
     CachedSpellContainer m_CachedSpellContainer;
 
+    FakePlayerBytesContainer m_FakePlayerBytesContainer;
 };
 
 #define sCustom MaNGOS::Singleton<Custom>::Instance()

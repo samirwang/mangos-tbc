@@ -66,6 +66,7 @@
 #include "CharacterDatabaseCleaner.h"
 #include "CreatureLinkingMgr.h"
 #include "WardenDataStorage.h"
+#include "Custom.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1275,6 +1276,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Initializing Scripts...");
     sScriptMgr.InitScriptLibrary();
+
+    sLog.outString("Initializing fake playerbytes...");
+    sCustom.InitializeFakePlayerBytes();
 
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");
