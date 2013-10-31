@@ -811,6 +811,8 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
     m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
 
+    SetFakeValues();
+
     return true;
 }
 
