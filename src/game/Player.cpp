@@ -16202,8 +16202,8 @@ void Player::SaveToDB()
     uberInsert.addUInt32(getLevel());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_XP));
     uberInsert.addUInt32(GetMoney());
-    uberInsert.addUInt32(GetUInt32Value(PLAYER_BYTES));
-    uberInsert.addUInt32(GetUInt32Value(PLAYER_BYTES_2));
+    uberInsert.addUInt32(getOPlayerBytes());
+    uberInsert.addUInt32(getOPlayerBytes2());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_FLAGS));
 
     if (!IsBeingTeleported())
