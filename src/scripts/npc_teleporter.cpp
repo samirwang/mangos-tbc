@@ -1,4 +1,5 @@
 #include "Precompiled.h"
+#include "ArenaTeam.h"
 
 bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
 {
@@ -20,6 +21,7 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
     pPlayer->AddGossipMenuItem(5, "Open Tools                  ", GOSSIP_SENDER_MAIN, 100);
     //pPlayer->AddGossipMenuItem(5, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
     pPlayer->AddGossipMenuItem(1, "Open Vendors                ", GOSSIP_SENDER_MAIN, 300);
+    pPlayer->AddGossipMenuItem(9, "Queue for battle            ", GOSSIP_SENDER_MAIN, 400);
 
     if (pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(1, "GM menu", GOSSIP_SENDER_MAIN, 1337);
@@ -202,6 +204,101 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->AddGossipMenuItem(6 ,"Necklaces", GOSSIP_SENDER_MULTIVENDOR, 81021);
         pPlayer->AddGossipMenuItem(5 ,"Back     ", GOSSIP_SENDER_MAIN, 300);
     }
+    else if (action == 400)
+    {
+        pPlayer->AddGossipMenuItem(9, "Warsong Gulch    ", GOSSIP_SENDER_MAIN, 401);
+        pPlayer->AddGossipMenuItem(9, "Arathi Basin     ", GOSSIP_SENDER_MAIN, 402);
+        pPlayer->AddGossipMenuItem(9, "Eye of the Storm ", GOSSIP_SENDER_MAIN, 403);
+        pPlayer->AddGossipMenuItem(9, "Alterac Valley   ", GOSSIP_SENDER_MAIN, 404);
+
+        if (Group* grp = pPlayer->GetGroup())
+        {
+            for (uint8 i = 0; i < 3; ++i)
+            {
+                if (ArenaTeam* at = sObjectMgr.GetArenaTeamById(pPlayer->GetArenaTeamId(i)))
+                {
+                    bool showrated = true;
+
+                    for (Group::MemberSlotList::const_iterator itr = grp->GetMemberSlots().begin(); itr != grp->GetMemberSlots().end(); ++itr)
+                    {
+                        if (Player* member = sObjectMgr.GetPlayer(itr->guid))
+                        {
+                            if (sObjectMgr.GetArenaTeamById(member->GetArenaTeamId(i)) != at)
+                                showrated = false;
+                        }
+                        else
+                            showrated = false;
+                    }
+
+                    if (showrated)
+                    {
+                        if (i == 0)
+                            pPlayer->AddGossipMenuItem(9, "Rated 2v2        ", GOSSIP_SENDER_MAIN, 405);
+                        else if (i == 1)
+                            pPlayer->AddGossipMenuItem(9, "Rated 3v3        ", GOSSIP_SENDER_MAIN, 406);
+                        else if (i == 2)
+                            pPlayer->AddGossipMenuItem(9, "Rated 5v5        ", GOSSIP_SENDER_MAIN, 407);
+                    }
+                }
+            }
+        }
+
+        pPlayer->AddGossipMenuItem(9, "Skirmish 2v2     ", GOSSIP_SENDER_MAIN, 408);
+        pPlayer->AddGossipMenuItem(9, "Skirmish 3v3     ", GOSSIP_SENDER_MAIN, 409);
+        pPlayer->AddGossipMenuItem(9, "Skirmish 5v5     ", GOSSIP_SENDER_MAIN, 410);
+    }
+    else if (action >= 401 && action <= 404)
+    {
+        BattleGroundTypeId bgtype = BATTLEGROUND_TYPE_NONE;
+
+        switch (action)
+        {
+        case 401: bgtype = BATTLEGROUND_WS; break;
+        case 402: bgtype = BATTLEGROUND_AB; break;
+        case 403: bgtype = BATTLEGROUND_EY; break;
+        case 404: bgtype = BATTLEGROUND_AV; break;
+        default:
+            break;
+        }
+
+        WorldPacket data;
+        data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
+        data << pCreature->GetObjectGuid();
+        data << bgtype;
+        data << 0;
+        data << (pPlayer->GetGroup() != NULL);
+        pPlayer->GetSession()->HandleBattlemasterJoinOpcode(data);
+    }
+    else if (action >= 405 && action <= 410)
+    {
+        uint8 arenaslot = 0; // 2v2 default
+        bool rated = false;
+
+        switch (action)
+        {
+        case 406:
+        case 408:
+            arenaslot = 1;
+            break;
+        case 407:
+        case 410:
+            arenaslot = 2;
+            break;
+        default:
+            break;
+        }
+
+        if (action <= 407)
+            rated = true;
+
+        WorldPacket data;
+        data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
+        data << pCreature->GetObjectGuid();
+        data << arenaslot;
+        data << (pPlayer->GetGroup() != NULL);
+        data << rated;
+        pPlayer->GetSession()->HandleBattlemasterJoinArena(data);
+    }
     else if (action == 1337)
     {
         pPlayer->AddGossipMenuItem(5, "Check how icons look", GOSSIP_SENDER_MAIN, 1338);
@@ -211,17 +308,17 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 1338)
     {
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_CHAT         ,"0  GOSSIP_ICON_CHAT",        GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_VENDOR       ,"1  GOSSIP_ICON_VENDOR",      GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TAXI         ,"2  GOSSIP_ICON_TAXI",        GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TRAINER      ,"3  GOSSIP_ICON_TRAINER",     GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_INTERACT_1   ,"4  GOSSIP_ICON_INTERACT_1",  GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_INTERACT_2   ,"5  GOSSIP_ICON_INTERACT_2",  GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_MONEY_BAG    ,"6  GOSSIP_ICON_MONEY_BAG",   GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TALK         ,"7  GOSSIP_ICON_TALK",        GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TABARD       ,"8  GOSSIP_ICON_TABARD",      GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_BATTLE       ,"9  GOSSIP_ICON_BATTLE",      GOSSIP_SENDER_MAIN, 0);
-        pPlayer->AddGossipMenuItem(GOSSIP_ICON_DOT          ,"10 GOSSIP_ICON_DOT",         GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_CHAT      , "0  GOSSIP_ICON_CHAT",       GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_VENDOR    , "1  GOSSIP_ICON_VENDOR",     GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TAXI      , "2  GOSSIP_ICON_TAXI",       GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TRAINER   , "3  GOSSIP_ICON_TRAINER",    GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_INTERACT_1, "4  GOSSIP_ICON_INTERACT_1", GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_INTERACT_2, "5  GOSSIP_ICON_INTERACT_2", GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_MONEY_BAG , "6  GOSSIP_ICON_MONEY_BAG",  GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TALK      , "7  GOSSIP_ICON_TALK",       GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_TABARD    , "8  GOSSIP_ICON_TABARD",     GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_BATTLE    , "9  GOSSIP_ICON_BATTLE",     GOSSIP_SENDER_MAIN, 0);
+        pPlayer->AddGossipMenuItem(GOSSIP_ICON_DOT       , "10 GOSSIP_ICON_DOT",        GOSSIP_SENDER_MAIN, 0);
     }
     else if (action == 1339)
     {
