@@ -4,12 +4,40 @@
 #include "WorldPacket.h"
 #include "World.h"
 #include "ObjectMgr.h"
+#include "DBCStores.h"
 
 void Player::CUpdate(uint32 diff)
 {
     if (!m_DelayedSpellLearn.empty())
     {
-        learnSpell(m_DelayedSpellLearn.front(), false);
+        uint32 spellid = m_DelayedSpellLearn.front();
+        bool castable = false;
+        bool learn = false;
+
+        if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid))
+        {
+            for (uint8 i = 0; i < 2; i++)
+            {
+                if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
+                {
+                    castable = true;
+                    if (!HasSpell(spellInfo->EffectTriggerSpell[i]))
+                       learn = true; 
+                }
+            }
+        }
+
+        if (!learn && !castable && !HasSpell(spellid))
+            learn = true;
+
+        if (learn)
+        {
+            if (castable)
+                CastSpell(this, spellid, true);
+            else
+                learnSpell(spellid, false);
+        }
+
         m_DelayedSpellLearn.erase(m_DelayedSpellLearn.begin());
 
         if (m_DelayedSpellLearn.empty())
@@ -124,9 +152,7 @@ void Player::LearnGreenSpells()
     if (!trainerid)
         return;
 
-    uint32 CRFlag = sCustom.GetCRFlag(getClass(), getRace());
-
-    SpellContainer* allSpellContainer = sCustom.GetSpellContainerByCR(CRFlag);
+    SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(getClass());
 
     if (!allSpellContainer)
     {
@@ -137,7 +163,7 @@ void Player::LearnGreenSpells()
         for (SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
             allSpellContainer->push_back(*itr);
 
-        sCustom.AddCachedSpellContainerByCR(CRFlag, allSpellContainer);
+        sCustom.CacheSpellContainer(getClass(), allSpellContainer);
     }
 
     if (allSpellContainer->empty())
@@ -145,28 +171,16 @@ void Player::LearnGreenSpells()
 
     m_DelayedSpellLearn.clear();
 
-    bool taughtspell = true;
 
-    while(taughtspell)
+    for (SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
     {
-        taughtspell = false;
-        for (SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
-        {
-            TrainerSpell const* tSpell = &*itr;
+        TrainerSpell const* tSpell = &*itr;
 
-            TrainerSpellState state = GetTrainerSpellState(tSpell, tSpell->reqLevel);
+        TrainerSpellState state = GetTrainerSpellState(tSpell, tSpell->reqLevel);
 
-            if (state == TRAINER_SPELL_GREEN)
-            {
-                if (IsInWorld())
-                    m_DelayedSpellLearn.push_back(tSpell->spell);
-                else
-                {
-                    learnSpell(tSpell->spell, false);
-                    taughtspell = true;
-                }
-            }
-        }
+        if (state == TRAINER_SPELL_GREEN)
+            if (IsInWorld())
+                m_DelayedSpellLearn.push_back(tSpell->spell);
     }
 }
 

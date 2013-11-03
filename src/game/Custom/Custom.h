@@ -124,15 +124,12 @@ public:
         var &= ~flag;
     }
 
-    uint32 GetCRFlag(Player* player);
-    uint32 GetCRFlag(uint8 pclass, uint8 prace);
-
     SpellContainer GetSpellContainerByCreatureEntry(uint32 entry);
-    SpellContainer* GetSpellContainerByCR(uint32 crval);
+    SpellContainer* GetCachedSpellContainer(uint32 crval);
 
     std::string ChatNameWrapper(std::string cName);
 
-    void AddCachedSpellContainerByCR(uint32 crval, SpellContainer* container)
+    void CacheSpellContainer(uint32 crval, SpellContainer* container)
     {
         m_CachedSpellContainer.insert(std::make_pair(crval, container));
     }
