@@ -77,14 +77,14 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->AddGossipMenuItem(5 ,"Open Auction House", GOSSIP_SENDER_MAIN, 106);
         pPlayer->AddGossipMenuItem(5 ,"Create a guild    ", GOSSIP_SENDER_MAIN, 107);
         pPlayer->AddGossipMenuItem(5 ,"Design your tabard", GOSSIP_SENDER_MAIN, 108);
-        pPlayer->AddGossipMenuItem(5 ,"Back to Main Menu ", GOSSIP_SENDER_MAIN, 0  );
+        pPlayer->AddGossipMenuItem(5 ,"Back              ", GOSSIP_SENDER_MAIN, 0  );
     }
     else if (action == 101) // Reset Talents
     {
         pPlayer->AddGossipMenuItem(5 ,"Are you sure you want to reset your talents?", GOSSIP_SENDER_MAIN, 100);
         pPlayer->AddGossipMenuItem(5 ,"Yes                                         ", GOSSIP_SENDER_MAIN, 102);
         pPlayer->AddGossipMenuItem(5 ,"No                                          ", GOSSIP_SENDER_MAIN, 100);
-        pPlayer->AddGossipMenuItem(5 ,"Back to Main Menu                           ", GOSSIP_SENDER_MAIN, 0  );
+        pPlayer->AddGossipMenuItem(5 ,"Back                                        ", GOSSIP_SENDER_MAIN, 0  );
     }
     else if (action == 102) // Talents Reset
     {
@@ -206,10 +206,10 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 400)
     {
-        pPlayer->AddGossipMenuItem(9, "Warsong Gulch    ", GOSSIP_SENDER_MAIN, 401);
-        pPlayer->AddGossipMenuItem(9, "Arathi Basin     ", GOSSIP_SENDER_MAIN, 402);
-        pPlayer->AddGossipMenuItem(9, "Eye of the Storm ", GOSSIP_SENDER_MAIN, 403);
-        pPlayer->AddGossipMenuItem(9, "Alterac Valley   ", GOSSIP_SENDER_MAIN, 404);
+        pPlayer->AddGossipMenuItem(9, "Warsong Gulch   ", GOSSIP_SENDER_MAIN, 401);
+        pPlayer->AddGossipMenuItem(9, "Arathi Basin    ", GOSSIP_SENDER_MAIN, 402);
+        pPlayer->AddGossipMenuItem(9, "Eye of the Storm", GOSSIP_SENDER_MAIN, 403);
+        pPlayer->AddGossipMenuItem(9, "Alterac Valley  ", GOSSIP_SENDER_MAIN, 404);
 
         if (Group* grp = pPlayer->GetGroup())
         {
@@ -233,19 +233,20 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
                     if (showrated)
                     {
                         if (i == 0)
-                            pPlayer->AddGossipMenuItem(9, "Rated 2v2        ", GOSSIP_SENDER_MAIN, 405);
+                            pPlayer->AddGossipMenuItem(9, "Rated 2v2", GOSSIP_SENDER_MAIN, 405);
                         else if (i == 1)
-                            pPlayer->AddGossipMenuItem(9, "Rated 3v3        ", GOSSIP_SENDER_MAIN, 406);
+                            pPlayer->AddGossipMenuItem(9, "Rated 3v3", GOSSIP_SENDER_MAIN, 406);
                         else if (i == 2)
-                            pPlayer->AddGossipMenuItem(9, "Rated 5v5        ", GOSSIP_SENDER_MAIN, 407);
+                            pPlayer->AddGossipMenuItem(9, "Rated 5v5", GOSSIP_SENDER_MAIN, 407);
                     }
                 }
             }
         }
 
-        pPlayer->AddGossipMenuItem(9, "Skirmish 2v2     ", GOSSIP_SENDER_MAIN, 408);
-        pPlayer->AddGossipMenuItem(9, "Skirmish 3v3     ", GOSSIP_SENDER_MAIN, 409);
-        pPlayer->AddGossipMenuItem(9, "Skirmish 5v5     ", GOSSIP_SENDER_MAIN, 410);
+        pPlayer->AddGossipMenuItem(9, "Skirmish 2v2", GOSSIP_SENDER_MAIN, 408);
+        pPlayer->AddGossipMenuItem(9, "Skirmish 3v3", GOSSIP_SENDER_MAIN, 409);
+        pPlayer->AddGossipMenuItem(9, "Skirmish 5v5", GOSSIP_SENDER_MAIN, 410);
+        pPlayer->AddGossipMenuItem(5 ,"Back        ", GOSSIP_SENDER_MAIN, 0  );
     }
     else if (action >= 401 && action <= 404)
     {
