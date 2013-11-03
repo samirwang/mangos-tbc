@@ -1343,7 +1343,7 @@ INSERT INTO `npc_trainer` VALUES ('26331', '11739', '11000', '0', '0', '42');
 INSERT INTO `npc_trainer` VALUES ('26331', '11740', '18000', '0', '0', '52');
 INSERT INTO `npc_trainer` VALUES ('26331', '17727', '14000', '0', '0', '48');
 INSERT INTO `npc_trainer` VALUES ('26331', '17728', '26000', '0', '0', '60');
-INSERT INTO `npc_trainer` VALUES ('26331', '17862', '12000', '0', '0', '44');
+/*INSERT INTO `npc_trainer` VALUES ('26331', '17862', '12000', '0', '0', '44');*/
 INSERT INTO `npc_trainer` VALUES ('26331', '17919', '4000', '0', '0', '26');
 INSERT INTO `npc_trainer` VALUES ('26331', '17920', '8000', '0', '0', '34');
 INSERT INTO `npc_trainer` VALUES ('26331', '17921', '11000', '0', '0', '42');
@@ -1353,7 +1353,7 @@ INSERT INTO `npc_trainer` VALUES ('26331', '17924', '22000', '0', '0', '56');
 INSERT INTO `npc_trainer` VALUES ('26331', '17925', '15000', '0', '0', '50');
 INSERT INTO `npc_trainer` VALUES ('26331', '17926', '24000', '0', '0', '58');
 INSERT INTO `npc_trainer` VALUES ('26331', '17928', '20000', '0', '0', '54');
-INSERT INTO `npc_trainer` VALUES ('26331', '17937', '22000', '0', '0', '56');
+/*INSERT INTO `npc_trainer` VALUES ('26331', '17937', '22000', '0', '0', '56');*/
 INSERT INTO `npc_trainer` VALUES ('26331', '17951', '9000', '0', '0', '36');
 INSERT INTO `npc_trainer` VALUES ('26331', '17952', '13000', '0', '0', '46');
 INSERT INTO `npc_trainer` VALUES ('26331', '17953', '22000', '0', '0', '56');
@@ -1395,7 +1395,7 @@ INSERT INTO `npc_trainer` VALUES ('26331', '27223', '63000', '0', '0', '68');
 INSERT INTO `npc_trainer` VALUES ('26331', '27224', '30000', '0', '0', '61');
 INSERT INTO `npc_trainer` VALUES ('26331', '27226', '70000', '0', '0', '69');
 INSERT INTO `npc_trainer` VALUES ('26331', '27228', '70000', '0', '0', '69');
-INSERT INTO `npc_trainer` VALUES ('26331', '27229', '57000', '0', '0', '67');
+/*INSERT INTO `npc_trainer` VALUES ('26331', '27229', '57000', '0', '0', '67');*/
 INSERT INTO `npc_trainer` VALUES ('26331', '27230', '63000', '0', '0', '68');
 INSERT INTO `npc_trainer` VALUES ('26331', '27238', '78000', '0', '0', '70');
 INSERT INTO `npc_trainer` VALUES ('26331', '27243', '78000', '0', '0', '70');
