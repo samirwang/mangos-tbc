@@ -1771,6 +1771,8 @@ bool SpellMgr::IsRankSpellDueToSpell(SpellEntry const* spellInfo_1, uint32 spell
 
 bool SpellMgr::canStackSpellRanksInSpellBook(SpellEntry const* spellInfo) const
 {
+    if( spellInfo->IsFitToFamily(SPELLFAMILY_DRUID, UI64LIT(0x400)) )
+        return true;
     if (IsPassiveSpell(spellInfo))                          // ranked passive spell
         return false;
     if (spellInfo->powerType != POWER_MANA && spellInfo->powerType != POWER_HEALTH)
