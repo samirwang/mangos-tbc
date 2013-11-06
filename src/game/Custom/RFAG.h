@@ -1,6 +1,21 @@
 #ifndef __RFAG_H
 #define __RFAG_H
 
+namespace RFAGS
+{
+    enum
+    {
+        RFAG_NONE = 0,
+        // Compability
+        RFAG_PLAYER,        // 1
+        RFAG_MODERATOR,     // 2
+        RFAG_GAMEMASTER,    // 3
+        RFAG_ADMINISTRATOR, // 4
+        // !Compability
+        RFAG_HIGH
+    };
+}
+
 class RFAG
 {
 public:
