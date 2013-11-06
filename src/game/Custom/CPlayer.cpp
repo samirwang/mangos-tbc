@@ -5,6 +5,7 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "DBCStores.h"
+#include "RFAG.h"
 
 void Player::CUpdate(uint32 diff)
 {
@@ -43,6 +44,9 @@ void Player::CUpdate(uint32 diff)
         if (m_DelayedSpellLearn.empty())
             LearnGreenSpells();
     }
+
+    if (ReFAG())
+        LoadRFAGPerms();
 
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
@@ -152,15 +156,15 @@ void Player::LearnGreenSpells()
     if (!trainerid)
         return;
 
-    SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(getClass());
+    Custom::SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(getClass());
 
     if (!allSpellContainer)
     {
-        allSpellContainer = new SpellContainer;
+        allSpellContainer = new Custom::SpellContainer;
 
-        SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
+        Custom::SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
 
-        for (SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
+        for (Custom::SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
             allSpellContainer->push_back(*itr);
 
         sCustom.CacheSpellContainer(getClass(), allSpellContainer);
@@ -172,7 +176,7 @@ void Player::LearnGreenSpells()
     m_DelayedSpellLearn.clear();
 
 
-    for (SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
+    for (Custom::SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
     {
         TrainerSpell const* tSpell = &*itr;
 
@@ -988,6 +992,27 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
     }
     else
         SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, 0, 0);
+
+    return false;
+}
+
+bool Player::HasRFAGPerm(uint32 permid)
+{
+    return (std::find(m_RFAGs.begin(), m_RFAGs.end(), permid) != m_RFAGs.end());
+}
+
+void Player::LoadRFAGPerms()
+{
+    m_RFAGs = sRFAG.GetAccountPerms(GetSession()->GetAccountId());
+}
+
+bool Player::ReFAG()
+{
+    if (m_NewRFAGs)
+    {
+        m_NewRFAGs = false;
+        return true;
+    }
 
     return false;
 }

@@ -67,6 +67,7 @@
 #include "CreatureLinkingMgr.h"
 #include "WardenDataStorage.h"
 #include "Custom.h"
+#include "RFAG.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1279,6 +1280,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Initializing fake playerbytes...");
     sCustom.InitializeFakePlayerBytes();
+
+    sLog.outString("Initializing RFAG group permissions...");
+    sRFAG.LoadRFAGGroupPerms();
 
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");

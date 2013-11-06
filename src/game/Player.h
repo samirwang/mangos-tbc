@@ -927,6 +927,7 @@ public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
     typedef std::multimap<uint32, uint32> AvailableGossipOptions;
+    typedef std::vector<uint32> PermissionContainer;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -989,17 +990,22 @@ public:
         guid  = m_MultiVendor.guid;
     }
 
+    bool HasRFAGPerm(uint32 permid);
+    void LoadRFAGPerms();
+    bool ReFAG();
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
 private:
     DelayedSpellLearn m_DelayedSpellLearn;
     FakedPlayers m_FakedPlayers;
-    bool m_Recache;
 
     AvailableGossipOptions m_AvailableGossipOptions;
 
     MultiVendor m_MultiVendor;
+
+    bool m_Recache;
 
     uint8 m_fRace;
     uint8 m_oRace;
@@ -1009,6 +1015,9 @@ private:
     uint32 m_oPlayerBytes2;
     uint32 m_fPlayerBytes;
     uint32 m_fPlayerBytes2;
+
+    bool m_NewRFAGs;
+    PermissionContainer m_RFAGs;
 
     // !Custom
         friend class WorldSession;

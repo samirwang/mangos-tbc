@@ -1,9 +1,10 @@
-#ifndef _CUSTOM_H
-#define _CUSTOM_H
+#ifndef __CUSTOM_H
+#define __CUSTOM_H
 
 #include "Policies/Singleton.h"
 #include "Player.h"
 #include "Creature.h"
+#include "WorldSession.h"
 
 #define MSG_COLOR_LIGHTRED     "|cffff6060"
 #define MSG_COLOR_LIGHTBLUE    "|cff00ccff"
@@ -92,15 +93,15 @@ struct FakePlayerBytes
     uint32 PlayerBytes2[2];
 };
 
-typedef std::vector<TrainerSpell> SpellContainer;
-typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
-typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
-
 class Custom
 {
 public:
     Custom() { };
     ~Custom();
+
+    typedef std::vector<TrainerSpell> SpellContainer;
+    typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
+    typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
 
     // Flip all the bits to get highest possible value!
     static const uint32 maxuint32 = ~0;

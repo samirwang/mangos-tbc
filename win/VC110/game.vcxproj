@@ -379,6 +379,7 @@
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\RFAG.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp" />
@@ -552,6 +553,7 @@
     <ClInclude Include="..\..\src\game\CreatureEventAIMgr.h" />
     <ClInclude Include="..\..\src\game\CreatureLinkingMgr.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
+    <ClInclude Include="..\..\src\game\Custom\RFAG.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_creature.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />

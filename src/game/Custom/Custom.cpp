@@ -2,13 +2,15 @@
 #include "Log.h"
 #include "ObjectMgr.h"
 
+INSTANTIATE_SINGLETON_1(Custom);
+
 Custom::~Custom()
 {
     for (CachedSpellContainer::const_iterator itr = m_CachedSpellContainer.begin(); itr != m_CachedSpellContainer.end(); ++itr)
         delete itr->second;
 }
 
-SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
+Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 {
     SpellContainer spellContainer;
 
@@ -31,7 +33,7 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     return spellContainer;
 }
 
-SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
+Custom::SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
 {
     if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.end())
         return m_CachedSpellContainer[crval];
