@@ -1086,8 +1086,8 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(char* args)
         return false;
 
     /// account can't set security to same or grater level, need more power GM or console
-    AccountTypes plSecurity = GetAccessLevel();
-    if (AccountTypes(gm) >= plSecurity)
+    uint32 plSecurity = GetAccessLevel();
+    if (gm >= plSecurity)
     {
         SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
         SetSentErrorMessage(true);
@@ -1097,7 +1097,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(char* args)
     if (targetPlayer)
     {
         ChatHandler(targetPlayer).PSendSysMessage(LANG_YOURS_SECURITY_CHANGED, GetNameLink().c_str(), gm);
-        targetPlayer->GetSession()->SetSecurity(AccountTypes(gm));
+        targetPlayer->GetSession()->SetSecurity(gm);
     }
 
     PSendSysMessage(LANG_YOU_CHANGE_SECURITY, targetAccountName.c_str(), gm);
@@ -5700,7 +5700,7 @@ bool ChatHandler::HandleServerPLimitCommand(char* args)
     }
 
     uint32 pLimit = sWorld.GetPlayerAmountLimit();
-    AccountTypes allowedAccountType = sWorld.GetPlayerSecurityLimit();
+    uint32 allowedAccountType = sWorld.GetPlayerSecurityLimit();
     char const* secName = "";
     switch (allowedAccountType)
     {

@@ -507,7 +507,7 @@ bool AuthSocket::_HandleLogonChallenge()
                     }
 
                     uint8 secLevel = (*result)[4].GetUInt8();
-                    _accountSecurityLevel = secLevel <= SEC_ADMINISTRATOR ? AccountTypes(secLevel) : SEC_ADMINISTRATOR;
+                    _accountSecurityLevel = secLevel <= SEC_ADMINISTRATOR ? secLevel : SEC_ADMINISTRATOR;
 
                     _localizationName.resize(4);
                     for (int i = 0; i < 4; ++i)

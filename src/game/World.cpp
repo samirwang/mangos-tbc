@@ -1687,7 +1687,7 @@ void World::KickAll()
 }
 
 /// Kick (and save) all players with security level less `sec`
-void World::KickAllLess(AccountTypes sec)
+void World::KickAllLess(uint32 sec)
 {
     // session not removed at kick and will removed in next update tick
     for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)

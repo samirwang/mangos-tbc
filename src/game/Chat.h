@@ -109,7 +109,7 @@ class MANGOS_DLL_SPEC ChatHandler
 
         // function with different implementation for chat/console
         virtual uint32 GetAccountId() const;
-        virtual AccountTypes GetAccessLevel() const;
+        virtual uint32 GetAccessLevel() const;
         virtual bool isAvailable(ChatCommand const& cmd) const;
         virtual std::string GetNameLink() const;
         virtual bool needReportToTarget(Player* chr) const;
@@ -690,13 +690,13 @@ class CliHandler : public ChatHandler
 {
     public:
         typedef void Print(void*, char const*);
-        explicit CliHandler(uint32 accountId, AccountTypes accessLevel, void* callbackArg, Print* zprint)
+        explicit CliHandler(uint32 accountId, uint32 accessLevel, void* callbackArg, Print* zprint)
             : m_accountId(accountId), m_loginAccessLevel(accessLevel), m_callbackArg(callbackArg), m_print(zprint) {}
 
         // overwrite functions
         const char* GetMangosString(int32 entry) const override;
         uint32 GetAccountId() const override;
-        AccountTypes GetAccessLevel() const override;
+        uint32 GetAccessLevel() const override;
         bool isAvailable(ChatCommand const& cmd) const override;
         void SendSysMessage(const char* str) override;
         std::string GetNameLink() const override;
@@ -706,7 +706,7 @@ class CliHandler : public ChatHandler
 
     private:
         uint32 m_accountId;
-        AccountTypes m_loginAccessLevel;
+        uint32 m_loginAccessLevel;
         void* m_callbackArg;
         Print* m_print;
 };

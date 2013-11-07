@@ -419,13 +419,13 @@ struct CliCommandHolder
     typedef void CommandFinished(void*, bool success);
 
     uint32 m_cliAccountId;                                  // 0 for console and real account id for RA/soap
-    AccountTypes m_cliAccessLevel;
+    uint32 m_cliAccessLevel;
     void* m_callbackArg;
     char* m_command;
     Print* m_print;
     CommandFinished* m_commandFinished;
 
-    CliCommandHolder(uint32 accountId, AccountTypes cliAccessLevel, void* callbackArg, const char* command, Print* zprint, CommandFinished* commandFinished)
+    CliCommandHolder(uint32 accountId, uint32 cliAccessLevel, void* callbackArg, const char* command, Print* zprint, CommandFinished* commandFinished)
         : m_cliAccountId(accountId), m_cliAccessLevel(cliAccessLevel), m_callbackArg(callbackArg), m_print(zprint), m_commandFinished(commandFinished)
     {
         size_t len = strlen(command) + 1;
@@ -469,7 +469,7 @@ public:
 
         /// Get the active session server limit (or security level limitations)
         uint32 GetPlayerAmountLimit() const { return m_playerLimit >= 0 ? m_playerLimit : 0; }
-        AccountTypes GetPlayerSecurityLimit() const { return m_playerLimit <= 0 ? AccountTypes(-m_playerLimit) : SEC_PLAYER; }
+        uint32 GetPlayerSecurityLimit() const { return m_playerLimit <= 0 ? uint32(-m_playerLimit) : SEC_PLAYER; }
 
         /// Set the active session server limit (or security level limitation)
         void SetPlayerLimit(int32 limit, bool needUpdate = false);
@@ -559,7 +559,7 @@ public:
         bool IsFFAPvPRealm() { return getConfig(CONFIG_UINT32_GAME_TYPE) == REALM_TYPE_FFA_PVP; }
 
         void KickAll();
-        void KickAllLess(AccountTypes sec);
+        void KickAllLess(uint32 sec);
         BanReturn BanAccount(BanMode mode, std::string nameOrIP, uint32 duration_secs, std::string reason, std::string author);
         bool RemoveBanAccount(BanMode mode, std::string nameOrIP);
 

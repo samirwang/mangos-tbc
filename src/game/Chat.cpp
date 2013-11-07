@@ -833,7 +833,7 @@ uint32 ChatHandler::GetAccountId() const
     return m_session->GetAccountId();
 }
 
-AccountTypes ChatHandler::GetAccessLevel() const
+uint32 ChatHandler::GetAccessLevel() const
 {
     return m_session->GetSecurity();
 }
@@ -841,9 +841,9 @@ AccountTypes ChatHandler::GetAccessLevel() const
 bool ChatHandler::isAvailable(ChatCommand const& cmd) const
 {
     // check security level only for simple  command (without child commands)
-    //return GetAccessLevel() >= (AccountTypes)cmd.SecurityLevel;
+    //return GetAccessLevel() >= cmd.SecurityLevel;
 
-    if (GetAccessLevel() >= (AccountTypes)cmd.SecurityLevel)
+    if (GetAccessLevel() >= cmd.SecurityLevel)
         return true;
 
     if (cmd.permid == RFAGS::RFAG_NONE)
@@ -882,7 +882,7 @@ bool ChatHandler::HasLowerSecurity(Player* target, ObjectGuid guid, bool strong)
 
 bool ChatHandler::HasLowerSecurityAccount(WorldSession* target, uint32 target_account, bool strong)
 {
-    AccountTypes target_sec;
+    uint32 target_sec;
 
     // ignore only for non-players for non strong checks (when allow apply command at least to same sec level)
     if (GetAccessLevel() > SEC_PLAYER && !strong && !sWorld.getConfig(CONFIG_BOOL_GM_LOWER_SECURITY))
@@ -3318,7 +3318,7 @@ uint32 CliHandler::GetAccountId() const
     return m_accountId;
 }
 
-AccountTypes CliHandler::GetAccessLevel() const
+uint32 CliHandler::GetAccessLevel() const
 {
     return m_loginAccessLevel;
 }
@@ -3330,7 +3330,7 @@ bool CliHandler::isAvailable(ChatCommand const& cmd) const
         return false;
 
     // normal case
-    return GetAccessLevel() >= (AccountTypes)cmd.SecurityLevel;
+    return GetAccessLevel() >= cmd.SecurityLevel;
 }
 
 void CliHandler::SendSysMessage(const char* str)

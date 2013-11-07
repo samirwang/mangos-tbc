@@ -768,9 +768,9 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     }
 
     // Check locked state for server
-    AccountTypes allowedAccountType = sWorld.GetPlayerSecurityLimit();
+    uint32 allowedAccountType = sWorld.GetPlayerSecurityLimit();
 
-    if (allowedAccountType > SEC_PLAYER && AccountTypes(security) < allowedAccountType)
+    if (allowedAccountType > SEC_PLAYER && security < allowedAccountType)
     {
         WorldPacket Packet(SMSG_AUTH_RESPONSE, 1);
         Packet << uint8(AUTH_UNAVAILABLE);
@@ -819,7 +819,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     stmt.PExecute(address.c_str(), account.c_str());
 
     // NOTE ATM the socket is single-threaded, have this in mind ...
-    ACE_NEW_RETURN(m_Session, WorldSession(id, this, AccountTypes(security), expansion, mutetime, locale), -1);
+    ACE_NEW_RETURN(m_Session, WorldSession(id, this, security, expansion, mutetime, locale), -1);
 
     m_Crypt.Init(&K);
 

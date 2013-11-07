@@ -2369,7 +2369,7 @@ bool ChatHandler::HandlePInfoCommand(char* args)
 
     std::string username = GetMangosString(LANG_ERROR);
     std::string last_ip = GetMangosString(LANG_ERROR);
-    AccountTypes security = SEC_PLAYER;
+    uint32 security = SEC_PLAYER;
     std::string last_login = GetMangosString(LANG_ERROR);
 
     QueryResult* result = LoginDatabase.PQuery("SELECT username,gmlevel,last_ip,last_login FROM account WHERE id = '%u'", accId);
@@ -2377,7 +2377,7 @@ bool ChatHandler::HandlePInfoCommand(char* args)
     {
         Field* fields = result->Fetch();
         username = fields[0].GetCppString();
-        security = (AccountTypes)fields[1].GetUInt32();
+        security = fields[1].GetUInt32();
 
         if (GetAccessLevel() >= security)
         {

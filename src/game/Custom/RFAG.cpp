@@ -74,15 +74,3 @@ bool RFAG::HasPermissionDatabase(uint32 accid, uint32 permid)
 
     return (std::find(permissions.begin(), permissions.end(), permid) != permissions.end());
 }
-
-AccountTypes WorldSession::GetSecurity() const
-{
-    if (HasRFAGPerm(RFAGS::RFAG_ADMINISTRATOR))
-        return SEC_ADMINISTRATOR;
-    if (HasRFAGPerm(RFAGS::RFAG_GAMEMASTER))
-        return SEC_GAMEMASTER;
-    if (HasRFAGPerm(RFAGS::RFAG_MODERATOR))
-        return SEC_MODERATOR;
-
-    return SEC_PLAYER;
-}

@@ -74,7 +74,7 @@ class AuthSocket: public BufferedSocket
         std::string _localizationName;
         std::string _os;
         uint16 _build;
-        AccountTypes _accountSecurityLevel;
+        uint32 _accountSecurityLevel;
 
         ACE_HANDLE patch_;
 
