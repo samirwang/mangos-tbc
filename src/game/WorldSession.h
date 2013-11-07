@@ -169,7 +169,7 @@ class MANGOS_DLL_SPEC WorldSession
         void SendTransferAborted(uint32 mapid, uint8 reason, uint8 arg = 0);
         void SendQueryTimeResponse();
 
-        AccountTypes GetSecurity() const { return _security; }
+        AccountTypes GetSecurity() const/* { return _security; }*/;
         uint32 GetAccountId() const { return _accountId; }
         Player* GetPlayer() const { return _player; }
         char const* GetPlayerName() const;
@@ -783,7 +783,7 @@ class MANGOS_DLL_SPEC WorldSession
         bool m_NewRFAGs;
         PermissionContainer m_RFAGs;
     public:
-        bool HasRFAGPerm(uint32 permid);
+        bool HasRFAGPerm(uint32 permid) const;
         void LoadRFAGPerms();
         bool ReFAG();
 };

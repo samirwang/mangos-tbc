@@ -11,6 +11,7 @@ namespace RFAGS
         RFAG_MODERATOR,     // 2
         RFAG_GAMEMASTER,    // 3
         RFAG_ADMINISTRATOR, // 4
+        RFAG_LOG_TRADES,
         // !Compability
         RFAG_HIGH
     };
@@ -27,6 +28,8 @@ public:
     void LoadRFAGGroupPerms();
 
     PermissionContainer GetAccountPerms(uint32 accid);
+
+    bool HasPermissionDatabase(uint32 accid, uint32 permid);
 
 private:
     PermissionMMap m_GroupPerms;

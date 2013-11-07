@@ -33,6 +33,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "Mail.h"
+#include "RFAG.h"
 
 #include "Policies/Singleton.h"
 
@@ -92,27 +93,27 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry* auction)
     // data for gm.log
     if (sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
     {
-        AccountTypes bidder_security = SEC_PLAYER;
+        bool logBidder = false;
         std::string bidder_name;
         if (bidder)
         {
             bidder_accId = bidder->GetSession()->GetAccountId();
-            bidder_security = bidder->GetSession()->GetSecurity();
+            logBidder = bidder->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES);
             bidder_name = bidder->GetName();
         }
         else
         {
             bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
-            bidder_security = bidder_accId ? sAccountMgr.GetSecurity(bidder_accId) : SEC_PLAYER;
+            logBidder = sRFAG.HasPermissionDatabase(bidder_accId, RFAGS::RFAG_LOG_TRADES);
 
-            if (bidder_security > SEC_PLAYER)               // not do redundant DB requests
+            if (logBidder)               // not do redundant DB requests
             {
                 if (!sObjectMgr.GetPlayerNameByGUID(bidder_guid, bidder_name))
                     bidder_name = sObjectMgr.GetMangosStringForDBCLocale(LANG_UNKNOWN);
             }
         }
 
-        if (bidder_security > SEC_PLAYER)
+        if (logBidder)
         {
             std::string owner_name;
             if (ownerGuid && !sObjectMgr.GetPlayerNameByGUID(ownerGuid, owner_name))

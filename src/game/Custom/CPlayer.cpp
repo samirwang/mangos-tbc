@@ -996,7 +996,7 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
     return false;
 }
 
-bool WorldSession::HasRFAGPerm(uint32 permid)
+bool WorldSession::HasRFAGPerm(uint32 permid) const
 {
     return (std::find(m_RFAGs.begin(), m_RFAGs.end(), permid) != m_RFAGs.end());
 }
