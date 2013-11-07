@@ -52,6 +52,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
+#include "RFAG.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {
@@ -4126,7 +4127,7 @@ void Spell::EffectEnchantItemPerm(SpellEffectIndex eff_idx)
     if (!item_owner)
         return;
 
-    if (item_owner != p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+    if (item_owner != p_caster && p_caster->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
     {
         sLog.outCommand(p_caster->GetSession()->GetAccountId(), "GM %s (Account: %u) enchanting(perm): %s (Entry: %d) for player: %s (Account: %u)",
                         p_caster->GetName(), p_caster->GetSession()->GetAccountId(),
@@ -4255,7 +4256,7 @@ void Spell::EffectEnchantItemTmp(SpellEffectIndex eff_idx)
     if (!item_owner)
         return;
 
-    if (item_owner != p_caster && p_caster->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+    if (item_owner != p_caster && p_caster->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
     {
         sLog.outCommand(p_caster->GetSession()->GetAccountId(), "GM %s (Account: %u) enchanting(temp): %s (Entry: %d) for player: %s (Account: %u)",
                         p_caster->GetName(), p_caster->GetSession()->GetAccountId(),

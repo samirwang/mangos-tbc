@@ -91,42 +91,38 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry* auction)
 
     ObjectGuid ownerGuid = ObjectGuid(HIGHGUID_PLAYER, auction->owner);
     // data for gm.log
-    if (sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+
+    bool logBidder = false;
+    std::string bidder_name;
+    if (bidder)
     {
-        bool logBidder = false;
-        std::string bidder_name;
-        if (bidder)
+        bidder_accId = bidder->GetSession()->GetAccountId();
+        logBidder = bidder->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES);
+        bidder_name = bidder->GetName();
+    }
+    else
+    {
+        bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
+        logBidder = sRFAG.HasPermissionDatabase(bidder_accId, RFAGS::RFAG_LOG_TRADES);
+
+        if (logBidder)               // not do redundant DB requests
         {
-            bidder_accId = bidder->GetSession()->GetAccountId();
-            logBidder = bidder->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES);
-            bidder_name = bidder->GetName();
-        }
-        else
-        {
-            bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
-            logBidder = sRFAG.HasPermissionDatabase(bidder_accId, RFAGS::RFAG_LOG_TRADES);
-
-            if (logBidder)               // not do redundant DB requests
-            {
-                if (!sObjectMgr.GetPlayerNameByGUID(bidder_guid, bidder_name))
-                    bidder_name = sObjectMgr.GetMangosStringForDBCLocale(LANG_UNKNOWN);
-            }
-        }
-
-        if (logBidder)
-        {
-            std::string owner_name;
-            if (ownerGuid && !sObjectMgr.GetPlayerNameByGUID(ownerGuid, owner_name))
-                owner_name = sObjectMgr.GetMangosStringForDBCLocale(LANG_UNKNOWN);
-
-            uint32 owner_accid = sObjectMgr.GetPlayerAccountIdByGUID(ownerGuid);
-
-            sLog.outCommand(bidder_accId, "GM %s (Account: %u) won item in auction (Entry: %u Count: %u) and pay money: %u. Original owner %s (Account: %u)",
-                            bidder_name.c_str(), bidder_accId, auction->itemTemplate, auction->itemCount, auction->bid, owner_name.c_str(), owner_accid);
+            if (!sObjectMgr.GetPlayerNameByGUID(bidder_guid, bidder_name))
+                bidder_name = sObjectMgr.GetMangosStringForDBCLocale(LANG_UNKNOWN);
         }
     }
-    else if (!bidder)
-        bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
+
+    if (logBidder)
+    {
+        std::string owner_name;
+        if (ownerGuid && !sObjectMgr.GetPlayerNameByGUID(ownerGuid, owner_name))
+            owner_name = sObjectMgr.GetMangosStringForDBCLocale(LANG_UNKNOWN);
+
+        uint32 owner_accid = sObjectMgr.GetPlayerAccountIdByGUID(ownerGuid);
+
+        sLog.outCommand(bidder_accId, "GM %s (Account: %u) won item in auction (Entry: %u Count: %u) and pay money: %u. Original owner %s (Account: %u)",
+                        bidder_name.c_str(), bidder_accId, auction->itemTemplate, auction->itemCount, auction->bid, owner_name.c_str(), owner_accid);
+    }
 
     // receiver exist
     if (bidder || bidder_accId)

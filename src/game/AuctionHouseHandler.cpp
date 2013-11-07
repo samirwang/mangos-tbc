@@ -29,6 +29,7 @@
 #include "Mail.h"
 #include "Util.h"
 #include "Chat.h"
+#include "RFAG.h"
 
 // please DO NOT use iterator++, because it is slower than ++iterator!!!
 // post-incrementation is always slower than pre-incrementation !
@@ -310,7 +311,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
         return;
     }
 
-    if (GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+    if (HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
     {
         sLog.outCommand(GetAccountId(), "GM %s (Account: %u) create auction: %s (Entry: %u Count: %u)",
                         GetPlayerName(), GetAccountId(), it->GetProto()->Name1, it->GetEntry(), it->GetCount());

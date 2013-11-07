@@ -188,7 +188,7 @@ uint32 AccountMgr::GetSecurity(uint32 acc_id)
         return sec;
     }
 
-    return SEC_PLAYER;
+    return 0;
 }
 
 bool AccountMgr::GetName(uint32 acc_id, std::string& name)

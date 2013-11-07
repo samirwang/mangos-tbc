@@ -29,6 +29,7 @@
 #include "SocialMgr.h"
 #include "Language.h"
 #include "DBCStores.h"
+#include "RFAG.h"
 
 void WorldSession::SendTradeStatus(TradeStatus status)
 {
@@ -151,7 +152,7 @@ void WorldSession::moveItems(Item* myItems[], Item* hisItems[])
             {
                 // logging
                 DEBUG_LOG("partner storing: %s", myItems[i]->GetGuidStr().c_str());
-                if (_player->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+                if (_player->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
                 {
                     sLog.outCommand(_player->GetSession()->GetAccountId(), "GM %s (Account: %u) trade: %s (Entry: %d Count: %u) to player: %s (Account: %u)",
                                     _player->GetName(), _player->GetSession()->GetAccountId(),
@@ -167,7 +168,7 @@ void WorldSession::moveItems(Item* myItems[], Item* hisItems[])
             {
                 // logging
                 DEBUG_LOG("player storing: %s", hisItems[i]->GetGuidStr().c_str());
-                if (trader->GetSession()->GetSecurity() > SEC_PLAYER && sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+                if (trader->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
                 {
                     sLog.outCommand(trader->GetSession()->GetAccountId(), "GM %s (Account: %u) trade: %s (Entry: %d Count: %u) to player: %s (Account: %u)",
                                     trader->GetName(), trader->GetSession()->GetAccountId(),
@@ -442,22 +443,19 @@ void WorldSession::HandleAcceptTradeOpcode(WorldPacket& recvPacket)
         moveItems(myItems, hisItems);
 
         // logging money
-        if (sWorld.getConfig(CONFIG_BOOL_GM_LOG_TRADE))
+        if (_player->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES) && my_trade->GetMoney() > 0)
         {
-            if (_player->GetSession()->GetSecurity() > SEC_PLAYER && my_trade->GetMoney() > 0)
-            {
-                sLog.outCommand(_player->GetSession()->GetAccountId(), "GM %s (Account: %u) give money (Amount: %u) to player: %s (Account: %u)",
-                                _player->GetName(), _player->GetSession()->GetAccountId(),
-                                my_trade->GetMoney(),
-                                trader->GetName(), trader->GetSession()->GetAccountId());
-            }
-            if (trader->GetSession()->GetSecurity() > SEC_PLAYER && his_trade->GetMoney() > 0)
-            {
-                sLog.outCommand(trader->GetSession()->GetAccountId(), "GM %s (Account: %u) give money (Amount: %u) to player: %s (Account: %u)",
-                                trader->GetName(), trader->GetSession()->GetAccountId(),
-                                his_trade->GetMoney(),
-                                _player->GetName(), _player->GetSession()->GetAccountId());
-            }
+            sLog.outCommand(_player->GetSession()->GetAccountId(), "GM %s (Account: %u) give money (Amount: %u) to player: %s (Account: %u)",
+                _player->GetName(), _player->GetSession()->GetAccountId(),
+                my_trade->GetMoney(),
+                trader->GetName(), trader->GetSession()->GetAccountId());
+        }
+        if (trader->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES) && his_trade->GetMoney() > 0)
+        {
+            sLog.outCommand(trader->GetSession()->GetAccountId(), "GM %s (Account: %u) give money (Amount: %u) to player: %s (Account: %u)",
+                trader->GetName(), trader->GetSession()->GetAccountId(),
+                his_trade->GetMoney(),
+                _player->GetName(), _player->GetSession()->GetAccountId());
         }
 
         // update money

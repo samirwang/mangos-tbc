@@ -1087,7 +1087,7 @@ bool ChatHandler::HandleAccountSetGmLevelCommand(char* args)
 
     /// account can't set security to same or grater level, need more power GM or console
     uint32 plSecurity = GetAccessLevel();
-    if (gm >= plSecurity)
+    if (uint32(gm) >= plSecurity)
     {
         SendSysMessage(LANG_YOURS_SECURITY_IS_LOW);
         SetSentErrorMessage(true);
