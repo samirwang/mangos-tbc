@@ -389,7 +389,6 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_oPlayerBytes2 = 0;
     m_fPlayerBytes  = 0;
     m_fPlayerBytes2 = 0;
-    m_NewRFAGs      = true;
     m_Recache       = false;
 
     m_transport = 0;

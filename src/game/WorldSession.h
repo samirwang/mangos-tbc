@@ -142,6 +142,8 @@ class WorldSessionFilter : public PacketFilter
         virtual bool Process(WorldPacket* packet) override;
 };
 
+typedef std::vector<uint32> PermissionContainer;
+
 /// Player session in the World
 class MANGOS_DLL_SPEC WorldSession
 {
@@ -777,6 +779,13 @@ class MANGOS_DLL_SPEC WorldSession
         uint32 m_Tutorials[8];
         TutorialDataState m_tutorialState;
         ACE_Based::LockedQueue<WorldPacket*, ACE_Thread_Mutex> _recvQueue;
+
+        bool m_NewRFAGs;
+        PermissionContainer m_RFAGs;
+    public:
+        bool HasRFAGPerm(uint32 permid);
+        void LoadRFAGPerms();
+        bool ReFAG();
 };
 #endif
 /// @}

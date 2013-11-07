@@ -849,7 +849,7 @@ bool ChatHandler::isAvailable(ChatCommand const& cmd) const
     if (cmd.permid == RFAGS::RFAG_NONE)
         return false;
 
-    if (m_session && m_session->GetPlayer() && m_session->GetPlayer()->HasRFAGPerm(cmd.permid))
+    if (m_session && m_session->GetPlayer() && m_session->HasRFAGPerm(cmd.permid))
         return true;
 
     return false;

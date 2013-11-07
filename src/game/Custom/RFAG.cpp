@@ -25,9 +25,9 @@ void RFAG::LoadRFAGGroupPerms()
     delete result;
 }
 
-Player::PermissionContainer RFAG::GetAccountPerms(uint32 accid)
+PermissionContainer RFAG::GetAccountPerms(uint32 accid)
 {
-    Player::PermissionContainer permissions;
+    PermissionContainer permissions;
     QueryResult* result = NULL;
 
     result = LoginDatabase.PQuery("SELECT permid FROM rfag_account_permissions WHERE accid = %u", accid);

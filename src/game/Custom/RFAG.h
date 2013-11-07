@@ -26,7 +26,7 @@ public:
 
     void LoadRFAGGroupPerms();
 
-    Player::PermissionContainer GetAccountPerms(uint32 accid);
+    PermissionContainer GetAccountPerms(uint32 accid);
 
 private:
     PermissionMMap m_GroupPerms;

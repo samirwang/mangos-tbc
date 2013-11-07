@@ -45,8 +45,8 @@ void Player::CUpdate(uint32 diff)
             LearnGreenSpells();
     }
 
-    if (ReFAG())
-        LoadRFAGPerms();
+    if (GetSession()->ReFAG())
+        GetSession()->LoadRFAGPerms();
 
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
@@ -996,17 +996,17 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
     return false;
 }
 
-bool Player::HasRFAGPerm(uint32 permid)
+bool WorldSession::HasRFAGPerm(uint32 permid)
 {
     return (std::find(m_RFAGs.begin(), m_RFAGs.end(), permid) != m_RFAGs.end());
 }
 
-void Player::LoadRFAGPerms()
+void WorldSession::LoadRFAGPerms()
 {
-    m_RFAGs = sRFAG.GetAccountPerms(GetSession()->GetAccountId());
+    m_RFAGs = sRFAG.GetAccountPerms(GetAccountId());
 }
 
-bool Player::ReFAG()
+bool WorldSession::ReFAG()
 {
     if (m_NewRFAGs)
     {
