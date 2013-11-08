@@ -73,10 +73,10 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->AddGossipMenuItem(5 ,"Reset Talents     ", GOSSIP_SENDER_MAIN, 101);
         pPlayer->AddGossipMenuItem(5 ,"Reset Cooldowns   ", GOSSIP_SENDER_MAIN, 104);
         pPlayer->AddGossipMenuItem(5 ,"Max Weapon Skills ", GOSSIP_SENDER_MAIN, 103);
-        pPlayer->AddGossipMenuItem(5 ,"Open Bank         ", GOSSIP_SENDER_MAIN, 105);
-        pPlayer->AddGossipMenuItem(5 ,"Open Auction House", GOSSIP_SENDER_MAIN, 106);
-        pPlayer->AddGossipMenuItem(5 ,"Create a guild    ", GOSSIP_SENDER_MAIN, 107);
-        pPlayer->AddGossipMenuItem(5 ,"Design your tabard", GOSSIP_SENDER_MAIN, 108);
+        pPlayer->AddGossipMenuItem(1 ,"Open Bank         ", GOSSIP_SENDER_MAIN, 105);
+        pPlayer->AddGossipMenuItem(6 ,"Open Auction House", GOSSIP_SENDER_MAIN, 106);
+        pPlayer->AddGossipMenuItem(8 ,"Create a guild    ", GOSSIP_SENDER_MAIN, 107);
+        pPlayer->AddGossipMenuItem(8 ,"Design your tabard", GOSSIP_SENDER_MAIN, 108);
         pPlayer->AddGossipMenuItem(5 ,"Back              ", GOSSIP_SENDER_MAIN, 0  );
     }
     else if (action == 101) // Reset Talents

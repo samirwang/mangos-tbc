@@ -135,6 +135,8 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleBGStartCommand(char* args);
         bool HandleBGStopCommand(char* args);
         bool HandleLookupIDCommand(char* args);
+        bool HandleGetPermByName(char* args);
+        bool HandleGetNameByPerm(char* args);
 
         bool HandleAccountCommand(char* args);
         bool HandleAccountCharactersCommand(char* args);

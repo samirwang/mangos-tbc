@@ -5,18 +5,24 @@ namespace RFAGS
 {
     enum
     {
-        RFAG_NONE = 0,
+        RFAG_NONE,
         // Compability
-        RFAG_PLAYER,        // 1
-        RFAG_MODERATOR,     // 2
-        RFAG_GAMEMASTER,    // 3
-        RFAG_ADMINISTRATOR, // 4
+        RFAG_PLAYER,
+        RFAG_MODERATOR,
+        RFAG_GAMEMASTER,
+        RFAG_ADMINISTRATOR,
         RFAG_LOG_TRADES,
         RFAG_SHOW_GMLIST,
         // !Compability
         RFAG_HIGH
     };
 }
+
+struct PermNameAssign
+{
+    uint32 permid;
+    std::string  name;
+};
 
 class RFAG
 {
@@ -32,8 +38,12 @@ public:
 
     bool HasPermissionDatabase(uint32 accid, uint32 permid);
 
+    uint32 GetPermByName(std::string name);
+    std::string  GetNameByPerm(uint32 perm);
+
 private:
     PermissionMMap m_GroupPerms;
+    static const PermNameAssign m_PermNameAssign[];
 };
 
 #define sRFAG MaNGOS::Singleton<RFAG>::Instance()

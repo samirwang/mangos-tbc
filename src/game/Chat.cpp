@@ -695,6 +695,8 @@ ChatCommand* ChatHandler::getCommandTable()
         { "battlestart",     SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, &ChatHandler::HandleBGStartCommand,             "", NULL },
         { "battlestop",      SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, &ChatHandler::HandleBGStopCommand,              "", NULL },
         { "lookupid",        SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, &ChatHandler::HandleLookupIDCommand,            "", NULL },
+        { "getpermid",       SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, &ChatHandler::HandleGetPermByName,              "", NULL },
+        { "getpermname",     SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, &ChatHandler::HandleGetNameByPerm,              "", NULL },
 
         { "account",         SEC_PLAYER,         RFAGS::RFAG_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
         { "auction",         SEC_ADMINISTRATOR,  RFAGS::RFAG_ADMINISTRATOR,  false, NULL,                                           "", auctionCommandTable  },

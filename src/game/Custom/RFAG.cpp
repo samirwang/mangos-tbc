@@ -3,6 +3,39 @@
 
 INSTANTIATE_SINGLETON_1(RFAG);
 
+const PermNameAssign RFAG::m_PermNameAssign[] =
+{
+    {RFAGS::RFAG_NONE,                  "RFAG_NONE"},
+    {RFAGS::RFAG_PLAYER,                "RFAG_PLAYER"},
+    {RFAGS::RFAG_MODERATOR,             "RFAG_MODERATOR"},
+    {RFAGS::RFAG_GAMEMASTER,            "RFAG_GAMEMASTER"},
+    {RFAGS::RFAG_ADMINISTRATOR,         "RFAG_ADMINISTRATOR"},
+    {RFAGS::RFAG_LOG_TRADES,            "RFAG_LOG_TRADES"},
+    {RFAGS::RFAG_SHOW_GMLIST,           "RFAG_SHOW_GMLIST"},
+};
+
+uint32 RFAG::GetPermByName(std::string name)
+{
+    for (uint32 i = 0; m_PermNameAssign[i].permid != NULL; ++i)
+        if (m_PermNameAssign[i].name == name)
+            return m_PermNameAssign[i].permid;
+
+    sLog.outError("PERMISSION WITH NAME %s NOT FOUND", name);
+
+    return RFAGS::RFAG_NONE;
+}
+
+std::string RFAG::GetNameByPerm(uint32 permid)
+{
+    for (uint32 i = 0; m_PermNameAssign[i].permid != NULL; ++i)
+        if (m_PermNameAssign[i].permid == permid)
+            return m_PermNameAssign[i].name;
+
+    sLog.outError("PERMISSION WITH PERMID %u NOT FOUND", uint32(permid));
+
+    return "UNKNOWN";
+}
+
 void RFAG::LoadRFAGGroupPerms()
 {
     m_GroupPerms.clear();

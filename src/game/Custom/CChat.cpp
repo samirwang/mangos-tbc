@@ -2,6 +2,7 @@
 #include "WorldSession.h"
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
+#include "RFAG.h"
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {
@@ -129,6 +130,33 @@ bool ChatHandler::HandleLookupIDCommand(char* args)
     uint32 titleid = 0;
     if (ExtractUint32KeyFromLink(&titleargs, "Htitle", titleid))
         player->BoxChat << "titleid: " << titleid << std::endl;
+
+    return true;
+}
+
+bool ChatHandler::HandleGetPermByName(char* args)
+{
+    char* name = ExtractQuotedOrLiteralArg(&args);
+
+    if (!name)
+        return false;
+
+    if (uint32 permid = sRFAG.GetPermByName(std::string(name)))
+        PSendSysMessage("Permission %s has id %u", name, permid);
+
+    return true;
+}
+
+bool ChatHandler::HandleGetNameByPerm(char* args)
+{
+    uint32 id;
+    if (!ExtractUInt32(&args, id))
+        return false;
+
+    std::string name = sRFAG.GetNameByPerm(id);
+
+    if (name != "UNKNOWN")
+        PSendSysMessage("Permission %u has name %s", id, name);
 
     return true;
 }
