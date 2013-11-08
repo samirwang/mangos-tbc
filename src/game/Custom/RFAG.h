@@ -12,6 +12,7 @@ namespace RFAGS
         RFAG_GAMEMASTER,    // 3
         RFAG_ADMINISTRATOR, // 4
         RFAG_LOG_TRADES,
+        RFAG_SHOW_GMLIST,
         // !Compability
         RFAG_HIGH
     };

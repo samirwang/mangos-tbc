@@ -30,6 +30,7 @@
 #include "revision.h"
 #include "revision_nr.h"
 #include "Util.h"
+#include "RFAG.h"
 
 bool ChatHandler::HandleHelpCommand(char* args)
 {
@@ -162,7 +163,7 @@ bool ChatHandler::HandleGMListIngameCommand(char* /*args*/)
         for (HashMapHolder<Player>::MapType::const_iterator itr = m.begin(); itr != m.end(); ++itr)
         {
             uint32 itr_sec = itr->second->GetSession()->GetSecurity();
-            if ((itr->second->isGameMaster() || (itr_sec > SEC_PLAYER && itr_sec <= sWorld.getConfig(CONFIG_UINT32_GM_LEVEL_IN_GM_LIST))) &&
+            if ((itr->second->isGameMaster() || itr->second->GetSession()->HasRFAGPerm(RFAGS::RFAG_SHOW_GMLIST)) &&
                     (!m_session || itr->second->IsVisibleGloballyFor(m_session->GetPlayer())))
                 names.push_back(std::make_pair<std::string, bool>(GetNameLink(itr->second), itr->second->isAcceptWhispers()));
         }

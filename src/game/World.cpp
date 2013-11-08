@@ -609,7 +609,6 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_UINT32_GM_CHAT,           "GM.Chat",          2);
     setConfig(CONFIG_UINT32_GM_WISPERING_TO,   "GM.WhisperingTo",  2);
 
-    setConfig(CONFIG_UINT32_GM_LEVEL_IN_GM_LIST,  "GM.InGMList.Level",  SEC_ADMINISTRATOR);
     setConfig(CONFIG_UINT32_GM_LEVEL_IN_WHO_LIST, "GM.InWhoList.Level", SEC_ADMINISTRATOR);
 
     setConfigMinMax(CONFIG_UINT32_START_GM_LEVEL, "GM.StartLevel", 1, getConfig(CONFIG_UINT32_START_PLAYER_LEVEL), MAX_LEVEL);
