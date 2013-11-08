@@ -311,7 +311,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
         return;
     }
 
-    if (HasRFAGPerm(RFAGS::RFAG_LOG_TRADES))
+    if (HasRFAGPerm(RFAGS::LOG_TRADES))
     {
         sLog.outCommand(GetAccountId(), "GM %s (Account: %u) create auction: %s (Entry: %u Count: %u)",
                         GetPlayerName(), GetAccountId(), it->GetProto()->Name1, it->GetEntry(), it->GetCount());

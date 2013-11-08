@@ -5,16 +5,16 @@ namespace RFAGS
 {
     enum
     {
-        RFAG_NONE,
+        NONE,
         // Compability
-        RFAG_PLAYER,
-        RFAG_MODERATOR,
-        RFAG_GAMEMASTER,
-        RFAG_ADMINISTRATOR,
-        RFAG_LOG_TRADES,
-        RFAG_SHOW_GMLIST,
+        PLAYER,
+        MODERATOR,
+        GAMEMASTER,
+        ADMINISTRATOR,
+        LOG_TRADES,
+        SHOW_GMLIST,
         // !Compability
-        RFAG_HIGH
+        INVALID
     };
 }
 

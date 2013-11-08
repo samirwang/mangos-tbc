@@ -97,13 +97,13 @@ void AuctionHouseMgr::SendAuctionWonMail(AuctionEntry* auction)
     if (bidder)
     {
         bidder_accId = bidder->GetSession()->GetAccountId();
-        logBidder = bidder->GetSession()->HasRFAGPerm(RFAGS::RFAG_LOG_TRADES);
+        logBidder = bidder->GetSession()->HasRFAGPerm(RFAGS::LOG_TRADES);
         bidder_name = bidder->GetName();
     }
     else
     {
         bidder_accId = sObjectMgr.GetPlayerAccountIdByGUID(bidder_guid);
-        logBidder = sRFAG.HasPermissionDatabase(bidder_accId, RFAGS::RFAG_LOG_TRADES);
+        logBidder = sRFAG.HasPermissionDatabase(bidder_accId, RFAGS::LOG_TRADES);
 
         if (logBidder)               // not do redundant DB requests
         {

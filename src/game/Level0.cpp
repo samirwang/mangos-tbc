@@ -163,7 +163,7 @@ bool ChatHandler::HandleGMListIngameCommand(char* /*args*/)
         for (HashMapHolder<Player>::MapType::const_iterator itr = m.begin(); itr != m.end(); ++itr)
         {
             uint32 itr_sec = itr->second->GetSession()->GetSecurity();
-            if ((itr->second->isGameMaster() || itr->second->GetSession()->HasRFAGPerm(RFAGS::RFAG_SHOW_GMLIST)) &&
+            if ((itr->second->isGameMaster() || itr->second->GetSession()->HasRFAGPerm(RFAGS::SHOW_GMLIST)) &&
                     (!m_session || itr->second->IsVisibleGloballyFor(m_session->GetPlayer())))
                 names.push_back(std::make_pair<std::string, bool>(GetNameLink(itr->second), itr->second->isAcceptWhispers()));
         }
