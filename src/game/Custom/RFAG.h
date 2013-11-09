@@ -10,13 +10,13 @@ namespace RFAGS
     {
         NONE,
         // Compability
-        PLAYER,
-        MODERATOR,
-        GAMEMASTER,
-        ADMINISTRATOR,
-        LOG_TRADES,
-        SHOW_GMLIST,
+        PLAYER = 10,
+        MODERATOR = 20,
+        GAMEMASTER = 30,
+        ADMINISTRATOR = 40, // Increase by 10 here to be able to insert new security ranks.
         // !Compability
+        LOG_TRADES = 50,
+        SHOW_GMLIST,
         INVALID
     };
 };
