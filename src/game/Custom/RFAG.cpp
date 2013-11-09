@@ -61,14 +61,35 @@ void RFAG::LoadRFAGGroupPerms()
     }
 
     delete result;
+    result = NULL;
+
+    result = LoginDatabase.PQuery("SELECT inheritor, inherited FROM rfag_group_inheritance");
+    if (result)
+    {
+        do 
+        {
+            Field* fields  = result->Fetch();
+
+            uint32 inheritor = fields[0].GetUInt32();
+            uint32 inherited = fields[1].GetUInt32();
+
+            sLog.outDebug("rfag_group_inheritance: inheritor: %u inherited: %u", inheritor, inherited);
+
+            for (PermissionMMap::const_iterator itr = m_GroupPerms.begin(); itr != m_GroupPerms.end(); ++itr)
+                if (itr->first == inherited)
+                    m_GroupPerms.insert(std::make_pair(inheritor, itr->second));
+        }
+        while (result->NextRow());
+    }
+
+    delete result;
 }
 
 PermissionContainer RFAG::GetAccountPerms(uint32 accid)
 {
     PermissionContainer permissions;
-    QueryResult* result = NULL;
 
-    result = LoginDatabase.PQuery("SELECT groupid FROM rfag_account_groups WHERE accid = %u", accid);
+    QueryResult* result = LoginDatabase.PQuery("SELECT groupid FROM rfag_account_groups WHERE accid = %u", accid);
     if (result)
     {
         do 
