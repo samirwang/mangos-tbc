@@ -1,6 +1,9 @@
 #ifndef __RFAG_H
 #define __RFAG_H
 
+#include "Common.h"
+#include "WorldSession.h"
+
 namespace RFAGS
 {
     enum
@@ -16,7 +19,7 @@ namespace RFAGS
         // !Compability
         INVALID
     };
-}
+};
 
 struct PermNameAssign
 {

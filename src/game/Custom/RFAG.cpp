@@ -1,5 +1,7 @@
 #include "RFAG.h"
 #include "Log.h"
+#include "WorldSession.h"
+#include "Database/DatabaseEnv.h"
 
 INSTANTIATE_SINGLETON_1(RFAG);
 

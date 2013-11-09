@@ -44,6 +44,8 @@ set(SRC_GRP_CUSTOM
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp
+    Custom/RFAG.cpp
+    Custom/RFAG.h
     Custom/Warden
     Custom/sc_creature.cpp
     Custom/sc_creature.h
