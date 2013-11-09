@@ -46,7 +46,6 @@ set(SRC_GRP_CUSTOM
     Custom/Misc.cpp
     Custom/RFAG.cpp
     Custom/RFAG.h
-    Custom/Warden
     Custom/sc_creature.cpp
     Custom/sc_creature.h
     Custom/sc_grid_searchers.cpp
