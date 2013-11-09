@@ -22,7 +22,7 @@ uint32 RFAG::GetPermByName(std::string name)
         if (m_PermNameAssign[i].name == name)
             return m_PermNameAssign[i].permid;
 
-    sLog.outError("PERMISSION WITH NAME %s NOT FOUND", name);
+    sLog.outError("PERMISSION WITH NAME %s NOT FOUND", name.c_str());
 
     return RFAGS::NONE;
 }
