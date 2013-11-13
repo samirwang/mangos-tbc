@@ -112,3 +112,9 @@ dep/ACE_wrappers/ace/config.h
 
 # recastnavigation directory needs exception
 !dep/recastnavigation/RecastDemo/Build/
+win/VC110/Release/cl.command.1.tlog
+win/VC110/Release/CL.read.1.tlog
+win/VC110/Release/CL.write.1.tlog
+win/VC110/Release/scripts.lastbuildstate
+win/VC110/Release/scripts.unsuccessfulbuild
+win/VC110/Release/vc110.pdb
