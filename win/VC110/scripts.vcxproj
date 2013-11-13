@@ -59,6 +59,11 @@
     <IntDir>.\scripts__$(Platform)_$(Configuration)\</IntDir>
     <TargetName>scripts</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\scripts__$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>.\scripts__$(Platform)_$(Configuration)\</IntDir>
+    <TargetName>scripts</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
