@@ -118,3 +118,8 @@ win/VC110/Release/CL.write.1.tlog
 win/VC110/Release/scripts.lastbuildstate
 win/VC110/Release/scripts.unsuccessfulbuild
 win/VC110/Release/vc110.pdb
+win/Release/scripts.lib
+win/VC110/Release/Lib-link.read.1.tlog
+win/VC110/Release/Lib-link.write.1.tlog
+win/VC110/Release/lib.command.1.tlog
+win/VC110/Release/scripts.pch
