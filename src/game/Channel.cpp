@@ -20,6 +20,7 @@
 #include "ObjectMgr.h"
 #include "World.h"
 #include "SocialMgr.h"
+#include "RFAG.h"
 
 Channel::Channel(const std::string& name, uint32 channel_id)
     : m_announce(true), m_moderate(false), m_name(name), m_flags(0), m_channelId(channel_id)
@@ -96,7 +97,7 @@ void Channel::Join(ObjectGuid p, const char* pass)
         plr->JoinedChannel(this);
     }
 
-    if (m_announce && (!plr || plr->GetSession()->GetSecurity() < SEC_GAMEMASTER || !sWorld.getConfig(CONFIG_BOOL_SILENTLY_GM_JOIN_TO_CHANNEL)))
+    if (m_announce && (plr && !plr->GetSession()->HasRFAGPerm(RFAGS::SILENT_CHANNEL_JOIN)))
     {
         MakeJoined(&data, p);
         SendToAll(&data);
@@ -149,7 +150,7 @@ void Channel::Leave(ObjectGuid p, bool send)
         bool changeowner = m_players[p].IsOwner();
 
         m_players.erase(p);
-        if (m_announce && (!plr || plr->GetSession()->GetSecurity() < SEC_GAMEMASTER || !sWorld.getConfig(CONFIG_BOOL_SILENTLY_GM_JOIN_TO_CHANNEL)))
+        if (m_announce && (plr && !plr->GetSession()->HasRFAGPerm(RFAGS::SILENT_CHANNEL_JOIN)))
         {
             WorldPacket data;
             MakeLeft(&data, p);
