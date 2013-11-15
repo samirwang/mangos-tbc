@@ -19,6 +19,7 @@ namespace RFAGS
         SHOW_GMLIST,
         SILENT_CHANNEL_JOIN,
         JOIN_RESTRICTED_LFG,
+        INSTANT_SAVE,
         INVALID
     };
 };

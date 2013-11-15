@@ -15,6 +15,7 @@ const PermNameAssign RFAG::m_PermNameAssign[] =
     {RFAGS::SHOW_GMLIST,           "SHOW_GMLIST"},
     {RFAGS::SILENT_CHANNEL_JOIN,   "SILENT_CHANNEL_JOIN"},
     {RFAGS::JOIN_RESTRICTED_LFG,   "JOIN_RESTRICTED_LFG"},
+    {RFAGS::INSTANT_SAVE,          "INSTANT_SAVE"},
 };
 
 uint32 RFAG::GetPermByName(std::string name)

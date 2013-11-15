@@ -138,7 +138,7 @@ bool ChatHandler::HandleSaveCommand(char* /*args*/)
     Player* player = m_session->GetPlayer();
 
     // save GM account without delay and output message (testing, etc)
-    if (GetAccessLevel() > SEC_PLAYER)
+    if (m_session->HasRFAGPerm(RFAGS::INSTANT_SAVE))
     {
         player->SaveToDB();
         SendSysMessage(LANG_PLAYER_SAVED);
