@@ -18,6 +18,7 @@ namespace RFAGS
         LOG_TRADES = 50,
         SHOW_GMLIST,
         SILENT_CHANNEL_JOIN,
+        JOIN_RESTRICTED_LFG,
         INVALID
     };
 };
