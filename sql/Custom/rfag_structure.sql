@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50612
 File Encoding         : 65001
 
-Date: 2013-11-09 02:42:16
+Date: 2013-11-15 18:57:35
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,12 +23,11 @@ CREATE TABLE `rfag_account_groups` (
   `accid` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Identifier',
   `groupid` int(11) unsigned NOT NULL,
   PRIMARY KEY (`accid`,`groupid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of rfag_account_groups
 -- ----------------------------
-INSERT INTO `rfag_account_groups` VALUES ('5', '1');
 
 -- ----------------------------
 -- Table structure for `rfag_account_permissions`
