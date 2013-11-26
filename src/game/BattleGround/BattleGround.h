@@ -398,6 +398,7 @@ private:
         void CastSpellOnTeam(uint32 SpellID, Team team);
         void RewardHonorToTeam(uint32 Honor, Team team);
         void RewardReputationToTeam(uint32 faction_id, uint32 Reputation, Team team);
+        void RewardReputationToXBGTeam(uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId);
         void RewardMark(Player* plr, uint32 count);
         void SendRewardMarkByMail(Player* plr, uint32 mark, uint32 count);
         void RewardItem(Player* plr, uint32 item_id, uint32 count);

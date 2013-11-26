@@ -117,3 +117,29 @@ uint32 World::GetSaveInterval()
     uint32 hardtime = ceil(float((1.f/sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC))*sWorld.GetActiveSessionCount()*IN_MILLISECONDS)+2*IN_MILLISECONDS);
     return urand(hardtime / 2, hardtime * 3 / 2);
 }
+
+void BattleGround::RewardReputationToXBGTeam(uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId)
+{
+    FactionEntry const* a_factionEntry = sFactionStore.LookupEntry(faction_ally);
+    FactionEntry const* h_factionEntry = sFactionStore.LookupEntry(faction_horde);
+
+    if (!a_factionEntry || !h_factionEntry)
+        return;
+
+    for (BattleGroundPlayerMap::const_iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+    {
+        if (itr->second.OfflineRemoveTime)
+            continue;
+
+        Player* plr = sObjectMgr.GetPlayer(itr->first);
+
+        if (!plr)
+        {
+            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr->first.GetString().c_str());
+            continue;
+        }
+
+        if (plr->GetTeam() == teamId) // Check if player is playing in the team that capped and then reward by original team.
+            plr->GetReputationMgr().ModifyReputation(plr->GetOTeam() == ALLIANCE ? a_factionEntry : h_factionEntry, gain);
+    }
+}
