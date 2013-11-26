@@ -51,18 +51,19 @@ void BattleGroundAV::HandleKillUnit(Creature* creature, Player* killer)
     uint8 event1 = (sBattleGroundMgr.GetCreatureEventIndex(creature->GetGUIDLow())).event1;
     if (event1 == BG_EVENT_NONE)
         return;
+
     switch (event1)
     {
         case BG_AV_BOSS_A:
             CastSpellOnTeam(BG_AV_BOSS_KILL_QUEST_SPELL, HORDE);   // this is a spell which finishes a quest where a player has to kill the boss
-            RewardReputationToTeam(BG_AV_FACTION_H, m_RepBoss, HORDE);
+            RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, m_RepBoss, HORDE);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_BOSS), HORDE);
             SendYellToAll(LANG_BG_AV_A_GENERAL_DEAD, LANG_UNIVERSAL, GetSingleCreatureGuid(BG_AV_HERALD, 0));
             EndBattleGround(HORDE);
             break;
         case BG_AV_BOSS_H:
             CastSpellOnTeam(BG_AV_BOSS_KILL_QUEST_SPELL, ALLIANCE); // this is a spell which finishes a quest where a player has to kill the boss
-            RewardReputationToTeam(BG_AV_FACTION_A, m_RepBoss, ALLIANCE);
+            RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, m_RepBoss, ALLIANCE);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_BOSS), ALLIANCE);
             SendYellToAll(LANG_BG_AV_H_GENERAL_DEAD, LANG_UNIVERSAL, GetSingleCreatureGuid(BG_AV_HERALD, 0));
             EndBattleGround(ALLIANCE);
@@ -70,7 +71,7 @@ void BattleGroundAV::HandleKillUnit(Creature* creature, Player* killer)
         case BG_AV_CAPTAIN_A:
             if (IsActiveEvent(BG_AV_NodeEventCaptainDead_A, 0))
                 return;
-            RewardReputationToTeam(BG_AV_FACTION_H, m_RepCaptain, HORDE);
+            RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, m_RepCaptain, HORDE);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_CAPTAIN), HORDE);
             UpdateScore(BG_TEAM_ALLIANCE, (-1) * BG_AV_RES_CAPTAIN);
             // spawn destroyed aura
@@ -79,7 +80,7 @@ void BattleGroundAV::HandleKillUnit(Creature* creature, Player* killer)
         case BG_AV_CAPTAIN_H:
             if (IsActiveEvent(BG_AV_NodeEventCaptainDead_H, 0))
                 return;
-            RewardReputationToTeam(BG_AV_FACTION_A, m_RepCaptain, ALLIANCE);
+            RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, m_RepCaptain, ALLIANCE);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_CAPTAIN), ALLIANCE);
             UpdateScore(BG_TEAM_HORDE, (-1) * BG_AV_RES_CAPTAIN);
             // spawn destroyed aura
@@ -202,7 +203,7 @@ void BattleGroundAV::HandleQuestComplete(uint32 questid, Player* player)
             break;
     }
     if (reputation)
-        RewardReputationToTeam((player->GetTeam() == ALLIANCE) ? BG_AV_FACTION_A : BG_AV_FACTION_H, reputation, player->GetTeam());
+        RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, reputation, player->GetTeam());
 }
 
 void BattleGroundAV::UpdateScore(BattleGroundTeamIndex teamIdx, int32 points)
@@ -317,18 +318,18 @@ void BattleGroundAV::EndBattleGround(Team winner)
     {
         if (tower_survived[i])
         {
-            RewardReputationToTeam(faction[i], tower_survived[i] * m_RepSurviveTower, team[i]);
+            RewardReputationToXBGTeam(faction[0], faction[1], tower_survived[i] * m_RepSurviveTower, team[i]);
             RewardHonorToTeam(GetBonusHonorFromKill(tower_survived[i] * BG_AV_KILL_SURVIVING_TOWER), team[i]);
         }
         DEBUG_LOG("BattleGroundAV: EndbattleGround: bgteam: %u towers:%u honor:%u rep:%u", i, tower_survived[i], GetBonusHonorFromKill(tower_survived[i] * BG_AV_KILL_SURVIVING_TOWER), tower_survived[i] * BG_AV_REP_SURVIVING_TOWER);
         if (graves_owned[i])
-            RewardReputationToTeam(faction[i], graves_owned[i] * m_RepOwnedGrave, team[i]);
+            RewardReputationToXBGTeam(faction[0], faction[1], graves_owned[i] * m_RepOwnedGrave, team[i]);
         if (mines_owned[i])
-            RewardReputationToTeam(faction[i], mines_owned[i] * m_RepOwnedMine, team[i]);
+            RewardReputationToXBGTeam(faction[0], faction[1], mines_owned[i] * m_RepOwnedMine, team[i]);
         // captain survived?:
         if (!IsActiveEvent(BG_AV_NodeEventCaptainDead_A + GetTeamIndexByTeamId(team[i]), 0))
         {
-            RewardReputationToTeam(faction[i], m_RepSurviveCaptain, team[i]);
+            RewardReputationToXBGTeam(faction[0], faction[1], m_RepSurviveCaptain, team[i]);
             RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_SURVIVING_CAPTAIN), team[i]);
         }
     }
@@ -424,7 +425,7 @@ void BattleGroundAV::EventPlayerDestroyedPoint(BG_AV_Nodes node)
         SpawnEvent(BG_AV_MARSHAL_A_SOUTH + tmp, 0, false);
 
         UpdateScore(GetOtherTeamIndex(ownerTeamIdx), (-1) * BG_AV_RES_TOWER);
-        RewardReputationToTeam((ownerTeam == ALLIANCE) ? BG_AV_FACTION_A : BG_AV_FACTION_H, m_RepTowerDestruction, ownerTeam);
+        RewardReputationToXBGTeam(BG_AV_FACTION_A, BG_AV_FACTION_H, m_RepTowerDestruction, ownerTeam);
         RewardHonorToTeam(GetBonusHonorFromKill(BG_AV_KILL_TOWER), ownerTeam);
         SendYell2ToAll(LANG_BG_AV_TOWER_TAKEN, LANG_UNIVERSAL, GetSingleCreatureGuid(BG_AV_HERALD, 0), GetNodeName(node), (ownerTeam == ALLIANCE) ? LANG_BG_ALLY : LANG_BG_HORDE);
     }
