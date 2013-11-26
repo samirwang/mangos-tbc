@@ -51,7 +51,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
             bool makeally = addedally < addedhorde;
 
             if (addedally == addedhorde)
-                makeally = !BattleGround::GetTeamIndexByTeamId(ginfo->OGroupTeam);
+                makeally = urand(0,1);
 
             ginfo->GroupTeam = makeally ? ALLIANCE : HORDE;
 
@@ -93,7 +93,7 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
             bool makeally = addedally < addedhorde;
 
             if (addedally == addedhorde)
-                makeally = !BattleGround::GetTeamIndexByTeamId(ginfo->OGroupTeam);
+                makeally = urand(0,1);
 
             makeally ? ++addedally : ++addedhorde;
 

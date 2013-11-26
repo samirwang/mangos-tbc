@@ -154,7 +154,6 @@ GroupQueueInfo* BattleGroundQueue::AddGroup(Player* leader, Group* grp, BattleGr
     ginfo->JoinTime                  = WorldTimer::getMSTime();
     ginfo->RemoveInviteTime          = 0;
     ginfo->GroupTeam                 = leader->GetTeam();
-    ginfo->OGroupTeam                = leader->GetOTeam();
     ginfo->ArenaTeamRating           = arenaRating;
     ginfo->OpponentsTeamRating       = 0;
 

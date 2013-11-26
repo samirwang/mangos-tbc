@@ -129,8 +129,11 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     case CHAT_MSG_RAID:
                     case CHAT_MSG_RAID_LEADER:
                     case CHAT_MSG_RAID_WARNING:
+                    case CHAT_MSG_BATTLEGROUND:
+                    case CHAT_MSG_BATTLEGROUND_LEADER:
                         // allow two side chat at group channel if two side group allowed
-                        if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP))
+                        if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)
+                            || (_player->InBattleGround() && sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED)))
                             lang = LANG_UNIVERSAL;
                         break;
                     case CHAT_MSG_GUILD:

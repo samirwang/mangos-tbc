@@ -57,6 +57,18 @@ void Player::Sometimes()
         RecachePlayersFromBG();
     }
 
+
+    if (m_FakeOnNextTick)
+    {
+        m_FakeOnNextTick = false;
+
+        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
+        setFaction(getFFaction());
+        FakeDisplayID();
+
+        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
+        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
+    }
 }
 
 void Player::OnLogin()
@@ -72,14 +84,7 @@ void Player::OnLogin()
     }
 
     if (!NativeTeam())
-    {
-        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
-        setFaction(getFFaction());
-        FakeDisplayID();
-
-        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
-        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
-    }
+        FakeOnNextTick();
 }
 
 void Player::OnFirstLogin()

@@ -959,6 +959,8 @@ public:
 
     void FakeDisplayID();
 
+    void FakeOnNextTick() { m_FakeOnNextTick = true; }
+
     bool SendBattleGroundChat(uint32 msgtype, std::string message);
 
     void CreatePet(uint32 entry, bool classcheck = true);
@@ -1009,6 +1011,8 @@ private:
     uint32 m_oPlayerBytes2;
     uint32 m_fPlayerBytes;
     uint32 m_fPlayerBytes2;
+
+    bool m_FakeOnNextTick;
 
     // !Custom
         friend class WorldSession;
