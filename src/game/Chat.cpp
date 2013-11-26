@@ -363,6 +363,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "taxinode",       SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleLookupTaxiNodeCommand,      "", NULL },
         { "tele",           SEC_MODERATOR,      true,  &ChatHandler::HandleLookupTeleCommand,          "", NULL },
         { "title",          SEC_GAMEMASTER,     true,  &ChatHandler::HandleLookupTitleCommand,         "", NULL },
+        { "id",             SEC_MODERATOR,      false, &ChatHandler::HandleLookupIDCommand,            "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
@@ -694,7 +695,6 @@ ChatCommand* ChatHandler::getCommandTable()
     {
         { "battlestart",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStartCommand,             "", NULL },
         { "battlestop",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStopCommand,              "", NULL },
-        { "lookupid",       SEC_ADMINISTRATOR,  false, &ChatHandler::HandleLookupIDCommand,            "", NULL },
 
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
         { "auction",        SEC_ADMINISTRATOR,  false, NULL,                                           "", auctionCommandTable  },
