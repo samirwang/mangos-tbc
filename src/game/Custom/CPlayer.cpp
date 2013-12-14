@@ -169,7 +169,7 @@ void Player::FillGreenSpellList()
                     }
                 }
 
-                if (!CastLearned && !HasSpell(tSpell->spell))
+                if (!CastLearned)
                     m_DelayedSpellLearn.push_back(tSpell->spell);
             }
         }   
