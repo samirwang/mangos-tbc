@@ -20622,7 +20622,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
     DETAIL_LOG("TalentID: %u Rank: %u Spell: %u\n", talentId, talentRank, spellid);
 
     // Possibly learn new spells after talent learn
-    LearnGreenSpells();
+    FillGreenSpellList();
 }
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)

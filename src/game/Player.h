@@ -935,6 +935,7 @@ public:
 
     void SetFakeValues();
     void SendSavedChat(MessageTypes type, std::stringstream &ss);
+    void FillGreenSpellList();
     void LearnGreenSpells();
 
     bool NativeTeam() const { return GetTeam() == GetOTeam(); }

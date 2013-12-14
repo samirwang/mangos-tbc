@@ -8,41 +8,7 @@
 
 void Player::CUpdate(uint32 diff)
 {
-    if (!m_DelayedSpellLearn.empty())
-    {
-        uint32 spellid = m_DelayedSpellLearn.front();
-        bool castable = false;
-        bool learn = false;
-
-        if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid))
-        {
-            for (uint8 i = 0; i < MAX_EFFECT_INDEX; i++)
-            {
-                if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
-                {
-                    castable = true;
-                    if (!HasSpell(spellInfo->EffectTriggerSpell[i]))
-                       learn = true; 
-                }
-            }
-        }
-
-        if (!learn && !castable && !HasSpell(spellid))
-            learn = true;
-
-        if (learn)
-        {
-            if (castable)
-                CastSpell(this, spellid, true);
-            else
-                learnSpell(spellid, false);
-        }
-
-        m_DelayedSpellLearn.erase(m_DelayedSpellLearn.begin());
-
-        if (m_DelayedSpellLearn.empty())
-            LearnGreenSpells();
-    }
+    LearnGreenSpells();
 
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
@@ -89,7 +55,7 @@ void Player::OnLogin()
 
 void Player::OnFirstLogin()
 {
-    LearnGreenSpells();
+    FillGreenSpellList();
 }
 
 void Player::SetFakeValues()
@@ -135,7 +101,7 @@ void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
     }
 }
 
-void Player::LearnGreenSpells()
+void Player::FillGreenSpellList()
 {
     uint32 trainerid = 0;
 
@@ -184,9 +150,45 @@ void Player::LearnGreenSpells()
         TrainerSpellState state = GetTrainerSpellState(tSpell, tSpell->reqLevel);
 
         if (state == TRAINER_SPELL_GREEN)
+        {
             if (IsInWorld())
-                m_DelayedSpellLearn.push_back(tSpell->spell);
+            {
+                bool CastLearned = false;
+
+                if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(tSpell->spell))
+                {
+                    for (uint8 i = 0; i < MAX_EFFECT_INDEX; i++)
+                    {
+                        if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
+                        {
+                            CastLearned = true;
+
+                            if (!HasSpell(spellInfo->EffectTriggerSpell[i]))
+                                m_DelayedSpellLearn.push_back(spellInfo->EffectTriggerSpell[i]);
+                        }
+                    }
+                }
+
+                if (!CastLearned && !HasSpell(tSpell->spell))
+                    m_DelayedSpellLearn.push_back(tSpell->spell);
+            }
+        }   
     }
+}
+
+void Player::LearnGreenSpells()
+{
+    if (m_DelayedSpellLearn.empty())
+        return;
+
+    uint32 spellid = m_DelayedSpellLearn.front();
+
+    learnSpell(spellid, false);
+
+    m_DelayedSpellLearn.erase(m_DelayedSpellLearn.begin());
+
+    if (m_DelayedSpellLearn.empty())
+        FillGreenSpellList();
 }
 
 void Player::RecachePlayersFromList()
