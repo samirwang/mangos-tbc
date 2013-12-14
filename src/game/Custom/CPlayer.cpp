@@ -16,7 +16,7 @@ void Player::CUpdate(uint32 diff)
 
         if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid))
         {
-            for (uint8 i = 0; i < 2; i++)
+            for (uint8 i = 0; i < MAX_EFFECT_INDEX; i++)
             {
                 if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
                 {
