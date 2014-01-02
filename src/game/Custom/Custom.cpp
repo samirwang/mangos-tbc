@@ -1,6 +1,9 @@
 #include "Custom.h"
 #include "Log.h"
 #include "ObjectMgr.h"
+#include "Database/DatabaseEnv.h"
+#include "World.h"
+#include "Log.h"
 
 Custom::~Custom()
 {
@@ -108,73 +111,42 @@ std::string Custom::ChatNameWrapper(std::string cName)
     return ss.str().c_str();
 }
 
-void Custom::InitializeFakePlayerBytes()
+void Custom::LoadFakePlayerBytes()
 {
-    FakePlayerBytes bytes;
+    uint32 count = 0;
+
+    QueryResult* result = WorldDatabase.PQuery("SELECT race, maleBytes, maleBytes2, femaleBytes, femaleBytes2 FROM fakeplayerbytes");
+    if (result)
+    {
+        do 
+        {
+            Field* fields = result->Fetch();
+
+            FakePlayerBytes bytes;
+            
+            uint8 race = fields[0].GetUInt8();
+            bytes.PlayerBytes[GENDER_MALE] = fields[1].GetUInt32();
+            bytes.PlayerBytes2[GENDER_MALE] = fields[2].GetUInt32();
+            bytes.PlayerBytes[GENDER_FEMALE] = fields[3].GetUInt32();
+            bytes.PlayerBytes[GENDER_FEMALE] = fields[4].GetUInt32();
+
+            m_FakePlayerBytesContainer.insert(std::make_pair(race, bytes));
+
+            if (race && bytes.PlayerBytes[GENDER_MALE] && bytes.PlayerBytes2[GENDER_MALE] &&
+                bytes.PlayerBytes[GENDER_FEMALE] && bytes.PlayerBytes[GENDER_FEMALE])
+            ++count;
+        }
+        while (result->NextRow());
+    }
     
-    // ALLIANCE
-
-    bytes.PlayerBytes[GENDER_MALE] = 151061248;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554435;
-    bytes.PlayerBytes[GENDER_FEMALE] = 67242757;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554437;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_HUMAN, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 67306498;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554440;
-    bytes.PlayerBytes[GENDER_FEMALE] = 16909320;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554432;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_DWARF, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 50464008;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554435;
-    bytes.PlayerBytes[GENDER_FEMALE] = 50724871;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554439;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_NIGHTELF, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 134546689;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554436;
-    bytes.PlayerBytes[GENDER_FEMALE] = 100663811;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554434;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_GNOME, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 395523;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554436;
-    bytes.PlayerBytes[GENDER_FEMALE] = 50660358;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554438;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_DRAENEI, bytes));
-
-    // HORDE
-
-    bytes.PlayerBytes[GENDER_MALE] = 67110400;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554433;
-    bytes.PlayerBytes[GENDER_FEMALE] = 34014978;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554434;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_ORC, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 67306497;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554438;
-    bytes.PlayerBytes[GENDER_FEMALE] = 100860930;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554438;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_UNDEAD, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 132111;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554438;
-    bytes.PlayerBytes[GENDER_FEMALE] = 33816584;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554433;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_TAUREN, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 67175170;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554438;
-    bytes.PlayerBytes[GENDER_FEMALE] = 67371778;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554436;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_TROLL, bytes));
-
-    bytes.PlayerBytes[GENDER_MALE] = 84215302;
-    bytes.PlayerBytes2[GENDER_MALE] = 33554439;
-    bytes.PlayerBytes[GENDER_FEMALE] = 460547;
-    bytes.PlayerBytes2[GENDER_FEMALE] = 33554438;
-    m_FakePlayerBytesContainer.insert(std::make_pair(RACE_BLOODELF, bytes));
+    
+    if (sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) && (count < 10 || !result))
+    {
+        const char* message = "There was something wrong with loading fakeplayerbytes for crossfaction battlegrounds!";
+        sLog.outError(message);
+        sLog.outErrorDb(message);
+        std::exit(EXIT_FAILURE);
+    }
 }
 
 uint8 Custom::PickFakeRace(uint8 pclass, Team team)

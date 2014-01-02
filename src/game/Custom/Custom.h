@@ -156,7 +156,7 @@ public:
         return str;
     }
 
-    void InitializeFakePlayerBytes();
+    void LoadFakePlayerBytes();
 
     uint8 PickFakeRace(uint8 pclass, Team team);
 

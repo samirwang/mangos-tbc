@@ -1278,7 +1278,7 @@ void World::SetInitialWorldSettings()
     sScriptMgr.InitScriptLibrary();
 
     sLog.outString("Initializing fake playerbytes...");
-    sCustom.InitializeFakePlayerBytes();
+    sCustom.LoadFakePlayerBytes();
 
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");
