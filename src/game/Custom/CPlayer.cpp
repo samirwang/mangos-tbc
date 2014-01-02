@@ -324,11 +324,12 @@ Team Player::GetTeam() const
 
 void Player::CJoinBattleGround(BattleGround* bg)
 {
-    if (!NativeTeam())
-        m_FakedPlayers.push_back(GetObjectGuid());
+    if (bg->isArena())
+        return;
 
     if (!NativeTeam())
     {
+        m_FakedPlayers.push_back(GetObjectGuid());
         SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
         setFaction(getFFaction());
     }
@@ -337,8 +338,11 @@ void Player::CJoinBattleGround(BattleGround* bg)
     FakeDisplayID();
 }
 
-void Player::CLeaveBattleGround(BattleGround* /*bg*/)
+void Player::CLeaveBattleGround(BattleGround* bg)
 {
+    if (bg->isArena())
+        return;
+
     SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
     setFaction(getOFaction());
     InitDisplayIds();
