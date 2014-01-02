@@ -276,7 +276,7 @@ void Player::FakeDisplayID()
         PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
         if (!info)
         {
-            for (int i = 1; i <= CLASS_DRUID; i++)
+            for (uint8 i = 1; i <= CLASS_DRUID; i++)
             {
                 info = sObjectMgr.GetPlayerInfo(getRace(), i);
                 if (info)
@@ -316,7 +316,7 @@ void Player::FakeDisplayID()
 
 Team Player::GetTeam() const
 {
-    if (GetBattleGround() && GetBattleGround()->isBattleGround())
+    if (GetBattleGround())
         return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
 
     return GetOTeam();

@@ -75,7 +75,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
 bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId bracket_id)
 {
-    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) || bg->isArena())
         return false;
 
     int32 allyFree   = bg->GetFreeSlotsForTeam(ALLIANCE);

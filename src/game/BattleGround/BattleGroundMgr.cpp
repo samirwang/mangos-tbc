@@ -164,7 +164,7 @@ GroupQueueInfo* BattleGroundQueue::AddGroup(Player* leader, Group* grp, BattleGr
     if (!isRated && !isPremade)
         index += BG_TEAMS_COUNT;                            // BG_QUEUE_PREMADE_* -> BG_QUEUE_NORMAL_*
 
-    if (ginfo->GroupTeam == HORDE && !sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+    if (ginfo->GroupTeam == HORDE && (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) || index <= BG_QUEUE_PREMADE_HORDE))
         ++index;                                            // BG_QUEUE_*_ALLIANCE -> BG_QUEUE_*_HORDE
 
     DEBUG_LOG("Adding Group to BattleGroundQueue bgTypeId : %u, bracket_id : %u, index : %u", BgTypeId, bracketId, index);
@@ -317,13 +317,13 @@ void BattleGroundQueue::RemovePlayer(ObjectGuid guid, bool decreaseInvitedCount)
     uint32 index = BattleGround::GetTeamIndexByTeamId(group->GroupTeam);
 
     if (sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
-        index = 0;
+        index = BG_TEAM_ALLIANCE;
 
     for (int8 bracket_id_tmp = MAX_BATTLEGROUND_BRACKETS - 1; bracket_id_tmp >= 0 && bracket_id == -1; --bracket_id_tmp)
     {
         // we must check premade and normal team's queue - because when players from premade are joining bg,
         // they leave groupinfo so we can't use its players size to find out index
-        for (uint8 j = index; j < BG_QUEUE_GROUP_TYPES_COUNT; j += BG_QUEUE_NORMAL_ALLIANCE)
+        for (uint8 j = index; j < BG_QUEUE_GROUP_TYPES_COUNT; ++j)
         {
             for (group_itr_tmp = m_QueuedGroups[bracket_id_tmp][j].begin(); group_itr_tmp != m_QueuedGroups[bracket_id_tmp][j].end(); ++group_itr_tmp)
             {
