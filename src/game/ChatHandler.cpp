@@ -308,6 +308,12 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (msg.empty())
                 break;
 
+            if (GetPlayer()->WCHatOn())
+            {
+                GetPlayer()->SendWorldChatMsg(msg);
+                break;
+            }
+
             if (GetPlayer()->GetGuildId())
                 if (Guild* guild = sGuildMgr.GetGuildById(GetPlayer()->GetGuildId()))
                     guild->BroadcastToOfficers(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);

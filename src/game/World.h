@@ -27,6 +27,7 @@
 #include "Timer.h"
 #include "Policies/Singleton.h"
 #include "SharedDefines.h"
+#include "ObjectGuid.h"
 
 #include <map>
 #include <set>
@@ -441,6 +442,7 @@ class World
 {
 public:
     uint32 GetSaveInterval();
+    void SendWorldChat(ObjectGuid guid, std::string msg);
     // !Custom
     public:
         static volatile uint32 m_worldLoopCounter;

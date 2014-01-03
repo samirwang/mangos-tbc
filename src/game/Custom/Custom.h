@@ -139,8 +139,8 @@ public:
         m_CachedSpellContainer.clear();
     }
 
-    template <class T>
-    std::string stringReplace(T istr, T ioldStr, T inewStr)
+    template <class T1, class T2, class T3>
+    std::string stringReplace(const T1 istr, const T2 ioldStr, const T3 inewStr)
     {
         size_t pos = 0;
 
@@ -176,10 +176,13 @@ public:
         return 0;
     }
 
+    std::string GetClassColor(uint8 classid) { return m_ClassColor[classid]; }
+    std::string GetItemColor(uint8 quality) { return m_ItemColor[quality]; }
+    std::string GetSlotName(uint8 slotid) { return m_SlotNames[slotid]; }
+
 private:
     static const std::string m_ClassColor[];
     static const std::string m_ItemColor[];
-    static const std::string StaffText[];
     static const std::string m_SlotNames[];
 
     CachedSpellContainer m_CachedSpellContainer;

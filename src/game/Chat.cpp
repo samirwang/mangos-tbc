@@ -62,6 +62,13 @@ bool ChatHandler::load_command_table = true;
 
 ChatCommand* ChatHandler::getCommandTable()
 {
+    static ChatCommand worldchatCommandTable[] =
+    {
+        { "toggle", SEC_PLAYER, true, &ChatHandler::HandleWToggleCommand, "", NULL },
+        { "", SEC_PLAYER, true, &ChatHandler::HandleWChatCommand, "", NULL },
+        { NULL, 0, false, NULL, "", NULL }
+    };
+
     static ChatCommand accountSetCommandTable[] =
     {
         { "addon",          SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleAccountSetAddonCommand,     "", NULL },
@@ -695,6 +702,10 @@ ChatCommand* ChatHandler::getCommandTable()
     {
         { "battlestart",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStartCommand,             "", NULL },
         { "battlestop",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStopCommand,              "", NULL },
+        { "c",              SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
+        { "chat",           SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
+        { "w",              SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
+        { "world",          SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
 
         { "account",        SEC_PLAYER,         true,  NULL,                                           "", accountCommandTable  },
         { "auction",        SEC_ADMINISTRATOR,  false, NULL,                                           "", auctionCommandTable  },

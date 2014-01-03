@@ -4,11 +4,21 @@
 #include "Database/DatabaseEnv.h"
 #include "World.h"
 #include "Log.h"
+#include "SocialMgr.h"
 
 Custom::~Custom()
 {
     for (CachedSpellContainer::const_iterator itr = m_CachedSpellContainer.begin(); itr != m_CachedSpellContainer.end(); ++itr)
         delete itr->second;
+}
+
+void World::SendWorldChat(ObjectGuid guid, std::string msg)
+{
+    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+    if (itr->second)
+    if (Player* pPlayer = itr->second->GetPlayer())
+    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->WCHatOn())
+        pPlayer->BoxChat << msg << "\n";
 }
 
 SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
@@ -66,18 +76,6 @@ const std::string Custom::m_ItemColor[] =
     MSG_COLOR_GREEN,
     MSG_COLOR_BLUE,
     MSG_COLOR_PURPLE,
-    MSG_COLOR_ORANGE
-};
-
-const std::string Custom::StaffText[] =
-{
-    "Player",
-    MSG_COLOR_ANN_GREEN,
-    "Moderator",
-    MSG_COLOR_BLUE,
-    "Game Master",
-    MSG_COLOR_PURPLE,
-    "Administrator",
     MSG_COLOR_ORANGE
 };
 
@@ -166,4 +164,25 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
     }
 
     return playableRaces[urand(0, playableRaces.size() - 1)];
+}
+
+bool ChatHandler::HandleWToggleCommand(char* /*args*/)
+{
+    m_session->GetPlayer()->ToggleWChat();
+    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->WCHatOn() ? "en" : "dis");
+
+    return true;
+}
+
+bool ChatHandler::HandleWChatCommand(char* args)
+{
+    if (!*args)
+        return false;
+
+    if (m_session->GetPlayer()->WCHatOn())
+        m_session->GetPlayer()->SendWorldChatMsg(args);
+    else
+        PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
+
+    return true;
 }

@@ -58,6 +58,33 @@ void Player::OnFirstLogin()
     FillGreenSpellList();
 }
 
+std::string Player::GetNameLink(bool applycolors)
+{
+    std::string name = GetName();
+    std::string teamcolor = GetOTeam() == ALLIANCE ? MSG_COLOR_DARKBLUE : MSG_COLOR_RED;
+    std::ostringstream ss;
+
+    if (isGameMaster())
+        teamcolor = MSG_COLOR_PURPLE;
+
+    ss << "|Hplayer:" << name << "|h";
+
+    if (applycolors)
+        ss << teamcolor << "[" << sCustom.GetClassColor(getClass()) << name << teamcolor << "]|h";
+    else
+        ss << "[" << name << "]|h";
+
+    return ss.str();
+}
+
+void Player::SendWorldChatMsg(std::string msg)
+{
+    std::ostringstream ss;
+    ss << m_session->GetPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
+
+    sWorld.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
+}
+
 void Player::SetFakeValues()
 {
     m_fRace = sCustom.PickFakeRace(getClass(), GetOTeam());

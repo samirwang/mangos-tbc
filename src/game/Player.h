@@ -933,6 +933,11 @@ public:
     void OnLogin();
     void OnFirstLogin();
 
+    std::string GetNameLink(bool applycolors = false);
+    void SendWorldChatMsg(std::string msg);
+    bool WCHatOn() { return m_wChatOn; }
+    void ToggleWChat() { m_wChatOn = !m_wChatOn; }
+
     void SetFakeValues();
     void SendSavedChat(MessageTypes type, std::stringstream &ss);
     void FillGreenSpellList();
@@ -997,6 +1002,9 @@ public:
     std::stringstream BothChat;
 private:
     DelayedSpellLearn m_DelayedSpellLearn;
+
+    bool m_wChatOn;
+
     FakedPlayers m_FakedPlayers;
     bool m_Recache;
 
