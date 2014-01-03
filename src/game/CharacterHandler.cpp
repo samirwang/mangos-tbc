@@ -592,13 +592,13 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     pCurrChar->SendInitialPacketsBeforeAddToMap();
 
     // Show cinematic at the first time that player login
-    if (!pCurrChar->getCinematic())
+    /*if (!pCurrChar->getCinematic())
     {
         pCurrChar->setCinematic(1);
 
         if (ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(pCurrChar->getRace()))
             pCurrChar->SendCinematicStart(rEntry->CinematicSequence);
-    }
+    }*/
 
     uint32 miscRequirement = 0;
     AreaLockStatus lockStatus = AREA_LOCKSTATUS_OK;

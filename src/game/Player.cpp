@@ -728,7 +728,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     for (PlayerCreateInfoActions::const_iterator action_itr = info->action.begin(); action_itr != info->action.end(); ++action_itr)
         addActionButton(action_itr->button, action_itr->action, action_itr->type);
 
-    // original items
+    /*// original items
     uint32 raceClassGender = GetUInt32Value(UNIT_FIELD_BYTES_0) & 0x00FFFFFF;
 
     CharStartOutfitEntry const* oEntry = NULL;
@@ -817,7 +817,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
             }
         }
     }
-    // all item positions resolved
+    // all item positions resolved*/
 
     m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
     m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
