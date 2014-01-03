@@ -543,15 +543,6 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
 }
 
-bool Player::IsAllowedGossipAction(ObjectGuid guid, uint32 sender, uint32 action)
-{
-    for (AvailableGossipOptions::const_iterator itr = m_AvailableGossipOptions.begin(); itr != m_AvailableGossipOptions.end(); ++itr)
-    if (itr->guid == guid && itr->sender == sender, itr->action == action)
-        return true;
-
-    return false;;
-}
-
 void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
 {
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
