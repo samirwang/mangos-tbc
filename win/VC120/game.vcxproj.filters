@@ -565,6 +565,9 @@
     <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp">
       <Filter>Custom\ScriptSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CPlayerGossip.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">

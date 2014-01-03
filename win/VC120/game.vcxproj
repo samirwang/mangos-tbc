@@ -377,6 +377,7 @@
     <ClCompile Include="..\..\src\game\CreatureLinkingMgr.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\CPlayerGossip.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp" />

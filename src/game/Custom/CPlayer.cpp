@@ -51,6 +51,11 @@ void Player::OnLogin()
 
     if (!NativeTeam())
         FakeOnNextTick();
+
+
+//     AddGossipMenuItem(1, "I wanna be a fag", GOSSIP_SENDER_MAIN, 1);
+//     AddGossipMenuItem(1, "I wanna be Malcrom", GOSSIP_SENDER_MAIN, 2);
+//     PlayerTalkClass->SendGossipMenu(1, GetObjectGuid());
 }
 
 void Player::OnFirstLogin()
