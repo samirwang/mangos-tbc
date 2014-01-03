@@ -173,7 +173,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
         data << gItem.m_gBoxMessage;                        // accept text (related to money) pop up box, 2.0.3, max 0x800
 
         if (player)
-            player->AddAllowedGossipAction(gItem.m_gSender, gItem.m_gOptionId);
+            player->AddAllowedGossipAction(objectGuid, gItem.m_gSender, gItem.m_gOptionId);
     }
 
     data << uint32(mQuestMenu.MenuItemCount());             // max count 0x20

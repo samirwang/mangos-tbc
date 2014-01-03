@@ -920,13 +920,27 @@ struct MultiVendor
     ObjectGuid guid;
 };
 
+struct AllowedGossip
+{
+    AllowedGossip(ObjectGuid cguid, uint32 csender, uint32 caction)
+    {
+        guid = cguid;
+        sender = csender;
+        action = caction;
+    }
+
+    ObjectGuid guid;
+    uint32 sender;
+    uint32 action;
+};
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
-    typedef std::multimap<uint32, uint32> AvailableGossipOptions;
+    typedef std::vector<AllowedGossip> AvailableGossipOptions;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -977,8 +991,8 @@ public:
         PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
     }
 
-    void AddAllowedGossipAction(uint32 sender, uint32 action) { m_AvailableGossipOptions.insert(std::make_pair(sender, action)); }
-    bool IsAllowedGossipAction(uint32 sender, uint32 action);
+    void AddAllowedGossipAction(ObjectGuid guid, uint32 sender, uint32 action) { m_AvailableGossipOptions.push_back(AllowedGossip(guid, sender, action)); }
+    bool IsAllowedGossipAction(ObjectGuid guid, uint32 sender, uint32 action);
     void ClearAllowedGossipAction() { m_AvailableGossipOptions.clear(); }
 
     void SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid);
