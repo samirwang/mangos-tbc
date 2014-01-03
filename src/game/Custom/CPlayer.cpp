@@ -64,6 +64,48 @@ void Player::OnLogin()
         AddGossipMenuItem(1, "I want to play Protection",   GOSSIP_SENDER_FIRSTLOGIN, 5);
         AddGossipMenuItem(1, "I want to play Retribution",  GOSSIP_SENDER_FIRSTLOGIN, 6);
     }
+    else if (getClass() == CLASS_HUNTER)
+    {
+        AddGossipMenuItem(1, "I want to play Beast Mastery",GOSSIP_SENDER_FIRSTLOGIN, 7);
+        AddGossipMenuItem(1, "I want to play Marksmanship", GOSSIP_SENDER_FIRSTLOGIN, 8);
+        AddGossipMenuItem(1, "I want to play Survival",     GOSSIP_SENDER_FIRSTLOGIN, 9);
+    }
+    else if (getClass() == CLASS_ROGUE)
+    {
+        AddGossipMenuItem(1, "I want to play Assassination",GOSSIP_SENDER_FIRSTLOGIN, 10);
+        AddGossipMenuItem(1, "I want to play Combat",       GOSSIP_SENDER_FIRSTLOGIN, 11);
+        AddGossipMenuItem(1, "I want to play Subtlety",     GOSSIP_SENDER_FIRSTLOGIN, 12);
+    }
+    else if (getClass() == CLASS_PRIEST)
+    {
+        AddGossipMenuItem(1, "I want to play Discipline",   GOSSIP_SENDER_FIRSTLOGIN, 13);
+        AddGossipMenuItem(1, "I want to play Holy",         GOSSIP_SENDER_FIRSTLOGIN, 14);
+        AddGossipMenuItem(1, "I want to play Shadow",       GOSSIP_SENDER_FIRSTLOGIN, 15);
+    }
+    else if (getClass() == CLASS_SHAMAN)
+    {
+        AddGossipMenuItem(1, "I want to play Elemental",    GOSSIP_SENDER_FIRSTLOGIN, 16);
+        AddGossipMenuItem(1, "I want to play Enhancement",  GOSSIP_SENDER_FIRSTLOGIN, 17);
+        AddGossipMenuItem(1, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 18);
+    }
+    else if (getClass() == CLASS_MAGE)
+    {
+        AddGossipMenuItem(1, "I want to play Arcane",       GOSSIP_SENDER_FIRSTLOGIN, 19);
+        AddGossipMenuItem(1, "I want to play Fire",         GOSSIP_SENDER_FIRSTLOGIN, 20);
+        AddGossipMenuItem(1, "I want to play Frost",        GOSSIP_SENDER_FIRSTLOGIN, 21);
+    }
+    else if (getClass() == CLASS_WARLOCK)
+    {
+        AddGossipMenuItem(1, "I want to play Affliction",   GOSSIP_SENDER_FIRSTLOGIN, 22);
+        AddGossipMenuItem(1, "I want to play Demonology",   GOSSIP_SENDER_FIRSTLOGIN, 23);
+        AddGossipMenuItem(1, "I want to play Destruction",  GOSSIP_SENDER_FIRSTLOGIN, 24);
+    }
+    else if (getClass() == CLASS_DRUID)
+    {
+        AddGossipMenuItem(1, "I want to play Balance",      GOSSIP_SENDER_FIRSTLOGIN, 25);
+        AddGossipMenuItem(1, "I want to play Feral",        GOSSIP_SENDER_FIRSTLOGIN, 26);
+        AddGossipMenuItem(1, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 27);
+    }
 
     if (!PlayerTalkClass->GetGossipMenu().Empty())
         PlayerTalkClass->SendGossipMenu(1, GetObjectGuid());
