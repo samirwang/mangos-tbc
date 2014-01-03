@@ -258,16 +258,14 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         case 402: bgtype = BATTLEGROUND_AB; break;
         case 403: bgtype = BATTLEGROUND_EY; break;
         case 404: bgtype = BATTLEGROUND_AV; break;
-        default:
-            break;
         }
 
         WorldPacket data;
         data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
-        data << pCreature->GetObjectGuid();
-        data << bgtype;
-        data << 0;
-        data << (pPlayer->GetGroup() != NULL);
+        data << ObjectGuid(pCreature->GetObjectGuid());
+        data << uint32(bgtype);
+        data << uint32(0);
+        data << uint8(pPlayer->GetGroup());
         pPlayer->GetSession()->HandleBattlemasterJoinOpcode(data);
     }
     else if (action >= 405 && action <= 410)
@@ -278,14 +276,12 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         switch (action)
         {
         case 406:
-        case 408:
+        case 409:
             arenaslot = 1;
             break;
         case 407:
         case 410:
             arenaslot = 2;
-            break;
-        default:
             break;
         }
 
@@ -294,10 +290,10 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
 
         WorldPacket data;
         data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
-        data << pCreature->GetObjectGuid();
-        data << arenaslot;
-        data << (pPlayer->GetGroup() != NULL);
-        data << rated;
+        data << ObjectGuid(pCreature->GetObjectGuid());
+        data << uint8(arenaslot);
+        data << uint8(pPlayer->GetGroup());
+        data << uint8(rated);
         pPlayer->GetSession()->HandleBattlemasterJoinArena(data);
     }
     else if (action == 1337)
