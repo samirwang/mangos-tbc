@@ -934,6 +934,8 @@ public:
 
     void PlayerGossip(uint32 sender, uint32 action, std::string code);
 
+    void AddItemSet(uint32 setid);
+
     std::string GetNameLink(bool applycolors = false);
     void SendWorldChatMsg(std::string msg);
     bool WCHatOn() { return m_wChatOn; }

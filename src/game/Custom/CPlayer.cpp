@@ -52,15 +52,40 @@ void Player::OnLogin()
     if (!NativeTeam())
         FakeOnNextTick();
 
+    if (getClass() == CLASS_WARRIOR)
+    {
+        AddGossipMenuItem(1, "I want to play Arms",         GOSSIP_SENDER_FIRSTLOGIN, 1);
+        AddGossipMenuItem(1, "I want to play Fury",         GOSSIP_SENDER_FIRSTLOGIN, 2);
+        AddGossipMenuItem(1, "I want to play Protection",   GOSSIP_SENDER_FIRSTLOGIN, 3);
+    }
+    else if (getClass() == CLASS_PALADIN)
+    {
+        AddGossipMenuItem(1, "I want to play Holy",         GOSSIP_SENDER_FIRSTLOGIN, 4);
+        AddGossipMenuItem(1, "I want to play Protection",   GOSSIP_SENDER_FIRSTLOGIN, 5);
+        AddGossipMenuItem(1, "I want to play Retribution",  GOSSIP_SENDER_FIRSTLOGIN, 6);
+    }
 
-//     AddGossipMenuItem(1, "I wanna be a fag", GOSSIP_SENDER_MAIN, 1);
-//     AddGossipMenuItem(1, "I wanna be Malcrom", GOSSIP_SENDER_MAIN, 2);
-//     PlayerTalkClass->SendGossipMenu(1, GetObjectGuid());
+    if (!PlayerTalkClass->GetGossipMenu().Empty())
+        PlayerTalkClass->SendGossipMenu(1, GetObjectGuid());
 }
 
 void Player::OnFirstLogin()
 {
     FillGreenSpellList();
+}
+
+void Player::AddItemSet(uint32 setid)
+{
+    ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
+    if (set)
+    {
+        for (uint8 i = 0; i < 17; ++i)
+        {
+            uint32 itemid = set->itemId[i];
+            if (itemid)
+                StoreNewItemInBestSlots(itemid, 1);
+        }
+    }
 }
 
 std::string Player::GetNameLink(bool applycolors)

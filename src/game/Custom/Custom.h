@@ -47,6 +47,7 @@ enum
     GOSSIP_SENDER_SEC_MAILBOX      = 9,
     GOSSIP_SENDER_SEC_STABLEMASTER = 10,
     GOSSIP_SENDER_MULTIVENDOR      = 11,
+    GOSSIP_SENDER_FIRSTLOGIN       = 12,
 
     // Gossip icons
     ICON_CHAT_BUBBLE               = 0,
