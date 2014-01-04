@@ -289,7 +289,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
             rated = true;
 
         WorldPacket data;
-        data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
+        data.SetOpcode(CMSG_BATTLEMASTER_JOIN_ARENA);
         data << ObjectGuid(pCreature->GetObjectGuid());
         data << uint8(arenaslot);
         data << uint8(pPlayer->GetGroup());
