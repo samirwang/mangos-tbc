@@ -277,6 +277,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
     if (plMover)
         plMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
+    if (plMover && WorldTimer::getMSTimeDiff(plMover->GetOldMoveTime(), WorldTimer::getMSTime()) >= 500)
+        plMover->HandleMovementCheat(movementInfo);
+
     WorldPacket data(opcode, recv_data.size());
     data << mover->GetPackGUID();             // write guid
     movementInfo.Write(data);                               // write data

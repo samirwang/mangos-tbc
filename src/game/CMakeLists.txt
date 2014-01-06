@@ -39,6 +39,7 @@ include_directories(
 )
 
 set(SRC_GRP_CUSTOM
+    Custom/AntiCheat.cpp
     Custom/CChat.cpp
     Custom/CPlayer.cpp
     Custom/Custom.cpp

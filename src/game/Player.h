@@ -926,6 +926,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
+    typedef std::deque<bool> AntiCheatTicks;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -999,6 +1000,11 @@ public:
         guid  = m_MultiVendor.guid;
     }
 
+    void HandleMovementCheat(MovementInfo& MoveInfo);
+    void HandleSpeedCheat(MovementInfo& MoveInfo);
+    uint32 GetOldMoveTime() { return m_OldMoveTime; }
+    void SkipAntiCheat() { m_SkipAntiCheat = true; }
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
@@ -1024,6 +1030,12 @@ private:
     uint32 m_fPlayerBytes2;
 
     bool m_FakeOnNextTick;
+
+    MovementInfo m_OldMoveInfo;
+    uint32 m_OldMoveTime;
+    float m_OldMoveSpeed;
+    bool m_SkipAntiCheat;
+    AntiCheatTicks m_SpeedHackTicks;
 
     // !Custom
         friend class WorldSession;
