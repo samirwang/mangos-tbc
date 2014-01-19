@@ -926,7 +926,7 @@ class MANGOS_DLL_SPEC Player : public Unit
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
-    typedef std::deque<bool> AntiCheatTicks;
+    typedef std::deque<float> AntiCheatTicks;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -1035,7 +1035,8 @@ private:
     uint32 m_OldMoveTime;
     float m_OldMoveSpeed;
     bool m_SkipAntiCheat;
-    AntiCheatTicks m_SpeedHackTicks;
+    AntiCheatTicks m_OverTraveled;
+    AntiCheatTicks m_DistTraveled;
 
     // !Custom
         friend class WorldSession;

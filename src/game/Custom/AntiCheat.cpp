@@ -40,21 +40,33 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
     float maxdist = highspeed * speedmod;
 
-    dist = (floor(dist * 10.f) / 10.f); // Round to lowest 1/10
-    maxdist = (ceil(maxdist * 10.f) / 10.f); // Round to highest 1/10 and add 0.1 for failsafe
+//     dist = (floor(dist * 10.f) / 10.f); // Round to lowest 1/10
+//     maxdist = (ceil(maxdist * 10.f) / 10.f); // Round to highest 1/10 and add 0.1 for failsafe
 
     const size_t listsize = 15;
-    const float detectpercent = 0.5f;
 
-    m_SpeedHackTicks.push_back(dist > maxdist);
+    if (maxdist / 2 > dist)
+        dist = maxdist;
 
-    while (m_SpeedHackTicks.size() > listsize)
-        m_SpeedHackTicks.pop_front();
+    m_OverTraveled.push_back(dist - maxdist);
 
-    float count = std::count(m_SpeedHackTicks.begin(), m_SpeedHackTicks.end(), true);
+    while (m_OverTraveled.size() > listsize)
+        m_OverTraveled.pop_front();
 
-    // BothChat << maxdist << " " << dist << " " << mstime << " " << (dist > maxdist ? "true" : "false") << " " << float(float(count) / float(m_SpeedHackTicks.size()));
+    float overtravel = 0;
 
-    if (m_SpeedHackTicks.size() >= listsize && count / float(m_SpeedHackTicks.size()) >= detectpercent)
-        BothChat << "You was detected speedhacking";
+    for (AntiCheatTicks::const_iterator itr = m_OverTraveled.begin(); itr != m_OverTraveled.end(); ++itr)
+        overtravel += *itr;
+
+    m_DistTraveled.push_back(dist);
+
+    while (m_DistTraveled.size() > listsize)
+        m_DistTraveled.pop_front();
+
+    float totaltravel = 0;
+
+    for (AntiCheatTicks::const_iterator itr = m_DistTraveled.begin(); itr != m_DistTraveled.end(); ++itr)
+        totaltravel += *itr;
+
+    BothChat << maxdist << " " << dist << " " << mstime << " " << (dist > maxdist ? "true" : "false") << " " << overtravel << " " << totaltravel;
 }
