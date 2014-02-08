@@ -3371,7 +3371,7 @@ void ChatHandler::LogCommand(char const* fullcmd)
 void ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg msgtype, char const* message, Language language /*= LANG_UNIVERSAL*/, ChatTagFlags chatTag /*= CHAT_TAG_NONE*/,
                                   ObjectGuid const& senderGuid /*= ObjectGuid()*/, char const* senderName /*= NULL*/,
                                   ObjectGuid const& targetGuid /*= ObjectGuid()*/, char const* targetName /*= NULL*/,
-                                  char const* channelName /*= NULL*/, uint32 achievementId /*= 0*/)
+                                  char const* channelName /*= NULL*/)
 {
     bool isGM = chatTag & CHAT_TAG_GM;
 
@@ -3399,6 +3399,10 @@ void ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg msgtype, char const
                 data << uint32(strlen(targetName) + 1);             // target name length
                 data << targetName;                                 // target name
             }
+            MANGOS_ASSERT(message);
+            data << uint32(strlen(message) + 1);
+            data << message;
+            data << uint8(chatTag);
             break;
         case CHAT_MSG_BG_SYSTEM_NEUTRAL:
         case CHAT_MSG_BG_SYSTEM_ALLIANCE:
@@ -3410,27 +3414,30 @@ void ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg msgtype, char const
                 data << uint32(strlen(targetName) + 1);             // target name length
                 data << targetName;                                 // target name
             }
+            MANGOS_ASSERT(message);
+            data << uint32(strlen(message) + 1);
+            data << message;
+            data << uint8(chatTag);
             break;
         default:
-            if (isGM)
-            {
-                MANGOS_ASSERT(senderName);
-                data << uint32(strlen(senderName) + 1);
-                data << senderName;
-            }
-
             if (msgtype == CHAT_MSG_CHANNEL)
             {
                 MANGOS_ASSERT(channelName);
                 data << channelName;
             }
             data << ObjectGuid(targetGuid);
+            MANGOS_ASSERT(message);
+            data << uint32(strlen(message) + 1);
+            data << message;
+            data << uint8(chatTag);
+            if (isGM)
+            {
+                MANGOS_ASSERT(senderName);
+                data << uint32(strlen(senderName) + 1);
+                data << senderName;
+            }
             break;
     }
-    MANGOS_ASSERT(message);
-    data << uint32(strlen(message) + 1);
-    data << message;
-    data << uint8(chatTag);
 }
 
 
