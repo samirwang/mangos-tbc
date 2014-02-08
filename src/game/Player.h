@@ -964,7 +964,7 @@ public:
 
     void FakeOnNextTick() { m_FakeOnNextTick = true; }
 
-    bool SendBattleGroundChat(uint32 msgtype, std::string message);
+    bool SendBattleGroundChat(ChatMsg msgtype, std::string message);
 
     void CreatePet(uint32 entry, bool classcheck = true);
     void EnchantItem(uint32 spellid, uint8 slot, const char* sendername = "Enchanting");

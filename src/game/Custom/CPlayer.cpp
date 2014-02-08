@@ -453,7 +453,7 @@ void Player::CLeaveBattleGround(BattleGround* bg)
     SetUInt32Value(PLAYER_BYTES_2, getOPlayerBytes2());
 }
 
-bool Player::SendBattleGroundChat(uint32 msgtype, std::string message)
+bool Player::SendBattleGroundChat(ChatMsg msgtype, std::string message)
 {
     // Select distance to broadcast to.
     float distance = msgtype == CHAT_MSG_SAY ? sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY) : sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_YELL);
@@ -472,9 +472,9 @@ bool Player::SendBattleGroundChat(uint32 msgtype, std::string message)
                     WorldPacket data(SMSG_MESSAGECHAT, 200);
 
                     if (GetTeam() == pPlayer->GetTeam())
-                        BuildPlayerChat(&data, msgtype, message, LANG_UNIVERSAL);
+                        ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), LANG_UNIVERSAL, GetChatTag(), GetObjectGuid(), GetName());
                     else if (msgtype != CHAT_MSG_EMOTE)
-                        BuildPlayerChat(&data, msgtype, message, pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON);
+                        ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON, GetChatTag(), GetObjectGuid(), GetName());
 
                     pPlayer->GetSession()->SendPacket(&data);
                 }

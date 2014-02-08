@@ -186,7 +186,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                 break;
 
             if (!GetPlayer()->isGameMaster())
-                if (GetPlayer()->SendBattleGroundChat(type, msg))
+                if (GetPlayer()->SendBattleGroundChat(ChatMsg(type), msg))
                     return;
 
             if (type == CHAT_MSG_SAY)
