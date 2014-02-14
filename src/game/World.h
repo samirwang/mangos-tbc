@@ -445,6 +445,7 @@ class World
 public:
     uint32 GetSaveInterval();
     void SendWorldChat(ObjectGuid guid, std::string msg);
+    void SendGMMessage(std::string msg);
     // !Custom
     public:
         static volatile uint32 m_worldLoopCounter;

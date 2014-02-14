@@ -1,14 +1,17 @@
 #include "Player.h"
 #include "Timer.h"
+#include "World.h"
 
 void Player::HandleMovementCheat(MovementInfo& MoveInfo)
 {
-    if (!m_SkipAntiCheat)
+    bool SkipChecks = m_SkipAntiCheat;
+    m_SkipAntiCheat = false;
+
+    if (!SkipChecks)
     {
         HandleSpeedCheat(MoveInfo);
     }
 
-    m_SkipAntiCheat = false;
     m_OldMoveInfo = MoveInfo;
     m_OldMoveTime = WorldTimer::getMSTime();
 }
@@ -30,11 +33,9 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
     float dx = m_OldMoveInfo.GetPos()->x - MoveInfo.GetPos()->x;
     float dy = m_OldMoveInfo.GetPos()->y - MoveInfo.GetPos()->y;
-    float dist = sqrt((dx * dx) + (dy * dy));
+    float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
 
     float mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime());
-    if (!mstime)
-        mstime = 1;
 
     float speedmod = mstime / 1000.f;
 
@@ -42,8 +43,11 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
     const size_t listsize = 15;
 
+    dist = floor(dist * 10.f) / 10.f;
+    maxdist = ceil(maxdist * 10.f) / 10.f;
+
     if (maxdist / 2 > dist)
-        dist = maxdist;
+        dist = maxdist; // If player is standing still we do not subtract a lot.
 
     m_OverTraveled.push_back(dist - maxdist);
 
@@ -55,16 +59,18 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
     for (AntiCheatTicks::const_iterator itr = m_OverTraveled.begin(); itr != m_OverTraveled.end(); ++itr)
         overtravel += *itr;
 
-    m_DistTraveled.push_back(dist);
-
-    while (m_DistTraveled.size() > listsize)
-        m_DistTraveled.pop_front();
-
-    float totaltravel = 0;
-
-    for (AntiCheatTicks::const_iterator itr = m_DistTraveled.begin(); itr != m_DistTraveled.end(); ++itr)
-        totaltravel += *itr;
-
     if (isGameMaster())
-        BothChat << maxdist << " " << dist << " " << mstime << " " << (dist > maxdist ? "true" : "false") << " " << overtravel << " " << totaltravel;
+        BothChat << maxdist << " " << dist << " " << dist - maxdist << " " << overtravel;
+
+    if (!isGameMaster() && overtravel > 0 && m_OverTraveled.size() >= listsize)
+    {
+        m_SkipAntiCheat = true;
+        m_OverTraveled.clear();
+
+        CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, 'Speed hack', %u)", GetGUIDLow(), GetSession()->GetAccountId(), sWorld.GetGameTime());
+
+        std::ostringstream ss;
+        ss << "Player " << GetName() << " was caught speedhacking";
+        sWorld.SendGMMessage(ss.str());
+    }
 }

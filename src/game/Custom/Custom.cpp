@@ -21,6 +21,15 @@ void World::SendWorldChat(ObjectGuid guid, std::string msg)
         pPlayer->BoxChat << msg << "\n";
 }
 
+void World::SendGMMessage(std::string msg)
+{
+    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+    if (itr->second)
+    if (Player* pPlayer = itr->second->GetPlayer())
+    if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
+        pPlayer->BothChat << msg << "\n";
+}
+
 SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 {
     SpellContainer spellContainer;

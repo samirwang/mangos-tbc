@@ -1029,7 +1029,6 @@ private:
     float m_OldMoveSpeed;
     bool m_SkipAntiCheat;
     AntiCheatTicks m_OverTraveled;
-    AntiCheatTicks m_DistTraveled;
 
     // !Custom
         friend class WorldSession;
