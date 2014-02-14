@@ -3,7 +3,7 @@
 
 void Player::HandleMovementCheat(MovementInfo& MoveInfo)
 {
-    if (!isGameMaster() && !m_SkipAntiCheat)
+    if (!m_SkipAntiCheat)
     {
         HandleSpeedCheat(MoveInfo);
     }
@@ -40,9 +40,6 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
     float maxdist = highspeed * speedmod;
 
-//     dist = (floor(dist * 10.f) / 10.f); // Round to lowest 1/10
-//     maxdist = (ceil(maxdist * 10.f) / 10.f); // Round to highest 1/10 and add 0.1 for failsafe
-
     const size_t listsize = 15;
 
     if (maxdist / 2 > dist)
@@ -68,5 +65,6 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
     for (AntiCheatTicks::const_iterator itr = m_DistTraveled.begin(); itr != m_DistTraveled.end(); ++itr)
         totaltravel += *itr;
 
-    BothChat << maxdist << " " << dist << " " << mstime << " " << (dist > maxdist ? "true" : "false") << " " << overtravel << " " << totaltravel;
+    if (isGameMaster())
+        BothChat << maxdist << " " << dist << " " << mstime << " " << (dist > maxdist ? "true" : "false") << " " << overtravel << " " << totaltravel;
 }
