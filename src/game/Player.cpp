@@ -381,19 +381,20 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
-    m_fRace             = 0;
-    m_oRace             = 0;
-    m_fFaction          = 0;
-    m_oFaction          = 0;
-    m_oPlayerBytes      = 0;
-    m_oPlayerBytes2     = 0;
-    m_fPlayerBytes      = 0;
-    m_fPlayerBytes2     = 0;
-    m_FakeOnNextTick    = 0;
-    m_OldMoveTime       = 0;
-    m_OldMoveSpeed      = 0;
-    m_SkipAntiCheat     = 1;
-    m_GmFly             = 0;
+    m_fRace                     = 0;
+    m_oRace                     = 0;
+    m_fFaction                  = 0;
+    m_oFaction                  = 0;
+    m_oPlayerBytes              = 0;
+    m_oPlayerBytes2             = 0;
+    m_fPlayerBytes              = 0;
+    m_fPlayerBytes2             = 0;
+    m_FakeOnNextTick            = 0;
+    m_OldMoveTime               = 0;
+    m_OldMoveSpeed              = 0;
+    m_SkipAntiCheat             = 1;
+    m_GmFly                     = 0;
+    m_CheatDatabaseReportTimer  = 0;
 
 
     m_transport = 0;
