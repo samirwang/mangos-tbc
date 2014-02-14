@@ -390,6 +390,9 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_fPlayerBytes      = 0;
     m_fPlayerBytes2     = 0;
     m_FakeOnNextTick    = 0;
+    m_OldMoveTime       = 0;
+    m_OldMoveSpeed      = 0;
+    m_SkipAntiCheat     = 1;
 
 
     m_transport = 0;
@@ -1594,6 +1597,8 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         sLog.outError("TeleportTo: invalid map %d or absent instance template.", mapid);
         return false;
     }
+
+    SkipAntiCheat();
 
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);  // Validity checked in IsValidMapCoord
 
