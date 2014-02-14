@@ -7,9 +7,10 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo)
     bool SkipChecks = m_SkipAntiCheat;
     m_SkipAntiCheat = false;
 
-    if (!SkipChecks)
+    if (!SkipChecks && !GetTransport() && !IsTaxiFlying())
     {
         HandleSpeedCheat(MoveInfo);
+        HandleFlyCheat(MoveInfo);
     }
 
     m_OldMoveInfo = MoveInfo;
@@ -72,5 +73,26 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
         std::ostringstream ss;
         ss << "Player " << GetName() << " was caught speedhacking";
         sWorld.SendGMMessage(ss.str());
+    }
+}
+
+void Player::HandleFlyCheat(MovementInfo& MoveInfo)
+{
+    bool flying = HasAuraType(SPELL_AURA_FLY) || m_GmFly;
+    bool falling = MoveInfo.HasMovementFlag(MOVEFLAG_FALLING) || MoveInfo.HasMovementFlag(MOVEFLAG_FALLINGFAR) || MoveInfo.HasMovementFlag(MOVEFLAG_SAFE_FALL) ||
+        m_OldMoveInfo.HasMovementFlag(MOVEFLAG_FALLING) || m_OldMoveInfo.HasMovementFlag(MOVEFLAG_FALLINGFAR) || m_OldMoveInfo.HasMovementFlag(MOVEFLAG_SAFE_FALL);
+
+    if (!isGameMaster() && !flying && !falling)
+    {
+        float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
+
+        if (ceil(floor_z) < floor(GetPositionZ()))
+        {
+            CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, 'Fly hack', %u)", GetGUIDLow(), GetSession()->GetAccountId(), sWorld.GetGameTime());
+
+            std::ostringstream ss;
+            ss << "Player " << GetName() << " was caught flyhacking";
+            sWorld.SendGMMessage(ss.str());
+        }
     }
 }

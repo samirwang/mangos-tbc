@@ -4128,7 +4128,12 @@ void Aura::HandleAuraModIncreaseFlightSpeed(bool apply, bool Real)
         if (apply)
             data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
         else
+        {
             data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
+
+            if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
+                ((Player*)GetTarget())->SetGMFly(false);
+        }
         data << target->GetPackGUID();
         data << uint32(0);                                  // unknown
         target->SendMessageToSet(&data, true);
@@ -5674,7 +5679,12 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
     if (apply)
         data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
     else
+    {
         data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
+
+        if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
+            ((Player*)GetTarget())->SetGMFly(false);
+    }
     data << GetTarget()->GetPackGUID();
     data << uint32(0);                                      // unk
     GetTarget()->SendMessageToSet(&data, true);

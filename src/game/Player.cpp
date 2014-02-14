@@ -393,6 +393,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_OldMoveTime       = 0;
     m_OldMoveSpeed      = 0;
     m_SkipAntiCheat     = 1;
+    m_GmFly             = 0;
 
 
     m_transport = 0;

@@ -5434,6 +5434,9 @@ bool ChatHandler::HandleGMFlyCommand(char* args)
     data << uint32(0);                                      // unknown
     target->SendMessageToSet(&data, true);
     PSendSysMessage(LANG_COMMAND_FLYMODE_STATUS, GetNameLink(target).c_str(), args);
+
+    target->SetGMFly(value);
+
     return true;
 }
 

@@ -995,8 +995,10 @@ public:
 
     void HandleMovementCheat(MovementInfo& MoveInfo);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
+    void HandleFlyCheat(MovementInfo& MoveInfo);
     uint32 GetOldMoveTime() { return m_OldMoveTime; }
     void SkipAntiCheat() { m_SkipAntiCheat = true; }
+    void SetGMFly(bool value) { m_GmFly = value; }
 
     std::stringstream BoxChat;
     std::stringstream WideChat;
@@ -1029,6 +1031,7 @@ private:
     float m_OldMoveSpeed;
     bool m_SkipAntiCheat;
     AntiCheatTicks m_OverTraveled;
+    bool m_GmFly;
 
     // !Custom
         friend class WorldSession;
