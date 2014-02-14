@@ -456,7 +456,12 @@ void Player::CLeaveBattleGround(BattleGround* bg)
 bool Player::SendBattleGroundChat(ChatMsg msgtype, std::string message)
 {
     // Select distance to broadcast to.
-    float distance = msgtype == CHAT_MSG_SAY ? sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY) : sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_YELL);
+    float distance = sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY);
+
+    if (msgtype == CHAT_MSG_YELL)
+        sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_YELL);
+    else if (msgtype == CHAT_MSG_EMOTE)
+        sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_TEXTEMOTE);
 
     if (BattleGround* pBattleGround = GetBattleGround())
     {
