@@ -90,7 +90,7 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
     if (isGameMaster())
         BothChat << maxdist << " " << dist << " " << dist - maxdist << " " << overtravel;
 
-    if (!isGameMaster() && overtravel > 0 && m_OverTraveled.size() >= listsize)
+    if (overtravel > 0 && m_OverTraveled.size() >= listsize)
     {
         m_SkipAntiCheat = true;
         m_OverTraveled.clear();
@@ -101,7 +101,7 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
 void Player::HandleFlyCheat(MovementInfo& MoveInfo)
 {
-    if (!isGameMaster() && !IsFlying() && !IsFalling(MoveInfo))
+    if (!IsFlying() && !IsFalling(MoveInfo))
     {
         float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
 
@@ -128,12 +128,22 @@ void Player::HandleClimbCheat(MovementInfo& MoveInfo)
 
 void Player::HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode)
 {
-    if (m_LastOpcode == MSG_MOVE_JUMP && opcode == MSG_MOVE_JUMP)
-        HandleCheatReport("jumphack");
+    if (opcode == MSG_MOVE_JUMP)
+    {
+        float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
+
+        float diff = abs(floor_z - MoveInfo.GetPos()->z);
+
+        if (diff > 1.5f && getDeathState() == ALIVE)
+            HandleCheatReport("jumphacking");
+    }
 }
 
 void Player::HandleCheatReport(const char* hack)
 {
+    if (isGameMaster())
+        return;
+
     if (m_CheatDatabaseReportTimer <= 0)
     {
         CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", GetGUIDLow(), GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
