@@ -23,20 +23,25 @@ bool Player::IsSwimming(MovementInfo& MoveInfo)
         m_OldMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING);
 }
 
-void Player::HandleMovementCheat(MovementInfo& MoveInfo)
+void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 {
     bool SkipChecks = m_SkipAntiCheat;
     m_SkipAntiCheat = false;
 
     if (!SkipChecks && !GetTransport() && !IsTaxiFlying())
     {
-        HandleSpeedCheat(MoveInfo);
-        HandleFlyCheat(MoveInfo);
-        HandleClimbCheat(MoveInfo);
+        if (WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 500)
+        {
+            HandleSpeedCheat(MoveInfo);
+            HandleFlyCheat(MoveInfo);
+            HandleClimbCheat(MoveInfo);
+        }
+        HandleJumpCheat(MoveInfo, opcode);
     }
 
     m_OldMoveInfo = MoveInfo;
     m_OldMoveTime = WorldTimer::getMSTime();
+    m_LastOpcode = opcode;
 }
 
 void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
@@ -100,8 +105,10 @@ void Player::HandleFlyCheat(MovementInfo& MoveInfo)
     {
         float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
 
-        if (ceil(floor_z) < floor(GetPositionZ()))
-            HandleCheatReport("flyhacking");
+        float diff = abs(floor_z - MoveInfo.GetPos()->z);
+
+        if (diff > 1.5f && getDeathState() == ALIVE)
+            HandleCheatReport(floor_z < MoveInfo.GetPos()->z ? "flyhacking" : "planehacking");
     }
 }
 
@@ -117,6 +124,12 @@ void Player::HandleClimbCheat(MovementInfo& MoveInfo)
 
     if (angle > 1.9f && dist > 0.1f && !IsFlying() && !IsFalling(MoveInfo) && !IsSwimming(MoveInfo))
         HandleCheatReport("wallclimbing");
+}
+
+void Player::HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode)
+{
+    if (m_LastOpcode == MSG_MOVE_JUMP && opcode == MSG_MOVE_JUMP)
+        HandleCheatReport("jumphack");
 }
 
 void Player::HandleCheatReport(const char* hack)

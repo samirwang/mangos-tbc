@@ -993,10 +993,11 @@ public:
         guid  = m_MultiVendor.guid;
     }
 
-    void HandleMovementCheat(MovementInfo& MoveInfo);
+    void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
     void HandleFlyCheat(MovementInfo& MoveInfo);
     void HandleClimbCheat(MovementInfo& MoveInfo);
+    void HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode);
     uint32 GetOldMoveTime() { return m_OldMoveTime; }
     void SkipAntiCheat() { m_SkipAntiCheat = true; }
     void SetGMFly(bool value) { m_GmFly = value; }
@@ -1040,6 +1041,7 @@ private:
     AntiCheatTicks m_OverTraveled;
     bool m_GmFly;
     int32 m_CheatDatabaseReportTimer;
+    Opcodes m_LastOpcode;
 
     // !Custom
         friend class WorldSession;
