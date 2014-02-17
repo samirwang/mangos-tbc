@@ -995,7 +995,7 @@ public:
 
     void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
-    void HandleFlyCheat(MovementInfo& MoveInfo);
+    void HandleHeightCheat(MovementInfo& MoveInfo);
     void HandleClimbCheat(MovementInfo& MoveInfo);
     void HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode);
     uint32 GetOldMoveTime() { return m_OldMoveTime; }
@@ -1007,6 +1007,7 @@ public:
     bool IsFlying();
     bool IsFalling(MovementInfo& MoveInfo);
     bool IsSwimming(MovementInfo& MoveInfo);
+    bool IsRooted(MovementInfo& MoveInfo);
 
     std::stringstream BoxChat;
     std::stringstream WideChat;

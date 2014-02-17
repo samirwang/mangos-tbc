@@ -20,7 +20,13 @@ bool Player::IsFalling(MovementInfo& MoveInfo)
 bool Player::IsSwimming(MovementInfo& MoveInfo)
 {
     return  MoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING) ||
-        m_OldMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING);
+            m_OldMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING);
+}
+
+bool Player::IsRooted(MovementInfo& MoveInfo)
+{
+    return  MoveInfo.HasMovementFlag(MOVEFLAG_ROOT) ||
+            m_OldMoveInfo.HasMovementFlag(MOVEFLAG_ROOT);
 }
 
 void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
@@ -33,7 +39,7 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
         if (WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 500)
         {
             HandleSpeedCheat(MoveInfo);
-            HandleFlyCheat(MoveInfo);
+            HandleHeightCheat(MoveInfo);
             HandleClimbCheat(MoveInfo);
         }
         HandleJumpCheat(MoveInfo, opcode);
@@ -99,9 +105,9 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
     }
 }
 
-void Player::HandleFlyCheat(MovementInfo& MoveInfo)
+void Player::HandleHeightCheat(MovementInfo& MoveInfo)
 {
-    if (!IsFlying() && !IsFalling(MoveInfo))
+    if (!IsFlying() && !IsFalling(MoveInfo) && !IsRooted(MoveInfo))
     {
         float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
 
