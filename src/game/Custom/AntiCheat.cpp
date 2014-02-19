@@ -52,14 +52,19 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
 void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 {
-    float speed = GetSpeed(MOVE_RUN);
+    bool back = HasMovementFlag(MOVEFLAG_BACKWARD);
+
+    float speed;
 
     if (HasMovementFlag(MOVEFLAG_WALK_MODE))
         speed = GetSpeed(MOVE_WALK);
     else if (HasMovementFlag(MOVEFLAG_SWIMMING))
-        speed = GetSpeed(MOVE_SWIM);
+        speed = GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
     else if (HasMovementFlag(MOVEFLAG_FLYING))
-        speed = GetSpeed(MOVE_FLIGHT);
+        speed = GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
+    else
+        speed = GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
+
 
     float highspeed = m_OldMoveSpeed > speed ? m_OldMoveSpeed : speed;
 
