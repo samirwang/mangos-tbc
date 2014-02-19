@@ -48,6 +48,8 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
     m_OldMoveInfo = MoveInfo;
     m_OldMoveTime = WorldTimer::getMSTime();
     m_LastOpcode = opcode;
+
+    BothChat << (HasMovementFlag(MOVEFLAG_SWIMMING) ? "swimming" : "not swimming");
 }
 
 void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
@@ -112,7 +114,7 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
 void Player::HandleHeightCheat(MovementInfo& MoveInfo)
 {
-    if (!IsFlying() && !IsFalling(MoveInfo) && !IsRooted(MoveInfo))
+    if (!IsFlying() && !IsFalling(MoveInfo) && !IsRooted(MoveInfo) && !IsSwimming(MoveInfo))
     {
         float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
 
@@ -139,7 +141,7 @@ void Player::HandleClimbCheat(MovementInfo& MoveInfo)
 
 void Player::HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode)
 {
-    if (opcode == MSG_MOVE_JUMP)
+    if (opcode == MSG_MOVE_JUMP && !IsSwimming(MoveInfo))
     {
         float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
 
