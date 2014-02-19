@@ -48,8 +48,6 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
     m_OldMoveInfo = MoveInfo;
     m_OldMoveTime = WorldTimer::getMSTime();
     m_LastOpcode = opcode;
-
-    BothChat << (HasMovementFlag(MOVEFLAG_SWIMMING) ? "swimming" : "not swimming");
 }
 
 void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
