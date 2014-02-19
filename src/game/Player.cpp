@@ -394,7 +394,9 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_OldMoveSpeed              = 0;
     m_SkipAntiCheat             = 1;
     m_GmFly                     = 0;
-    m_CheatDatabaseReportTimer  = 0;
+    m_CheatReportTimer[0]       = 0;
+    m_CheatReportTimer[1]       = 0;
+    m_LastHack                  = "";
     m_LastOpcode  = MSG_NULL_ACTION;
 
 

@@ -985,19 +985,18 @@ public:
     void SetMultiVendor(uint32 entry, ObjectGuid guid)
     {
         m_MultiVendor.entry = entry;
-        m_MultiVendor.guid  = guid;
+        m_MultiVendor.guid = guid;
     }
     void GetMultiVendor(uint32& entry, ObjectGuid& guid)
     {
         entry = m_MultiVendor.entry;
-        guid  = m_MultiVendor.guid;
+        guid = m_MultiVendor.guid;
     }
 
     void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
-    void HandleHeightCheat(MovementInfo& MoveInfo);
+    void HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleClimbCheat(MovementInfo& MoveInfo);
-    void HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode);
     uint32 GetOldMoveTime() { return m_OldMoveTime; }
     void SkipAntiCheat() { m_SkipAntiCheat = true; }
     void SetGMFly(bool value) { m_GmFly = value; }
@@ -1041,7 +1040,8 @@ private:
     bool m_SkipAntiCheat;
     AntiCheatTicks m_OverTraveled;
     bool m_GmFly;
-    int32 m_CheatDatabaseReportTimer;
+    int32 m_CheatReportTimer[2];
+    const char* m_LastHack;
     Opcodes m_LastOpcode;
 
     // !Custom

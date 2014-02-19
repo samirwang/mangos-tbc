@@ -14,8 +14,9 @@ void Player::CUpdate(uint32 diff)
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
 
-    if (m_CheatDatabaseReportTimer > 0)
-        m_CheatDatabaseReportTimer -= diff;
+    for (uint8 i = 0; i < 2; i++)
+        if (m_CheatReportTimer[i] > 0)
+            m_CheatReportTimer[i] -= diff;
 }
 
 void Player::Sometimes()

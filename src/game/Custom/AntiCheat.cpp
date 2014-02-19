@@ -37,13 +37,10 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
     if (!SkipChecks && !GetTransport() && !IsTaxiFlying())
     {
         if (WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 500)
-        {
             HandleSpeedCheat(MoveInfo);
-            HandleHeightCheat(MoveInfo);
-        }
 
+        HandleHeightCheat(MoveInfo, opcode);
         HandleClimbCheat(MoveInfo);
-        HandleJumpCheat(MoveInfo, opcode);
     }
 
     m_OldMoveInfo = MoveInfo;
@@ -111,9 +108,9 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
     }
 }
 
-void Player::HandleHeightCheat(MovementInfo& MoveInfo)
+void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
 {
-    if (!IsFlying() && !IsFalling(MoveInfo) && !IsRooted(MoveInfo) && !IsSwimming(MoveInfo))
+    if (!IsFlying() && (!IsFalling(MoveInfo) || opcode == MSG_MOVE_JUMP) && !IsRooted(MoveInfo) && !IsSwimming(MoveInfo))
     {
         float Size = GetObjectBoundingRadius();
 
@@ -148,39 +145,50 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo)
 
         uint8 diffing = 0;
         for (uint8 i = 0; i < 5; i++)
-        if (abs(z - floor_z[i]) > 0.5f)
-            ++diffing;
+            if (abs(z - floor_z[i]) > 0.5f)
+                ++diffing;
 
-        if (diffing >= 5 && getDeathState() == ALIVE)
-            HandleCheatReport(floor_z[4] < MoveInfo.GetPos()->z ? "flyhacking" : "planehacking");
+        if (diffing == 5 && getDeathState() == ALIVE)
+            HandleCheatReport(opcode == MSG_MOVE_JUMP ? "jump hacking" : "height hacking");
     }
 }
 
 void Player::HandleClimbCheat(MovementInfo& MoveInfo)
 {
+    float dist[2];
+    float deltaZ[2];
+    float floor_z[2];
+    float angle[2];
+
     float dx = m_OldMoveInfo.GetPos()->x - MoveInfo.GetPos()->x;
     float dy = m_OldMoveInfo.GetPos()->y - MoveInfo.GetPos()->y;
-    float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
+    dist[0] = sqrt((dx * dx) + (dy * dy)); // Traveled distance
 
-    float deltaZ = fabs(MoveInfo.GetPos()->z - m_OldMoveInfo.GetPos()->z);
+    float Size = GetObjectBoundingRadius();
+    dist[1] = Size * 2;
 
-    float angle = MapManager::NormalizeOrientation(tan(deltaZ / dist));
+    float o = GetOrientation();
+    float x, y, z;
+    GetPosition(x, y, z);
 
-    if (angle > 1.9f && dist > 0.1f && !IsFlying() && !IsFalling(MoveInfo) && !IsSwimming(MoveInfo))
+    // Forward
+    float fx = x + cosf(o)*Size;
+    float fy = y + sinf(o)*Size;
+    floor_z[0] = GetMap()->GetHeight(fx, fy, z);
+
+    // Backward
+    float bx = x + cosf(o)*(Size * -1);
+    float by = y + sinf(o)*(Size * -1);
+    floor_z[1] = GetMap()->GetHeight(bx, by, z);
+    
+    deltaZ[0] = fabs(MoveInfo.GetPos()->z - m_OldMoveInfo.GetPos()->z);
+    deltaZ[1] = fabs(floor_z[0] - floor_z[1]);
+
+    for (uint8 i = 0; i < 2; i++)
+        angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
+
+    if (angle[0] > 1.9f && angle[1] > 1.9f && !IsFlying() && !IsFalling(MoveInfo) && !IsSwimming(MoveInfo))
         HandleCheatReport("wallclimbing");
-}
-
-void Player::HandleJumpCheat(MovementInfo& MoveInfo, Opcodes opcode)
-{
-    if (opcode == MSG_MOVE_JUMP && !IsSwimming(MoveInfo))
-    {
-        float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
-
-        float diff = abs(floor_z - MoveInfo.GetPos()->z);
-
-        if (diff > 1.5f && getDeathState() == ALIVE)
-            HandleCheatReport("jumphacking");
-    }
 }
 
 void Player::HandleCheatReport(const char* hack)
@@ -188,13 +196,18 @@ void Player::HandleCheatReport(const char* hack)
     if (isGameMaster())
         return;
 
-    if (m_CheatDatabaseReportTimer <= 0)
+    if (m_CheatReportTimer[0] <= 0)
     {
         CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", GetGUIDLow(), GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
-        m_CheatDatabaseReportTimer = 5000;
+        m_CheatReportTimer[0] = 5000;
     }
 
-    std::ostringstream ss;
-    ss << "Player " << GetName() << " was caught " << hack;
-    sWorld.SendGMMessage(ss.str());
+    if (m_CheatReportTimer[1] <= 0 || hack != m_LastHack)
+    {
+        std::ostringstream ss;
+        ss << "Player " << GetName() << " was caught " << hack;
+        sWorld.SendGMMessage(ss.str());
+        m_CheatReportTimer[1] = 1000;
+        m_LastHack = hack;
+    }
 }
