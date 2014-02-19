@@ -919,7 +919,6 @@ class MANGOS_DLL_SPEC Player : public Unit
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
     typedef std::vector<ObjectGuid> FakedPlayers;
-    typedef std::deque<float> AntiCheatTicks;
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -1038,7 +1037,6 @@ private:
     uint32 m_OldMoveTime;
     float m_OldMoveSpeed;
     bool m_SkipAntiCheat;
-    AntiCheatTicks m_OverTraveled;
     bool m_GmFly;
     int32 m_CheatReportTimer[2];
     const char* m_LastHack;

@@ -96,26 +96,8 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
             maxdist *= 3;
     }
 
-    m_OverTraveled.push_back(dist - maxdist);
-
-    while (m_OverTraveled.size() > listsize)
-        m_OverTraveled.pop_front();
-
-    float overtravel = 0;
-
-    for (AntiCheatTicks::const_iterator itr = m_OverTraveled.begin(); itr != m_OverTraveled.end(); ++itr)
-        overtravel += *itr;
-
-    if (isGameMaster())
-        BothChat << maxdist << " " << dist << " " << dist - maxdist << " " << overtravel;
-
-    if (overtravel > 0 && m_OverTraveled.size() >= listsize)
-    {
-        m_SkipAntiCheat = true;
-        m_OverTraveled.clear();
-
+    if (dist > maxdist)
         HandleCheatReport("speedhacking");
-    }
 }
 
 void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
@@ -131,23 +113,23 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
         float floor_z[5];
 
         // Forward
-        float fx = x + cosf(o)*Size;
-        float fy = y + sinf(o)*Size;
+        float fx = x + cosf(o)*1;
+        float fy = y + sinf(o)*1;
         floor_z[0] = GetMap()->GetHeight(fx, fy, z);
 
         // Backward
-        float bx = x + cosf(o)*(Size * -1);
-        float by = y + sinf(o)*(Size * -1);
+        float bx = x + cosf(o)*-1;
+        float by = y + sinf(o)*-1;
         floor_z[1] = GetMap()->GetHeight(bx, by, z);
 
         // Right
-        float rx = x + cos(o - (M_PI / 2))*Size;
-        float ry = y + sin(o - (M_PI / 2))*Size;
+        float rx = x + cos(o - (M_PI / 2))*1;
+        float ry = y + sin(o - (M_PI / 2))*1;
         floor_z[2] = GetMap()->GetHeight(rx, ry, z);
 
         // Left
-        float lx = x + cos(o - (M_PI / 2))*(Size * -1);
-        float ly = y + sin(o - (M_PI / 2))*(Size * -1);
+        float lx = x + cos(o - (M_PI / 2))*-1;
+        float ly = y + sin(o - (M_PI / 2))*-1;
         floor_z[3] = GetMap()->GetHeight(lx, ly, z);
 
         // Current
@@ -155,7 +137,7 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
         uint8 diffing = 0;
         for (uint8 i = 0; i < 5; i++)
-            if (abs(z - floor_z[i]) > Size)
+            if (abs(z - floor_z[i]) > 1)
                 ++diffing;
 
         if (diffing == 5 && getDeathState() == ALIVE)
@@ -182,13 +164,13 @@ void Player::HandleClimbCheat(MovementInfo& MoveInfo)
     GetPosition(x, y, z);
 
     // Forward
-    float fx = x + cosf(o)*Size;
-    float fy = y + sinf(o)*Size;
+    float fx = x + cosf(o)*1;
+    float fy = y + sinf(o)*1;
     floor_z[0] = GetMap()->GetHeight(fx, fy, z);
 
     // Backward
-    float bx = x + cosf(o)*(Size * -1);
-    float by = y + sinf(o)*(Size * -1);
+    float bx = x + cosf(o)*-1;
+    float by = y + sinf(o)*-1;
     floor_z[1] = GetMap()->GetHeight(bx, by, z);
     
     deltaZ[0] = fabs(MoveInfo.GetPos()->z - m_OldMoveInfo.GetPos()->z);
