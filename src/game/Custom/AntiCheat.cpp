@@ -40,8 +40,9 @@ void Player::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
         {
             HandleSpeedCheat(MoveInfo);
             HandleHeightCheat(MoveInfo);
-            HandleClimbCheat(MoveInfo);
         }
+
+        HandleClimbCheat(MoveInfo);
         HandleJumpCheat(MoveInfo, opcode);
     }
 
@@ -114,12 +115,44 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo)
 {
     if (!IsFlying() && !IsFalling(MoveInfo) && !IsRooted(MoveInfo) && !IsSwimming(MoveInfo))
     {
-        float floor_z = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
+        float Size = GetObjectBoundingRadius();
 
-        float diff = abs(floor_z - MoveInfo.GetPos()->z);
+        float o = GetOrientation();
+        float x, y, z;
+        GetPosition(x, y, z);
 
-        if (diff > 1.5f && getDeathState() == ALIVE)
-            HandleCheatReport(floor_z < MoveInfo.GetPos()->z ? "flyhacking" : "planehacking");
+        float floor_z[5];
+
+        // Forward
+        float fx = x + cosf(o)*Size / 2;
+        float fy = y + sinf(o)*Size / 2;
+        floor_z[0] = GetMap()->GetHeight(fx, fy, z);
+
+        // Backward
+        float bx = x + cosf(o)*(Size * -1) / 2;
+        float by = y + sinf(o)*(Size * -1) / 2;
+        floor_z[1] = GetMap()->GetHeight(bx, by, z);
+
+        // Right
+        float rx = x + cos(o - (M_PI / 2))*Size / 2;
+        float ry = y + sin(o - (M_PI / 2))*Size / 2;
+        floor_z[2] = GetMap()->GetHeight(rx, ry, z);
+
+        // Left
+        float lx = x + cos(o - (M_PI / 2))*(Size * -1) / 2;
+        float ly = y + sin(o - (M_PI / 2))*(Size * -1) / 2;
+        floor_z[3] = GetMap()->GetHeight(lx, ly, z);
+
+        // Current
+        floor_z[4] = GetMap()->GetHeight(x, y, z);
+
+        uint8 diffing = 0;
+        for (uint8 i = 0; i < 5; i++)
+        if (abs(z - floor_z[i]) > 0.5f)
+            ++diffing;
+
+        if (diffing >= 5 && getDeathState() == ALIVE)
+            HandleCheatReport(floor_z[4] < MoveInfo.GetPos()->z ? "flyhacking" : "planehacking");
     }
 }
 
