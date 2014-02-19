@@ -64,7 +64,7 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
         speed = GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
 
 
-    float highspeed = m_OldMoveSpeed > speed ? m_OldMoveSpeed : speed;
+    float highspeed = std::max(m_OldMoveSpeed, speed);
 
     m_OldMoveSpeed = speed;
 
@@ -85,6 +85,16 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 
     if (maxdist / 2 > dist)
         dist = maxdist; // If player is standing still we do not subtract a lot.
+
+    if (IsFalling(MoveInfo))
+    {
+        float deltaZ = m_OldMoveInfo.GetPos()->z - MoveInfo.GetPos()->z;
+        float angle = MapManager::NormalizeOrientation(tan(deltaZ / dist));
+
+        // Sliding the ground which can be really fast.
+        if (angle > 1.9f)
+            maxdist *= 3;
+    }
 
     m_OverTraveled.push_back(dist - maxdist);
 
