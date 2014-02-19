@@ -131,23 +131,23 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
         float floor_z[5];
 
         // Forward
-        float fx = x + cosf(o)*Size / 2;
-        float fy = y + sinf(o)*Size / 2;
+        float fx = x + cosf(o)*Size;
+        float fy = y + sinf(o)*Size;
         floor_z[0] = GetMap()->GetHeight(fx, fy, z);
 
         // Backward
-        float bx = x + cosf(o)*(Size * -1) / 2;
-        float by = y + sinf(o)*(Size * -1) / 2;
+        float bx = x + cosf(o)*(Size * -1);
+        float by = y + sinf(o)*(Size * -1);
         floor_z[1] = GetMap()->GetHeight(bx, by, z);
 
         // Right
-        float rx = x + cos(o - (M_PI / 2))*Size / 2;
-        float ry = y + sin(o - (M_PI / 2))*Size / 2;
+        float rx = x + cos(o - (M_PI / 2))*Size;
+        float ry = y + sin(o - (M_PI / 2))*Size;
         floor_z[2] = GetMap()->GetHeight(rx, ry, z);
 
         // Left
-        float lx = x + cos(o - (M_PI / 2))*(Size * -1) / 2;
-        float ly = y + sin(o - (M_PI / 2))*(Size * -1) / 2;
+        float lx = x + cos(o - (M_PI / 2))*(Size * -1);
+        float ly = y + sin(o - (M_PI / 2))*(Size * -1);
         floor_z[3] = GetMap()->GetHeight(lx, ly, z);
 
         // Current
@@ -155,7 +155,7 @@ void Player::HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
         uint8 diffing = 0;
         for (uint8 i = 0; i < 5; i++)
-            if (abs(z - floor_z[i]) > 0.5f)
+            if (abs(z - floor_z[i]) > Size)
                 ++diffing;
 
         if (diffing == 5 && getDeathState() == ALIVE)
