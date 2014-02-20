@@ -600,7 +600,7 @@ bool ChatHandler::HandleGonameCommand(char* args)
             _player->SaveRecallPosition();
 
         // to point to see at target with same orientation
-        float x, y, z, z2;
+        float x, y, z;
         target->GetPosition(x, y, z);
 
         if (target->HasMovementFlag(MOVEFLAG_FLYING))

@@ -29,6 +29,23 @@ class WorldSession;
 #define GOSSIP_MAX_MENU_ITEMS 64                            // client supported items unknown, but provided number must be enough
 #define DEFAULT_GOSSIP_MESSAGE              0xffffff
 
+namespace Icon
+{
+    enum Icon
+    {
+        CHAT      = 0,  // white chat bubble
+        BAG       = 1,  // brown bag
+        TAXI      = 2,  // flight
+        TRAINER   = 3,  // book
+        GEAR      = 4,  // interaction wheel
+        MONEY_BAG = 6,  // brown bag with yellow dot
+        CHAT_DOTS = 7,  // white chat bubble with black dots
+        TABARD    = 8,  // tabard
+        SWORDS    = 9,  // two swords
+        DOT       = 10, // yellow dot
+    };
+}
+
 enum Gossip_Option
 {
     GOSSIP_OPTION_NONE              = 0,                    // UNIT_NPC_FLAG_NONE               (0)

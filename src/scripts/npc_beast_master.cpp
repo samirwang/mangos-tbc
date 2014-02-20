@@ -13,19 +13,19 @@ bool GossipHello_beast_master(Player *pPlayer, Creature *pCreature)
         return true;
     }
 
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Bat         ", GOSSIP_SENDER_MAIN, 1 ); // 16173
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Bear        ", GOSSIP_SENDER_MAIN, 2 ); // 23584
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Boar        ", GOSSIP_SENDER_MAIN, 3 ); // 21878
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Carrion Bird", GOSSIP_SENDER_MAIN, 4 ); // 18707
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Cat         ", GOSSIP_SENDER_MAIN, 5 ); // 20671
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Crab        ", GOSSIP_SENDER_MAIN, 6 ); // 18241
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Crocolisk   ", GOSSIP_SENDER_MAIN, 7 ); // 20773
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Dragonhawk  ", GOSSIP_SENDER_MAIN, 8 ); // 18155
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Gorilla     ", GOSSIP_SENDER_MAIN, 9 ); // 6585
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Hyena       ", GOSSIP_SENDER_MAIN, 10); // 8300
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Nether Ray  ", GOSSIP_SENDER_MAIN, 11); // 17731
-    pPlayer->AddGossipMenuItem(9, "Summon me a: Raptor      ", GOSSIP_SENDER_MAIN, 12); // 20634
-    pPlayer->AddGossipMenuItem(5, "Go to Next Page          ", GOSSIP_SENDER_MAIN, 13);
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bat         ", GOSSIP_SENDER_MAIN, 1 ); // 16173
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bear        ", GOSSIP_SENDER_MAIN, 2 ); // 23584
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Boar        ", GOSSIP_SENDER_MAIN, 3 ); // 21878
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Carrion Bird", GOSSIP_SENDER_MAIN, 4 ); // 18707
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Cat         ", GOSSIP_SENDER_MAIN, 5 ); // 20671
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crab        ", GOSSIP_SENDER_MAIN, 6 ); // 18241
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crocolisk   ", GOSSIP_SENDER_MAIN, 7 ); // 20773
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Dragonhawk  ", GOSSIP_SENDER_MAIN, 8 ); // 18155
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Gorilla     ", GOSSIP_SENDER_MAIN, 9 ); // 6585
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Hyena       ", GOSSIP_SENDER_MAIN, 10); // 8300
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Nether Ray  ", GOSSIP_SENDER_MAIN, 11); // 17731
+    pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Raptor      ", GOSSIP_SENDER_MAIN, 12); // 20634
+    pPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Next Page          ", GOSSIP_SENDER_MAIN, 13);
     pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
     return true;
 }
@@ -185,16 +185,16 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
     }
     else if (action == 13)
     {
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Ravager     ", GOSSIP_SENDER_MAIN, 14); // 23326
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Scorpid     ", GOSSIP_SENDER_MAIN, 15); // 21864
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Serpent     ", GOSSIP_SENDER_MAIN, 16); // 19784
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Spider      ", GOSSIP_SENDER_MAIN, 17); // 16170
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Tallstrider ", GOSSIP_SENDER_MAIN, 18); // 22807
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Turtle      ", GOSSIP_SENDER_MAIN, 19); // 5431
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Warp Stalker", GOSSIP_SENDER_MAIN, 20); // 23219
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Wind Serpent", GOSSIP_SENDER_MAIN, 21); // 20673
-        pPlayer->AddGossipMenuItem(9, "Summon me a: Wolf        ", GOSSIP_SENDER_MAIN, 22); // 17280
-        pPlayer->AddGossipMenuItem(5, "Go to Previous Page      ", GOSSIP_SENDER_MAIN, 0 );
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Ravager     ", GOSSIP_SENDER_MAIN, 14); // 23326
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Scorpid     ", GOSSIP_SENDER_MAIN, 15); // 21864
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Serpent     ", GOSSIP_SENDER_MAIN, 16); // 19784
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Spider      ", GOSSIP_SENDER_MAIN, 17); // 16170
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Tallstrider ", GOSSIP_SENDER_MAIN, 18); // 22807
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Turtle      ", GOSSIP_SENDER_MAIN, 19); // 5431
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Warp Stalker", GOSSIP_SENDER_MAIN, 20); // 23219
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wind Serpent", GOSSIP_SENDER_MAIN, 21); // 20673
+        pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wolf        ", GOSSIP_SENDER_MAIN, 22); // 17280
+        pPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Previous Page      ", GOSSIP_SENDER_MAIN, 0 );
         pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
     }
     else if (action == 14) // Ravager 23326
