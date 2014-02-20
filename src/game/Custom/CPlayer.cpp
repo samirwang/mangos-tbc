@@ -111,8 +111,15 @@ void Player::OnLogin()
         AddGossipMenuItem(Icon::BAG, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 27);
     }
 
+    ObjectGuid guid = GetObjectGuid();
+
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            if (pItem->GetEntry() == 6948) // Hearthstone
+                guid = pItem->GetObjectGuid();
+
     if (!PlayerTalkClass->GetGossipMenu().Empty())
-        PlayerTalkClass->SendGossipMenu(1, GetObjectGuid());
+        PlayerTalkClass->SendGossipMenu(1, guid);
 }
 
 void Player::OnFirstLogin()

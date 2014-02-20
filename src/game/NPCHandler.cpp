@@ -383,7 +383,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
         if (!sScriptMgr.OnGossipSelect(_player, pGo, sender, action, code.empty() ? NULL : code.c_str()))
             _player->OnGossipSelect(pGo, gossipListId, menuId);
     }
-    else if (guid.IsPlayer())
+    else if (guid.IsPlayer() || guid.IsItem())
         _player->PlayerGossip(sender, action, code);
 }
 
