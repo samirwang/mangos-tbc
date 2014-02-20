@@ -48,19 +48,6 @@ enum
     GOSSIP_SENDER_SEC_STABLEMASTER = 10,
     GOSSIP_SENDER_MULTIVENDOR      = 11,
     GOSSIP_SENDER_FIRSTLOGIN       = 12,
-
-    // Gossip icons
-    ICON_CHAT_BUBBLE               = 0,
-    ICON_BAG                       = 1,
-    ICON_FLY                       = 2,
-    ICON_BOOK                      = 3,
-    ICON_GEAR1                     = 4,
-    ICON_GEAR2                     = 5,
-    ICON_BAG_COIN                  = 6,
-    ICON_CHAT_BUBBLE_DOTS          = 7,
-    ICON_TABARD                    = 8,
-    ICON_CROSSING_SWORDS           = 9,
-    ICON_YELLOW_DOT                = 10
 };
 
 struct FakePlayerBytes

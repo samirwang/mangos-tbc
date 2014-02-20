@@ -12,10 +12,10 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
     if ((pPlayer->GetAreaId() != 3536 && pPlayer->GetTeam() == HORDE) ||
         (pPlayer->GetAreaId() != 3538 && pPlayer->GetTeam() == ALLIANCE) ||
         pPlayer->isGameMaster())
-        pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Shopping Mall  ", GOSSIP_SENDER_MAIN, 1  );
+        pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Shopping Mall", GOSSIP_SENDER_MAIN, 1  );
 
     if (pPlayer->GetAreaId() != 3539 || pPlayer->isGameMaster())
-        pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Neutral  Mall  ", GOSSIP_SENDER_MAIN, 2);
+        pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Neutral  Mall", GOSSIP_SENDER_MAIN, 2);
 
     if (pPlayer->GetAreaId() != 3738 || pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Stormspire", GOSSIP_SENDER_MAIN, 4);
