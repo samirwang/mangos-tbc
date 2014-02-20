@@ -52,7 +52,7 @@ void Player::HandleSpeedCheat(MovementInfo& MoveInfo)
 {
     bool back = HasMovementFlag(MOVEFLAG_BACKWARD);
 
-    float speed;
+    float speed = 0;
 
     if (HasMovementFlag(MOVEFLAG_WALK_MODE))
         speed = GetSpeed(MOVE_WALK);
@@ -188,13 +188,15 @@ void Player::HandleCheatReport(const char* hack)
     if (isGameMaster())
         return;
 
-    if (m_CheatReportTimer[0] <= 0)
+    bool newhack = hack != m_LastHack;
+
+    if (m_CheatReportTimer[0] <= 0 || newhack)
     {
         CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", GetGUIDLow(), GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
         m_CheatReportTimer[0] = 5000;
     }
 
-    if (m_CheatReportTimer[1] <= 0 || hack != m_LastHack)
+    if (m_CheatReportTimer[1] <= 0 || newhack)
     {
         std::ostringstream ss;
         ss << "Player " << GetName() << " was caught " << hack;
