@@ -119,7 +119,7 @@ void Player::OnLogin()
                 guid = pItem->GetObjectGuid();
 
     if (!PlayerTalkClass->GetGossipMenu().Empty())
-        PlayerTalkClass->SendGossipMenu(1, guid);
+        PlayerTalkClass->SendGossipMenu("Please select your spec!", guid);
 }
 
 void Player::OnFirstLogin()

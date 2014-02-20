@@ -5,6 +5,7 @@
 #include "World.h"
 #include "Log.h"
 #include "SocialMgr.h"
+#include "GossipDef.h"
 
 Custom::~Custom()
 {
@@ -194,4 +195,28 @@ bool ChatHandler::HandleWChatCommand(char* args)
         PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
 
     return true;
+}
+
+void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 textid)
+{
+    WorldPacket data(SMSG_NPC_TEXT_UPDATE, 100);            // guess size
+    data << textid;                                         // can be < 0
+
+    for (uint32 i = 0; i < 8; ++i)
+    {
+        data << float(0);
+        data << text;
+        data << text;
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+    }
+
+    GetMenuSession()->SendPacket(&data);
+
+    SendGossipMenu(textid, objectGuid);
 }
