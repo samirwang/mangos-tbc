@@ -14,7 +14,6 @@ AntiCheat::AntiCheat(Player* pPlayer)
     m_CheatReportTimer[0] = 0;
     m_CheatReportTimer[1] = 0;
     m_LastHack = "";
-    m_Lag = 0;
 
     for (uint8 i = 0; i < 2; i++)
         m_Opcode[i] = MSG_NULL_ACTION;
@@ -63,7 +62,7 @@ bool AntiCheat::IsRooted()
     return false;
 }
 
-void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode, int32 lag)
+void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 {
     bool SkipChecks = m_SkipAntiCheat;
     m_SkipAntiCheat = false;
@@ -88,6 +87,8 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode, int3
 
 void AntiCheat::HandleSpeedCheat()
 {
+    bool othercheat = false;
+
     bool back = m_MoveInfo[0].HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
@@ -110,9 +111,13 @@ void AntiCheat::HandleSpeedCheat()
     float dy = m_MoveInfo[1].GetPos()->y - m_MoveInfo[0].GetPos()->y;
     float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
 
-    float mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime()) + m_Lag;
+    float c_mstime = m_MoveInfo[0].GetTime() - m_MoveInfo[1].GetTime();
+    float s_mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime());
 
-    float speedmod = mstime / 1000;
+    if ((c_mstime + s_mstime) / 2 > s_mstime * 1.1)
+        othercheat = true;
+
+    float speedmod = c_mstime / 1000;
 
     float maxdist = highspeed * speedmod;
 
@@ -134,7 +139,7 @@ void AntiCheat::HandleSpeedCheat()
             maxdist *= 3;
     }
 
-    if (dist > maxdist)
+    if (dist > maxdist || othercheat)
         HandleCheatReport("speedhacking");
 }
 
