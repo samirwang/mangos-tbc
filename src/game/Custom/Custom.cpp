@@ -236,7 +236,7 @@ void Custom::LoadTalentContainer()
 
     uint32 count = 0;
 
-    QueryResult* result = WorldDatabase.PQuery("SELECT class, spec, id, rank FROM talenttemplates");
+    QueryResult* result = WorldDatabase.PQuery("SELECT class, spec, id, rank FROM playertemplate_talents");
     if (result)
     {
         do
