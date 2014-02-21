@@ -278,7 +278,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
         plMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
     if (plMover)
-        plMover->HandleMovementCheat(movementInfo, opcode);
+        plMover->GetAntiCheat()->HandleMovementCheat(movementInfo, opcode);
 
     WorldPacket data(opcode, recv_data.size());
     data << mover->GetPackGUID();             // write guid

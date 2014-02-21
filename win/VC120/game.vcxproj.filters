@@ -1075,5 +1075,8 @@
     <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h">
       <Filter>Custom\ScriptSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

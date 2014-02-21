@@ -605,7 +605,7 @@ bool ChatHandler::HandleGonameCommand(char* args)
 
         if (target->HasMovementFlag(MOVEFLAG_FLYING))
         {
-            _player->SetGMFly(true);
+            _player->GetAntiCheat()->SetGMFly(true);
 
             WorldPacket data;
             data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);

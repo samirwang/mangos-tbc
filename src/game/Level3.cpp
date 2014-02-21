@@ -5435,7 +5435,7 @@ bool ChatHandler::HandleGMFlyCommand(char* args)
     target->SendMessageToSet(&data, true);
     PSendSysMessage(LANG_COMMAND_FLYMODE_STATUS, GetNameLink(target).c_str(), args);
 
-    target->SetGMFly(value);
+    target->GetAntiCheat()->SetGMFly(value);
 
     return true;
 }

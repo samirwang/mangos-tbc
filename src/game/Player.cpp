@@ -390,14 +390,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_fPlayerBytes              = 0;
     m_fPlayerBytes2             = 0;
     m_FakeOnNextTick            = 0;
-    m_OldMoveTime               = 0;
-    m_OldMoveSpeed              = 0;
-    m_SkipAntiCheat             = 1;
-    m_GmFly                     = 0;
-    m_CheatReportTimer[0]       = 0;
-    m_CheatReportTimer[1]       = 0;
-    m_LastHack                  = "";
-    m_LastOpcode  = MSG_NULL_ACTION;
+    m_AntiCheat = new AntiCheat(this);
 
 
     m_transport = 0;
@@ -570,6 +563,8 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
 
 Player::~Player()
 {
+    delete m_AntiCheat;
+
     CleanupsBeforeDelete();
 
     // it must be unloaded already in PlayerLogout and accessed only for loggined player
@@ -1603,7 +1598,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         return false;
     }
 
-    SkipAntiCheat();
+    GetAntiCheat()->SkipAntiCheat();
 
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);  // Validity checked in IsValidMapCoord
 

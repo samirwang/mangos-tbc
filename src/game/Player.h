@@ -39,6 +39,7 @@
 #include "SharedDefines.h"
 #include "Chat.h"
 #include "GossipDef.h"
+#include "AntiCheat.h"
 
 #include<string>
 #include<vector>
@@ -995,20 +996,7 @@ public:
     void LearnTalentTemplate(uint8 spec);
     void ApplyEnchantTemplate(uint8 spec);
 
-    void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
-    void HandleSpeedCheat(MovementInfo& MoveInfo);
-    void HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode);
-    void HandleClimbCheat(MovementInfo& MoveInfo);
-    uint32 GetOldMoveTime() { return m_OldMoveTime; }
-    void SkipAntiCheat() { m_SkipAntiCheat = true; }
-    void SetGMFly(bool value) { m_GmFly = value; }
-
-    void HandleCheatReport(const char* hack);
-
-    bool IsFlying();
-    bool IsFalling(MovementInfo& MoveInfo);
-    bool IsSwimming(MovementInfo& MoveInfo);
-    bool IsRooted(MovementInfo& MoveInfo);
+    AntiCheat* GetAntiCheat() { return m_AntiCheat; }
 
     std::stringstream BoxChat;
     std::stringstream WideChat;
@@ -1036,14 +1024,7 @@ private:
 
     bool m_FakeOnNextTick;
 
-    MovementInfo m_OldMoveInfo;
-    uint32 m_OldMoveTime;
-    float m_OldMoveSpeed;
-    bool m_SkipAntiCheat;
-    bool m_GmFly;
-    int32 m_CheatReportTimer[2];
-    const char* m_LastHack;
-    Opcodes m_LastOpcode;
+    AntiCheat* m_AntiCheat;
 
     // !Custom
         friend class WorldSession;

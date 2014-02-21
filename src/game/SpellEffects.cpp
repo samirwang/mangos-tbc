@@ -6517,7 +6517,7 @@ void Spell::EffectCharge(SpellEffectIndex /*eff_idx*/)
         m_caster->Attack(unitTarget, true);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        ((Player*)m_caster)->SkipAntiCheat();
+        ((Player*)m_caster)->GetAntiCheat()->SkipAntiCheat();
 }
 
 void Spell::EffectCharge2(SpellEffectIndex /*eff_idx*/)
@@ -6543,7 +6543,7 @@ void Spell::EffectCharge2(SpellEffectIndex /*eff_idx*/)
         m_caster->Attack(unitTarget, true);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        ((Player*)m_caster)->SkipAntiCheat();
+        ((Player*)m_caster)->GetAntiCheat()->SkipAntiCheat();
 }
 
 void Spell::DoSummonCritter(SpellEffectIndex eff_idx, uint32 forceFaction)
