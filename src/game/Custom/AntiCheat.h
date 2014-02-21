@@ -9,7 +9,7 @@ public:
     AntiCheat(Player* pPlayer);
     ~AntiCheat() {}
 
-    void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
+    void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode, int32 lag);
     void SetGMFly(bool value) { m_GmFly = value; }
     void SkipAntiCheat() { m_SkipAntiCheat = true; }
     int32 GetCheatReportTimer(uint8 index) { return m_CheatReportTimer[index]; }
@@ -34,6 +34,7 @@ private:
     MovementInfo m_MoveInfo[2];
     Opcodes m_Opcode[2];
 
+    uint32 m_Lag;
     uint32 m_OldMoveTime;
     float m_OldMoveSpeed;
     bool m_SkipAntiCheat;

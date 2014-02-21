@@ -14,6 +14,7 @@ AntiCheat::AntiCheat(Player* pPlayer)
     m_CheatReportTimer[0] = 0;
     m_CheatReportTimer[1] = 0;
     m_LastHack = "";
+    m_Lag = 0;
 
     for (uint8 i = 0; i < 2; i++)
         m_Opcode[i] = MSG_NULL_ACTION;
@@ -62,7 +63,7 @@ bool AntiCheat::IsRooted()
     return false;
 }
 
-void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
+void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode, int32 lag)
 {
     bool SkipChecks = m_SkipAntiCheat;
     m_SkipAntiCheat = false;
@@ -72,7 +73,8 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
     if (!SkipChecks && !m_player->GetTransport() && !m_player->IsTaxiFlying())
     {
-        if (WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 500)
+        if ((m_Opcode[0] == MSG_MOVE_HEARTBEAT && WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 100) ||
+            WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 1000)
             HandleSpeedCheat();
 
         HandleHeightCheat();
@@ -108,9 +110,9 @@ void AntiCheat::HandleSpeedCheat()
     float dy = m_MoveInfo[1].GetPos()->y - m_MoveInfo[0].GetPos()->y;
     float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
 
-    float mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime());
+    float mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime()) + m_Lag;
 
-    float speedmod = mstime / 1000.f;
+    float speedmod = mstime / 1000;
 
     float maxdist = highspeed * speedmod;
 
