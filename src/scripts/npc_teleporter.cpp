@@ -31,7 +31,7 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
     if (pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(Icon::BAG, "GM menu", GOSSIP_SENDER_MAIN, 1337);
 
-    pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+    pPlayer->PlayerTalkClass->SendGossipMenu("Your wish, my law!", pCreature->GetObjectGuid());
     return true;
 }
 
@@ -322,7 +322,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
 
     if(pPlayer->PlayerTalkClass->GetGossipMenu().MenuItemCount() > 0)
-        pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+        pPlayer->PlayerTalkClass->SendGossipMenu("Your wish, my law!", pCreature->GetObjectGuid());
 
     return true;
 }

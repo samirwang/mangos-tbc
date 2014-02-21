@@ -26,7 +26,8 @@ bool GossipHello_beast_master(Player *pPlayer, Creature *pCreature)
     pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Nether Ray  ", GOSSIP_SENDER_MAIN, 11); // 17731
     pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Raptor      ", GOSSIP_SENDER_MAIN, 12); // 20634
     pPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Next Page          ", GOSSIP_SENDER_MAIN, 13);
-    pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+
+    pPlayer->PlayerTalkClass->SendGossipMenu("Those beasts mean nothing to me!", pCreature->GetObjectGuid());
     return true;
 }
 
@@ -194,8 +195,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Warp Stalker", GOSSIP_SENDER_MAIN, 20); // 23219
         pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wind Serpent", GOSSIP_SENDER_MAIN, 21); // 20673
         pPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wolf        ", GOSSIP_SENDER_MAIN, 22); // 17280
-        pPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Previous Page      ", GOSSIP_SENDER_MAIN, 0 );
-        pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+        pPlayer->AddGossipMenuItem(Icon::GEAR,   "Go to Previous Page      ", GOSSIP_SENDER_MAIN, 0 );
     }
     else if (action == 14) // Ravager 23326
     {
@@ -301,6 +301,9 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "wolf\n";
         }
     }
+
+    if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
+        pPlayer->PlayerTalkClass->SendGossipMenu("Those beasts mean nothing to me!", pCreature->GetObjectGuid());
 
     return true;
 }

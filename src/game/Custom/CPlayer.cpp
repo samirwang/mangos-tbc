@@ -111,6 +111,8 @@ void Player::OnLogin()
         AddGossipMenuItem(Icon::BAG, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 27);
     }
 
+    AddGossipMenuItem(Icon::GEAR, "Do not show this again", GOSSIP_SENDER_FIRSTLOGIN, 30);
+
     ObjectGuid guid = GetObjectGuid();
 
     for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)

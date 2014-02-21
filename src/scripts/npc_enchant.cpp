@@ -53,7 +53,8 @@ bool GossipHello_npc_enchant(Player *pPlayer, Creature *pCreature)
     if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_RANGED))
         pPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Ranged    ", SLOT_RANGED, 13);
 
-    pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+    if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
+        pPlayer->PlayerTalkClass->SendGossipMenu("Don't you feel enchanted a day like this?", pCreature->GetObjectGuid());
     return true;
 }
 
@@ -239,7 +240,7 @@ bool GossipSelect_npc_enchant(Player *pPlayer, Creature *pCreature, uint32 sende
     }
 
     if(pPlayer->PlayerTalkClass->GetGossipMenu().MenuItemCount() > 0)
-        pPlayer->PlayerTalkClass->SendGossipMenu(1,pCreature->GetObjectGuid());
+        pPlayer->PlayerTalkClass->SendGossipMenu("Don't you feel enchanted a day like this?", pCreature->GetObjectGuid());
 
     return true;
 }
