@@ -56,7 +56,7 @@ struct FakePlayerBytes
     uint32 PlayerBytes2[2];
 };
 
-struct TalentLearning
+struct TalentTemplate
 {
     uint8   ClassId;
     uint8   SpecId;
@@ -64,10 +64,19 @@ struct TalentLearning
     uint8   TalentRank;
 };
 
+struct EnchantTemplate
+{
+    uint8   ClassId;
+    uint8   SpecId;
+    uint32  SpellId;
+    uint8   SlotId;
+};
+
 typedef std::vector<TrainerSpell> SpellContainer;
 typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
 typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
-typedef std::vector<TalentLearning*> TalentContainer;
+typedef std::vector<TalentTemplate*> TalentContainer;
+typedef std::vector<EnchantTemplate*> EnchantContainer;
 
 class Custom
 {
@@ -157,6 +166,10 @@ public:
     TalentContainer::const_iterator GetTalentContainerBegin() { return m_TalentContainer.begin(); }
     TalentContainer::const_iterator GetTalentContainerEnd() { return m_TalentContainer.end(); }
 
+    void LoadEnchantContainer();
+    EnchantContainer::const_iterator GetEnchantContainerBegin() { return m_EnchantContainer.begin(); }
+    EnchantContainer::const_iterator GetEnchantContainerEnd() { return m_EnchantContainer.end(); }
+
 private:
     static const std::string m_ClassColor[];
     static const std::string m_ItemColor[];
@@ -165,6 +178,7 @@ private:
     CachedSpellContainer m_CachedSpellContainer;
     FakePlayerBytesContainer m_FakePlayerBytesContainer;
     TalentContainer m_TalentContainer;
+    EnchantContainer m_EnchantContainer;
 };
 
 #define sCustom MaNGOS::Singleton<Custom>::Instance()

@@ -150,6 +150,7 @@ void Player::PlayerGossip(uint32 sender, uint32 action, std::string code)
         { // Druid - Restoration
             AddItemSet(744);
             LearnTalentTemplate(3);
+            ApplyEnchantTemplate(3);
         }
     }
 }

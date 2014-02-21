@@ -243,7 +243,7 @@ void Custom::LoadTalentContainer()
         {
             Field* fields = result->Fetch();
 
-            TalentLearning* pTalent = new TalentLearning;
+            TalentTemplate* pTalent = new TalentTemplate;
 
             pTalent->ClassId    = fields[0].GetUInt8();
             pTalent->SpecId     = fields[1].GetUInt8();
@@ -257,6 +257,36 @@ void Custom::LoadTalentContainer()
 
         delete result;
     }
+}
 
-    sLog.outString("Loaded %u talents", count);
+void Custom::LoadEnchantContainer()
+{
+    for (EnchantContainer::const_iterator itr = m_EnchantContainer.begin(); itr != m_EnchantContainer.end(); ++itr)
+        delete *itr;
+
+    m_EnchantContainer.clear();
+
+    uint32 count = 0;
+
+    QueryResult* result = WorldDatabase.PQuery("SELECT class, spec, spellid, slotid FROM playertemplate_enchants");
+    if (result)
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+
+            EnchantTemplate* pEnchant = new EnchantTemplate;
+
+            pEnchant->ClassId   = fields[0].GetUInt8();
+            pEnchant->SpecId    = fields[1].GetUInt8();
+            pEnchant->SpellId   = fields[2].GetUInt32();
+            pEnchant->SlotId    = fields[3].GetUInt8();
+
+            m_EnchantContainer.push_back(pEnchant);
+            ++count;
+        }
+        while (result->NextRow());
+
+        delete result;
+    }
 }

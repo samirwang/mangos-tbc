@@ -603,7 +603,9 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
     if (!pItem)
     {
-        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot.\n";
+        if (sendername != "")
+            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot.\n";
+
         return;
     }
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid);
@@ -622,14 +624,18 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     if (!((1 << pItem->GetProto()->SubClass) & spellInfo->EquippedItemSubClassMask) &&
         !((1 << pItem->GetProto()->InventoryType) & spellInfo->EquippedItemInventoryTypeMask))
     {
-        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped\n";
+        if (sendername != "")
+            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped\n";
+
         return;
     }
 
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, false);
     pItem->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
-    BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
+
+    if (sendername != "")
+        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
 }
 
 void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
@@ -1111,9 +1117,14 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
 void Player::LearnTalentTemplate(uint8 spec)
 {
     for (TalentContainer::const_iterator itr = sCustom.GetTalentContainerBegin(); itr != sCustom.GetTalentContainerEnd(); ++itr)
-    {
-        BothChat << (*itr)->TalentId << std::endl;
-        if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
-            LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
-    }
+    if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
+        LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
+}
+
+
+void Player::ApplyEnchantTemplate(uint8 spec)
+{
+    for (EnchantContainer::const_iterator itr = sCustom.GetEnchantContainerBegin(); itr != sCustom.GetEnchantContainerEnd(); ++itr)
+    if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
+        EnchantItem((*itr)->SpellId, (*itr)->SlotId, "");
 }

@@ -993,6 +993,7 @@ public:
     }
 
     void LearnTalentTemplate(uint8 spec);
+    void ApplyEnchantTemplate(uint8 spec);
 
     void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
