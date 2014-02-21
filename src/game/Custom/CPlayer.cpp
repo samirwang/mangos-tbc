@@ -129,6 +129,8 @@ void Player::OnFirstLogin()
 
 void Player::AddItemSet(uint32 setid)
 {
+    std::vector<uint32> Items;
+
     ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
     if (set)
     {
@@ -136,7 +138,18 @@ void Player::AddItemSet(uint32 setid)
         {
             uint32 itemid = set->itemId[i];
             if (itemid)
-                StoreNewItemInBestSlots(itemid, 1);
+            {
+                if (StoreNewItemInBestSlots(itemid, 1))
+                    Items.push_back(itemid);
+                else
+                {
+                    for (std::vector<uint32>::const_iterator itr = Items.begin(); itr != Items.end(); ++itr)
+                        DestroyItemCount(*itr, 1, true);
+
+                    BoxChat << "Not enough space to store itemset" << std::endl;
+                    break;
+                }
+            }
         }
     }
 }
@@ -1116,6 +1129,8 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
 
 void Player::LearnTalentTemplate(uint8 spec)
 {
+    resetTalents(true);
+
     for (TalentContainer::const_iterator itr = sCustom.GetTalentContainerBegin(); itr != sCustom.GetTalentContainerEnd(); ++itr)
     if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
         LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
