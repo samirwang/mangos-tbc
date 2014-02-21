@@ -8,7 +8,6 @@ CREATE TABLE `fakeplayerbytes` (
   PRIMARY KEY (`race`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 INSERT INTO `fakeplayerbytes` VALUES ('1', '151061248', '33554435', '67242757', '33554437');
 INSERT INTO `fakeplayerbytes` VALUES ('2', '67110400', '33554433', '34014978', '33554434');
 INSERT INTO `fakeplayerbytes` VALUES ('3', '67306498', '33554440', '16909320', '33554432');

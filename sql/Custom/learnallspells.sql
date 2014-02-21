@@ -1,23 +1,3 @@
-/*
-Navicat MySQL Data Transfer
-
-Source Server         : HP-Server
-Source Server Version : 50531
-Source Host           : 192.168.0.72:3306
-Source Database       : 1mangos
-
-Target Server Type    : MYSQL
-Target Server Version : 50531
-File Encoding         : 65001
-
-Date: 2013-10-28 21:22:37
-*/
-
-SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `npc_trainer`
--- ----------------------------
 DROP TABLE IF EXISTS `npc_trainer`;
 CREATE TABLE `npc_trainer` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -28,9 +8,6 @@ CREATE TABLE `npc_trainer` (
   `reqlevel` tinyint(3) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of npc_trainer
--- ----------------------------
 INSERT INTO `npc_trainer` VALUES ('26332', '72', '1000', '0', '0', '12');
 INSERT INTO `npc_trainer` VALUES ('26332', '100', '100', '0', '0', '4');
 INSERT INTO `npc_trainer` VALUES ('26332', '284', '200', '0', '0', '8');
@@ -1660,9 +1637,6 @@ INSERT INTO `npc_trainer` VALUES ('26324', '33987', '1900', '0', '0', '68');
 INSERT INTO `npc_trainer` VALUES ('26330', '8737', '12000', '0', '0', '40');
 INSERT INTO `npc_trainer` VALUES ('26330', '32182', '88000', '0', '0', '70');
 
--- ----------------------------
--- Table structure for `npc_trainer_template`
--- ----------------------------
 DROP TABLE IF EXISTS `npc_trainer_template`;
 CREATE TABLE `npc_trainer_template` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -1673,9 +1647,6 @@ CREATE TABLE `npc_trainer_template` (
   `reqlevel` tinyint(3) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of npc_trainer_template
--- ----------------------------
 INSERT INTO `npc_trainer_template` VALUES ('1', '201', '1000', '0', '0', '0');
 INSERT INTO `npc_trainer_template` VALUES ('1', '266', '1000', '0', '0', '0');
 INSERT INTO `npc_trainer_template` VALUES ('1', '199', '1000', '0', '0', '0');
