@@ -992,6 +992,8 @@ public:
         guid = m_MultiVendor.guid;
     }
 
+    void LearnTalentTemplate(uint8 spec);
+
     void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
     void HandleSpeedCheat(MovementInfo& MoveInfo);
     void HandleHeightCheat(MovementInfo& MoveInfo, Opcodes opcode);

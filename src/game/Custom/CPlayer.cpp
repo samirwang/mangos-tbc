@@ -1107,3 +1107,13 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
 
     return false;
 }
+
+void Player::LearnTalentTemplate(uint8 spec)
+{
+    for (TalentContainer::const_iterator itr = sCustom.GetTalentContainerBegin(); itr != sCustom.GetTalentContainerEnd(); ++itr)
+    {
+        BothChat << (*itr)->TalentId << std::endl;
+        if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
+            LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
+    }
+}

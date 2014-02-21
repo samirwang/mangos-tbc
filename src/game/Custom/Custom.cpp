@@ -11,6 +11,9 @@ Custom::~Custom()
 {
     for (CachedSpellContainer::const_iterator itr = m_CachedSpellContainer.begin(); itr != m_CachedSpellContainer.end(); ++itr)
         delete itr->second;
+
+    for (TalentContainer::const_iterator itr = m_TalentContainer.begin(); itr != m_TalentContainer.end(); ++itr)
+        delete *itr;
 }
 
 void World::SendWorldChat(ObjectGuid guid, std::string msg)
@@ -161,8 +164,11 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
 {
     std::vector<uint8> playableRaces;
 
-    for (uint8 i = 0; i < 12; i++)
+    for (uint8 i = RACE_HUMAN; i <= RACE_DRAENEI; i++)
     {
+        if (i == RACE_GOBLIN)
+            continue;
+
         PlayerInfo const* info = sObjectMgr.GetPlayerInfo(i, pclass);
         if (!info)
             continue;
@@ -219,4 +225,38 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
     GetMenuSession()->SendPacket(&data);
 
     SendGossipMenu(textid, objectGuid);
+}
+
+void Custom::LoadTalentContainer()
+{
+    for (TalentContainer::const_iterator itr = m_TalentContainer.begin(); itr != m_TalentContainer.end(); ++itr)
+        delete *itr;
+
+    m_TalentContainer.clear();
+
+    uint32 count = 0;
+
+    QueryResult* result = WorldDatabase.PQuery("SELECT class, spec, id, rank FROM talenttemplates");
+    if (result)
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+
+            TalentLearning* pTalent = new TalentLearning;
+
+            pTalent->ClassId    = fields[0].GetUInt8();
+            pTalent->SpecId     = fields[1].GetUInt8();
+            pTalent->TalentId   = fields[2].GetUInt32();
+            pTalent->TalentRank = fields[3].GetUInt8();
+
+            m_TalentContainer.push_back(pTalent);
+            ++count;
+        }
+        while (result->NextRow());
+
+        delete result;
+    }
+
+    sLog.outString("Loaded %u talents", count);
 }

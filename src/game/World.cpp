@@ -1283,6 +1283,9 @@ void World::SetInitialWorldSettings()
     sLog.outString("Initializing fake playerbytes...");
     sCustom.LoadFakePlayerBytes();
 
+    sLog.outString("Initializing talent templates...");
+    sCustom.LoadTalentContainer();
+
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");
     m_gameTime = time(NULL);

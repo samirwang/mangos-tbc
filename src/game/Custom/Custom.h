@@ -56,9 +56,18 @@ struct FakePlayerBytes
     uint32 PlayerBytes2[2];
 };
 
+struct TalentLearning
+{
+    uint8   ClassId;
+    uint8   SpecId;
+    uint32  TalentId;
+    uint8   TalentRank;
+};
+
 typedef std::vector<TrainerSpell> SpellContainer;
 typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
 typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
+typedef std::vector<TalentLearning*> TalentContainer;
 
 class Custom
 {
@@ -144,14 +153,18 @@ public:
     std::string GetItemColor(uint8 quality) { return m_ItemColor[quality]; }
     std::string GetSlotName(uint8 slotid) { return m_SlotNames[slotid]; }
 
+    void LoadTalentContainer();
+    TalentContainer::const_iterator GetTalentContainerBegin() { return m_TalentContainer.begin(); }
+    TalentContainer::const_iterator GetTalentContainerEnd() { return m_TalentContainer.end(); }
+
 private:
     static const std::string m_ClassColor[];
     static const std::string m_ItemColor[];
     static const std::string m_SlotNames[];
 
     CachedSpellContainer m_CachedSpellContainer;
-
     FakePlayerBytesContainer m_FakePlayerBytesContainer;
+    TalentContainer m_TalentContainer;
 };
 
 #define sCustom MaNGOS::Singleton<Custom>::Instance()

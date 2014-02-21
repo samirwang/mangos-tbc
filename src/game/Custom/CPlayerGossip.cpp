@@ -123,6 +123,7 @@ void Player::PlayerGossip(uint32 sender, uint32 action, std::string code)
         else if (action == 27)
         { // Druid - Restoration
             AddItemSet(744);
+            LearnTalentTemplate(3);
         }
     }
 }
