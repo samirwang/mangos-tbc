@@ -920,7 +920,9 @@ class MANGOS_DLL_SPEC Player : public Unit
     // Custom
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
-    typedef std::vector<ObjectGuid> FakedPlayers;
+
+    AntiCheat* GetAntiCheat() { return m_AntiCheat; }
+    CFBG* GetCFBG() { return m_CFBG; }
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -970,9 +972,6 @@ public:
     void LearnTalentTemplate(uint8 spec);
     void ApplyEnchantTemplate(uint8 spec);
 
-    AntiCheat* GetAntiCheat() { return m_AntiCheat; }
-    CFBG* GetCFBG() { return m_CFBG; }
-
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
@@ -980,9 +979,6 @@ private:
     DelayedSpellLearn m_DelayedSpellLearn;
 
     bool m_wChatOn;
-
-    FakedPlayers m_FakedPlayers;
-    bool m_Recache;
 
     ObjectGuid m_LastGossipGuid;
 
