@@ -46,6 +46,15 @@
     <Filter Include="Custom\ScriptSystem">
       <UniqueIdentifier>{8b64df98-ecf2-401f-9a18-95f609bcade6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom\AntiCheat">
+      <UniqueIdentifier>{78ef2ba4-0541-45c3-841b-411cc5a14ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\CFBG">
+      <UniqueIdentifier>{273064bc-d3fc-43c1-893c-d80f2485c692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\Custom">
+      <UniqueIdentifier>{2dadc0f3-d540-4021-be10-edc4b09a7739}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -547,9 +556,6 @@
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenWin.cpp">
       <Filter>Custom\Warden</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
-      <Filter>Custom</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
@@ -569,10 +575,13 @@
       <Filter>Custom</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\AntiCheat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CFBG.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\CFBG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
+      <Filter>Custom\Custom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1079,10 +1088,10 @@
       <Filter>Custom\ScriptSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
-      <Filter>Custom</Filter>
+      <Filter>Custom\AntiCheat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CFBG.h">
-      <Filter>Custom</Filter>
+      <Filter>Custom\CFBG</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
