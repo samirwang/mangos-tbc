@@ -58,7 +58,7 @@ void Settings::SaveSettings()
         CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, UintSetting) VALUES (%u, %u, %u, %u)", m_player->GetGUIDLow(), itr->first, SETTING_UINT, itr->second);
 
     for (StringContainer::const_iterator itr = m_StringContainer.begin(); itr != m_StringContainer.end(); ++itr)
-        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, %s)", m_player->GetGUIDLow(), itr->first, SETTING_STRING, itr->second.c_str());
+        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, '%s')", m_player->GetGUIDLow(), itr->first, SETTING_STRING, itr->second.c_str());
 
     CharacterDatabase.CommitTransaction();
 }
