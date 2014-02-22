@@ -40,6 +40,7 @@
 #include "Chat.h"
 #include "GossipDef.h"
 #include "AntiCheat.h"
+#include "CFBG.h"
 
 #include<string>
 #include<vector>
@@ -935,36 +936,9 @@ public:
     bool WCHatOn() { return m_wChatOn; }
     void ToggleWChat() { m_wChatOn = !m_wChatOn; }
 
-    void SetFakeValues();
     void SendSavedChat(MessageTypes type, std::stringstream &ss);
     void FillGreenSpellList();
     void LearnGreenSpells();
-
-    bool NativeTeam() const { return GetTeam() == GetOTeam(); }
-    uint8 getFRace() const { return m_fRace; }
-    uint8 getORace() const { return m_oRace; }
-    uint32 getOFaction() const { return m_oFaction; }
-    uint32 getFFaction() const { return m_fFaction; }
-    uint32 getOPlayerBytes() const { return m_oPlayerBytes; }
-    uint32 getFPlayerBytes() const { return m_fPlayerBytes; }
-    uint32 getOPlayerBytes2() const { return m_oPlayerBytes2; }
-    uint32 getFPlayerBytes2() const { return m_fPlayerBytes2; }
-
-    void RecachePlayersFromList();
-    void RecachePlayersFromBG();
-    WorldPacket BuildNameQuery();
-    bool GetRecache() { return m_Recache; }
-    void SetRecache() { m_Recache = true; }
-    void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
-
-    void CJoinBattleGround(BattleGround* bg);
-    void CLeaveBattleGround(BattleGround* bg);
-
-    void FakeDisplayID();
-
-    void FakeOnNextTick() { m_FakeOnNextTick = true; }
-
-    bool SendBattleGroundChat(ChatMsg msgtype, std::string message);
 
     void CreatePet(uint32 entry, bool classcheck = true);
     void EnchantItem(uint32 spellid, uint8 slot, const char* sendername = "Enchanting");
@@ -997,6 +971,7 @@ public:
     void ApplyEnchantTemplate(uint8 spec);
 
     AntiCheat* GetAntiCheat() { return m_AntiCheat; }
+    CFBG* GetCFBG() { return m_CFBG; }
 
     std::stringstream BoxChat;
     std::stringstream WideChat;
@@ -1013,18 +988,8 @@ private:
 
     MultiVendor m_MultiVendor;
 
-    uint8 m_fRace;
-    uint8 m_oRace;
-    uint32 m_fFaction;
-    uint32 m_oFaction;
-    uint32 m_oPlayerBytes;
-    uint32 m_oPlayerBytes2;
-    uint32 m_fPlayerBytes;
-    uint32 m_fPlayerBytes2;
-
-    bool m_FakeOnNextTick;
-
     AntiCheat* m_AntiCheat;
+    CFBG* m_CFBG;
 
     // !Custom
         friend class WorldSession;

@@ -381,17 +381,8 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
-    m_fRace                     = 0;
-    m_oRace                     = 0;
-    m_fFaction                  = 0;
-    m_oFaction                  = 0;
-    m_oPlayerBytes              = 0;
-    m_oPlayerBytes2             = 0;
-    m_fPlayerBytes              = 0;
-    m_fPlayerBytes2             = 0;
-    m_FakeOnNextTick            = 0;
     m_AntiCheat = new AntiCheat(this);
-
+    m_CFBG = new CFBG(this);
 
     m_transport = 0;
 
@@ -822,10 +813,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     }
     // all item positions resolved*/
 
-    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
-    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
-
-    SetFakeValues();
+    GetCFBG()->SetFakeValues();
 
     return true;
 }
@@ -15152,8 +15140,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
 
-    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
-    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
+    GetCFBG()->SetFakeValues();
 
     return true;
 }
@@ -16197,18 +16184,18 @@ void Player::SaveToDB()
                               "?, ?, ?, ?, ?, ?, ?, "
                               "?, ?, ?, ?, ?, ?, ?, ?, ?, "
                               "?, ?, ?, ?, ?, ?, ?) ");
-
+    
     uberInsert.addUInt32(GetGUIDLow());
     uberInsert.addUInt32(GetSession()->GetAccountId());
     uberInsert.addString(m_name);
-    uberInsert.addUInt8(getORace());
+    uberInsert.addUInt8(GetCFBG()->getORace());
     uberInsert.addUInt8(getClass());
     uberInsert.addUInt8(getGender());
     uberInsert.addUInt32(getLevel());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_XP));
     uberInsert.addUInt32(GetMoney());
-    uberInsert.addUInt32(getOPlayerBytes());
-    uberInsert.addUInt32(getOPlayerBytes2());
+    uberInsert.addUInt32(GetCFBG()->getOPlayerBytes());
+    uberInsert.addUInt32(GetCFBG()->getOPlayerBytes2());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_FLAGS));
 
     if (!IsBeingTeleported())

@@ -571,6 +571,9 @@
     <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CFBG.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1076,6 +1079,9 @@
       <Filter>Custom\ScriptSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\CFBG.h">
       <Filter>Custom</Filter>
     </ClInclude>
   </ItemGroup>

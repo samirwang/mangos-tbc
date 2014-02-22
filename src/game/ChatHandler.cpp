@@ -74,7 +74,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
 
     DEBUG_LOG("CHAT: packet received. type %u, lang %u", type, lang);
 
-    if (!GetPlayer()->NativeTeam())
+    if (!GetPlayer()->GetCFBG()->NativeTeam())
     {
         // prevent talking at unknown language (cheating)
         LanguageDesc const* langDesc = GetLanguageDescByID(lang);
@@ -186,7 +186,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                 break;
 
             if (!GetPlayer()->isGameMaster())
-                if (GetPlayer()->SendBattleGroundChat(ChatMsg(type), msg))
+            if (GetPlayer()->GetCFBG()->SendBattleGroundChat(ChatMsg(type), msg))
                     return;
 
             if (type == CHAT_MSG_SAY)

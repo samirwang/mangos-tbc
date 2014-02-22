@@ -21,28 +21,28 @@ void Player::CUpdate(uint32 diff)
 
 void Player::Sometimes()
 {
-    if (GetRecache())
+    if (GetCFBG()->GetRecache())
     {
-        RecachePlayersFromList();
-        RecachePlayersFromBG();
+        GetCFBG()->RecachePlayersFromList();
+        GetCFBG()->RecachePlayersFromBG();
     }
 
-    if (m_FakeOnNextTick)
+    if (GetCFBG()->GetFakeOnNextTick())
     {
-        m_FakeOnNextTick = false;
+        GetCFBG()->SetFakeOnNextTick(false);
 
-        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
-        setFaction(getFFaction());
-        FakeDisplayID();
+        SetByteValue(UNIT_FIELD_BYTES_0, 0, GetCFBG()->getFRace());
+        setFaction(GetCFBG()->getFFaction());
+        GetCFBG()->FakeDisplayID();
 
-        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
-        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
+        SetUInt32Value(PLAYER_BYTES, GetCFBG()->getFPlayerBytes());
+        SetUInt32Value(PLAYER_BYTES_2, GetCFBG()->getFPlayerBytes2());
     }
 }
 
 void Player::OnLogin()
 {
-    SetFakeValues();
+    GetCFBG()->SetFakeValues();
 
     if (GetTotalPlayedTime() < 1)
     {
@@ -52,8 +52,8 @@ void Player::OnLogin()
         OnFirstLogin();
     }
 
-    if (!NativeTeam())
-        FakeOnNextTick();
+    if (!GetCFBG()->NativeTeam())
+        GetCFBG()->SetFakeOnNextTick();
 
     if (getClass() == CLASS_WARRIOR)
     {
@@ -182,24 +182,6 @@ void Player::SendWorldChatMsg(std::string msg)
     sWorld.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
 }
 
-void Player::SetFakeValues()
-{
-    m_fRace = sCustom.PickFakeRace(getClass(), GetOTeam());
-
-    m_fFaction = getFactionForRace(m_fRace);
-
-    m_oPlayerBytes = GetUInt32Value(PLAYER_BYTES);
-    m_oPlayerBytes2 = GetUInt32Value(PLAYER_BYTES_2);
-    m_fPlayerBytes = sCustom.GetFakePlayerBytes(m_fRace, getGender());
-    m_fPlayerBytes2 = sCustom.GetFakePlayerBytes2(m_fRace, getGender());
-
-    if (!m_fPlayerBytes)
-        m_fPlayerBytes = m_oPlayerBytes;
-
-    if (!m_fPlayerBytes2)
-        m_fPlayerBytes2 = m_oPlayerBytes2;
-}
-
 void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
 {
     if (!ss.str().empty())
@@ -315,206 +297,12 @@ void Player::LearnGreenSpells()
         FillGreenSpellList();
 }
 
-void Player::RecachePlayersFromList()
-{
-    for (FakedPlayers::const_iterator itr = m_FakedPlayers.begin(); itr != m_FakedPlayers.end(); ++itr)
-    {
-        WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-        data << *itr;
-        GetSession()->SendPacket(&data);
-
-        if (Player* player = sObjectMgr.GetPlayer(*itr))
-        {
-            WorldPacket data = player->BuildNameQuery();
-            GetSession()->SendPacket(&data);
-        }
-    }
-
-    m_FakedPlayers.clear();
-}
-
-void Player::RecachePlayersFromBG()
-{
-    if (BattleGround* bg = GetBattleGround())
-    {
-        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = bg->GetPlayers().begin();
-            itr != bg->GetPlayers().end(); ++itr)
-        {
-            if (Player* player = sObjectMgr.GetPlayer(itr->first))
-            {
-                if (!player->NativeTeam())
-                {
-                    WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-                    data << player->GetObjectGuid();
-                    GetSession()->SendPacket(&data);
-
-                    data = player->BuildNameQuery();
-                    GetSession()->SendPacket(&data);
-                }
-
-                if (!NativeTeam())
-                {
-                    WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-                    data << GetObjectGuid();
-                    player->GetSession()->SendPacket(&data);
-
-                    data = BuildNameQuery();
-                    player->GetSession()->SendPacket(&data);
-                }
-            }
-            else
-            {
-                WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-                data << itr->first;
-                GetSession()->SendPacket(&data);
-            }
-        }
-    }
-}
-
-WorldPacket Player::BuildNameQuery()
-{
-    WorldPacket data(SMSG_NAME_QUERY_RESPONSE, (8 + 1 + 4 + 4 + 4 + 10));
-    data << GetObjectGuid();                             // player guid
-    data << GetName();                                   // played name
-    data << uint8(0);                                       // realm name for cross realm BG usage
-    data << uint32(getRace());
-    data << uint32(getGender());
-    data << uint32(getClass());
-    if (DeclinedName const* names = GetDeclinedNames())
-    {
-        data << uint8(1);                                   // is declined
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
-            data << names->name[i];
-    }
-    else
-        data << uint8(0);                                   // is not declined
-
-    return data;
-}
-
-void Player::FakeDisplayID()
-{
-    if (!NativeTeam())
-    {
-        PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
-        if (!info)
-        {
-            for (uint8 i = 1; i <= CLASS_DRUID; i++)
-            {
-                info = sObjectMgr.GetPlayerInfo(getRace(), i);
-                if (info)
-                    break;
-            }
-        }
-
-        if (!info)
-        {
-            sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", GetGUIDLow());
-            return;
-        }
-
-        // reset scale before reapply auras
-        SetObjectScale(DEFAULT_OBJECT_SCALE);
-
-        uint8 gender = getGender();
-        switch (gender)
-        {
-        case GENDER_FEMALE:
-            SetDisplayId(info->displayId_f);
-            SetNativeDisplayId(info->displayId_f);
-            break;
-        case GENDER_MALE:
-            SetDisplayId(info->displayId_m);
-            SetNativeDisplayId(info->displayId_m);
-            break;
-        default:
-            sLog.outError("Invalid gender %u for player", gender);
-            return;
-        }
-
-        SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
-        SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
-    }
-}
-
 Team Player::GetTeam() const
 {
     if (GetBattleGround())
         return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
 
     return GetOTeam();
-}
-
-void Player::CJoinBattleGround(BattleGround* bg)
-{
-    if (bg->isArena())
-        return;
-
-    if (!NativeTeam())
-    {
-        m_FakedPlayers.push_back(GetObjectGuid());
-        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
-        setFaction(getFFaction());
-    }
-
-    SetRecache();
-    FakeDisplayID();
-}
-
-void Player::CLeaveBattleGround(BattleGround* bg)
-{
-    if (bg->isArena())
-        return;
-
-    SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
-    setFaction(getOFaction());
-    InitDisplayIds();
-
-    SetFakedPlayers(m_FakedPlayers);
-    SetRecache();
-
-    SetUInt32Value(PLAYER_BYTES, getOPlayerBytes());
-    SetUInt32Value(PLAYER_BYTES_2, getOPlayerBytes2());
-}
-
-bool Player::SendBattleGroundChat(ChatMsg msgtype, std::string message)
-{
-    // Select distance to broadcast to.
-    float distance = sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY);
-
-    if (msgtype == CHAT_MSG_YELL)
-        sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_YELL);
-    else if (msgtype == CHAT_MSG_EMOTE)
-        sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_TEXTEMOTE);
-
-    if (BattleGround* pBattleGround = GetBattleGround())
-    {
-        if (pBattleGround->isArena()) // Only fake chat in BG's. CFBG should not interfere with arenas.
-            return false;
-
-        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = pBattleGround->GetPlayers().begin(); itr != pBattleGround->GetPlayers().end(); ++itr)
-        {
-            if (Player* pPlayer = sObjectMgr.GetPlayer(itr->first))
-            {
-                if (GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
-                {
-                    WorldPacket data(SMSG_MESSAGECHAT, 200);
-
-                    
-                    if (GetTeam() == pPlayer->GetTeam())
-                        ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), LANG_UNIVERSAL, GetChatTag(), GetObjectGuid(), GetName());
-                    else if (msgtype != CHAT_MSG_EMOTE)
-                        ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON, GetChatTag(), GetObjectGuid(), GetName());
-
-                    pPlayer->GetSession()->SendPacket(&data);
-                }
-            }
-        }
-        return true;
-    }
-    else
-        return false;
 }
 
 void Player::CreatePet(uint32 entry, bool classcheck)
