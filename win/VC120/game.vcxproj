@@ -379,9 +379,9 @@
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CFBG.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp" />
-    <ClCompile Include="..\..\src\game\Custom\CPlayerGossip.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\PlayerGossip.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Settings.cpp" />
@@ -558,6 +558,7 @@
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h" />
     <ClInclude Include="..\..\src\game\Custom\CFBG.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
+    <ClInclude Include="..\..\src\game\Custom\PlayerGossip.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_creature.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h" />
     <ClInclude Include="..\..\src\game\Custom\Settings.h" />

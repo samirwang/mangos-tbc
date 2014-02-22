@@ -41,6 +41,7 @@
 #include "GossipDef.h"
 #include "AntiCheat.h"
 #include "CFBG.h"
+#include "PlayerGossip.h"
 
 #include<string>
 #include<vector>
@@ -926,13 +927,12 @@ public:
     AntiCheat* GetAntiCheat() { return m_AntiCheat; }
     CFBG* GetCFBG() { return m_CFBG; }
     Settings* GetSettings() { return m_Settings; }
+    PlayerGossip* GetPlayerGossip() { return m_PlayerGossip; }
 
     void CUpdate(uint32 diff);
     void Sometimes();
     void OnLogin();
     void OnFirstLogin();
-
-    void PlayerGossip(uint32 sender, uint32 action, std::string code);
 
     void AddItemSet(uint32 setid);
 
@@ -983,6 +983,7 @@ private:
     AntiCheat* m_AntiCheat;
     CFBG* m_CFBG;
     Settings* m_Settings;
+    PlayerGossip* m_PlayerGossip;
 
     DelayedSpellLearn m_DelayedSpellLearn;
 

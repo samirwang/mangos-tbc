@@ -385,6 +385,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_AntiCheat = new AntiCheat(this);
     m_CFBG = new CFBG(this);
     m_Settings = new Settings(this);
+    m_PlayerGossip = new PlayerGossip(this);
     m_wChatOn = true;
 
     m_transport = 0;
