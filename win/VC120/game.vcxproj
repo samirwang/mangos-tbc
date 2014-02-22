@@ -384,6 +384,7 @@
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp" />
     <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Settings.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenDataStorage.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenMac.cpp" />
@@ -559,6 +560,7 @@
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_creature.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h" />
+    <ClInclude Include="..\..\src\game\Custom\Settings.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenMac.h" />

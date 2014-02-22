@@ -1,9 +1,11 @@
-#include "PlayerSettings.h"
+#include "Settings.h"
 #include "Log.h"
 
 Settings::Settings(Player* pPlayer)
 {
     m_player = pPlayer;
+
+    LoadSettings();
 }
 
 void Settings::LoadSettings()
@@ -47,24 +49,16 @@ void Settings::SaveSettings()
     WorldDatabase.PExecute("DELETE FROM player_settings WHERE guid = %u", m_player->GetGUIDLow());
 
     for (FloatContainer::const_iterator itr = m_FloatContainer.begin(); itr != m_FloatContainer.end(); ++itr)
-    {
-        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, BoolSetting) VALUES (%u, %u, %u, %f)", m_player->GetGUIDLow(), itr->first, SETTING_FLOAT, itr->second);
-    }
+        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, FloatSetting) VALUES (%u, %u, %u, %f)", m_player->GetGUIDLow(), itr->first, SETTING_FLOAT, itr->second);
 
     for (IntContainer::const_iterator itr = m_IntContainer.begin(); itr != m_IntContainer.end(); ++itr)
-    {
-        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, BoolSetting) VALUES (%u, %u, %u, %i)", m_player->GetGUIDLow(), itr->first, SETTING_INT, itr->second);
-    }
+        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, IntSetting) VALUES (%u, %u, %u, %i)", m_player->GetGUIDLow(), itr->first, SETTING_INT, itr->second);
 
     for (UintContainer::const_iterator itr = m_UintContainer.begin(); itr != m_UintContainer.end(); ++itr)
-    {
-        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, BoolSetting) VALUES (%u, %u, %u, %u)", m_player->GetGUIDLow(), itr->first, SETTING_UINT, itr->second);
-    }
+        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, UintSetting) VALUES (%u, %u, %u, %u)", m_player->GetGUIDLow(), itr->first, SETTING_UINT, itr->second);
 
     for (StringContainer::const_iterator itr = m_StringContainer.begin(); itr != m_StringContainer.end(); ++itr)
-    {
-        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, BoolSetting) VALUES (%u, %u, %u, %s)", m_player->GetGUIDLow(), itr->first, SETTING_STRING, itr->second.c_str());
-    }
+        WorldDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, %s)", m_player->GetGUIDLow(), itr->first, SETTING_STRING, itr->second.c_str());
 
     WorldDatabase.CommitTransaction();
 }

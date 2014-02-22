@@ -1,5 +1,5 @@
-#ifndef _PLAYERSETTINGS_H
-#define _PLAYERSETTINGS_H
+#ifndef _SETTINGS_H
+#define _SETTINGS_H
 
 #include "Database/DatabaseEnv.h"
 
@@ -26,6 +26,7 @@ enum IntSettings
 enum UintSettings
 {
     SETTING_UINT_BEGIN = 0,
+    SETTING_UINT_WCHAT,
     SETTING_UINT_END
 };
 
@@ -49,45 +50,17 @@ public:
     void LoadSettings();
     void SaveSettings();
 
-    void SetSetting(FloatSettings setting, float value)
-    {
-        m_FloatContainer[setting] = value;
-    };
+    void SetSetting(FloatSettings setting, float value) { m_FloatContainer[setting] = value; }
+    float GetSetting(FloatSettings setting) { return m_FloatContainer[setting]; }
 
-    float GetSetting(FloatSettings setting)
-    {
-        return m_FloatContainer[setting];
-    };
+    void SetSetting(IntSettings setting, int32 value) { m_IntContainer[setting] = value; }
+    int32 GetSetting(IntSettings setting) { return m_IntContainer[setting]; }
 
-    void SetSetting(IntSettings setting, int32 value)
-    {
-        m_IntContainer[setting] = value;
-    };
+    void SetSetting(UintSettings setting, uint32 value) { m_UintContainer[setting] = value; }
+    uint32 GetSetting(UintSettings setting) { return m_UintContainer[setting]; }
 
-    int32 GetSetting(IntSettings setting)
-    {
-        return m_IntContainer[setting];
-    };
-
-    void SetSetting(UintSettings setting, uint32 value)
-    {
-        m_UintContainer[setting] = value;
-    };
-
-    uint32 GetSetting(UintSettings setting)
-    {
-        return m_UintContainer[setting];
-    };
-
-    void SetSetting(StringSettings setting, std::string value)
-    {
-        m_StringContainer[setting] = value;
-    };
-
-    std::string GetSetting(StringSettings setting)
-    {
-        return m_StringContainer[setting];
-    };
+    void SetSetting(StringSettings setting, std::string value) { m_StringContainer[setting] = value; }
+    std::string GetSetting(StringSettings setting) { return m_StringContainer[setting]; }
 
 private:
     Player* m_player;

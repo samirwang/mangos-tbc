@@ -308,7 +308,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (msg.empty())
                 break;
 
-            if (GetPlayer()->WCHatOn())
+            if (GetPlayer()->WChatOn())
             {
                 GetPlayer()->SendWorldChatMsg(msg);
                 break;

@@ -915,6 +915,8 @@ struct MultiVendor
     ObjectGuid guid;
 };
 
+class Settings;
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
@@ -923,6 +925,7 @@ public:
 
     AntiCheat* GetAntiCheat() { return m_AntiCheat; }
     CFBG* GetCFBG() { return m_CFBG; }
+    Settings* GetSettings() { return m_Settings; }
 
     void CUpdate(uint32 diff);
     void Sometimes();
@@ -935,7 +938,8 @@ public:
 
     std::string GetNameLink(bool applycolors = false);
     void SendWorldChatMsg(std::string msg);
-    bool WCHatOn() { return m_wChatOn; }
+    bool WChatOn() { return m_wChatOn; }
+    void SetWChat(bool value) { m_wChatOn = value; }
     void ToggleWChat() { m_wChatOn = !m_wChatOn; }
 
     void SendSavedChat(MessageTypes type, std::stringstream &ss);
@@ -976,6 +980,10 @@ public:
     std::stringstream WideChat;
     std::stringstream BothChat;
 private:
+    AntiCheat* m_AntiCheat;
+    CFBG* m_CFBG;
+    Settings* m_Settings;
+
     DelayedSpellLearn m_DelayedSpellLearn;
 
     bool m_wChatOn;
@@ -983,9 +991,6 @@ private:
     ObjectGuid m_LastGossipGuid;
 
     MultiVendor m_MultiVendor;
-
-    AntiCheat* m_AntiCheat;
-    CFBG* m_CFBG;
 
     // !Custom
         friend class WorldSession;

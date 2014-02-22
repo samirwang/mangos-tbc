@@ -5,6 +5,7 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "DBCStores.h"
+#include "Settings.h"
 
 void Player::CUpdate(uint32 diff)
 {
@@ -43,6 +44,7 @@ void Player::Sometimes()
 void Player::OnLogin()
 {
     GetCFBG()->SetFakeValues();
+    SetWChat(GetSettings()->GetSetting(SETTING_UINT_WCHAT));
 
     if (GetTotalPlayedTime() < 1)
     {

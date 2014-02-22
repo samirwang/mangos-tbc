@@ -55,6 +55,9 @@
     <Filter Include="Custom\Custom">
       <UniqueIdentifier>{2dadc0f3-d540-4021-be10-edc4b09a7739}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom\Settings">
+      <UniqueIdentifier>{de3c4b03-375d-4eb3-a341-8c0337c666af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -583,6 +586,9 @@
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
       <Filter>Custom\Custom</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Settings.cpp">
+      <Filter>Custom\Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1092,6 +1098,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Custom.h">
       <Filter>Custom\Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Settings.h">
+      <Filter>Custom\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
