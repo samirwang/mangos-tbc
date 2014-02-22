@@ -139,7 +139,7 @@ void Custom::LoadFakePlayerBytes()
             bytes.PlayerBytes[GENDER_MALE] = fields[1].GetUInt32();
             bytes.PlayerBytes2[GENDER_MALE] = fields[2].GetUInt32();
             bytes.PlayerBytes[GENDER_FEMALE] = fields[3].GetUInt32();
-            bytes.PlayerBytes[GENDER_FEMALE] = fields[4].GetUInt32();
+            bytes.PlayerBytes2[GENDER_FEMALE] = fields[4].GetUInt32();
 
             m_FakePlayerBytesContainer.insert(std::make_pair(race, bytes));
 
