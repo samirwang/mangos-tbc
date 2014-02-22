@@ -1,5 +1,6 @@
 #include "Precompiled.h"
 #include "ArenaTeam.h"
+#include "Settings.h"
 
 bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
 {
@@ -86,6 +87,10 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Open Auction House", GOSSIP_SENDER_MAIN, 106);
         pPlayer->AddGossipMenuItem(Icon::TABARD,    "Create a guild    ", GOSSIP_SENDER_MAIN, 107);
         pPlayer->AddGossipMenuItem(Icon::TABARD,    "Design your tabard", GOSSIP_SENDER_MAIN, 108);
+
+        if (pPlayer->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
+            pPlayer->AddGossipMenuItem(Icon::GEAR, "Show templates on login", GOSSIP_SENDER_MAIN, 109);
+
         pPlayer->AddGossipMenuItem(Icon::GEAR,      "Back              ", GOSSIP_SENDER_MAIN, 0  );
     }
     else if (action == 101) // Reset Talents
@@ -118,6 +123,11 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->GetSession()->SendPetitionShowList(pCreature->GetObjectGuid());
     else if (action == 108) // Tabard Petitioner
         pPlayer->GetSession()->SendTabardVendorActivate(pCreature->GetObjectGuid());
+    else if (action == 109)
+    {
+        pPlayer->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, false);
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " Template menu will be shown on next login\n";
+    }
     else if (action == 200) // Change Level
     {
         if (pPlayer->getLevel() != 70)

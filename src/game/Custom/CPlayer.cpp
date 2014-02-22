@@ -43,7 +43,9 @@ void Player::Sometimes()
 
 void Player::OnLogin()
 {
+    GetSettings()->LoadSettings();
     GetCFBG()->SetFakeValues();
+
     SetWChat(GetSettings()->GetSetting(SETTING_UINT_WCHAT));
 
     if (GetTotalPlayedTime() < 1)
@@ -57,72 +59,76 @@ void Player::OnLogin()
     if (!GetCFBG()->NativeTeam())
         GetCFBG()->SetFakeOnNextTick();
 
-    if (getClass() == CLASS_WARRIOR)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Arms",         GOSSIP_SENDER_FIRSTLOGIN, 1);
-        AddGossipMenuItem(Icon::BAG, "I want to play Fury",         GOSSIP_SENDER_FIRSTLOGIN, 2);
-        AddGossipMenuItem(Icon::BAG, "I want to play Protection",   GOSSIP_SENDER_FIRSTLOGIN, 3);
-    }
-    else if (getClass() == CLASS_PALADIN)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Holy",         GOSSIP_SENDER_FIRSTLOGIN, 4);
-        AddGossipMenuItem(Icon::BAG, "I want to play Protection",   GOSSIP_SENDER_FIRSTLOGIN, 5);
-        AddGossipMenuItem(Icon::BAG, "I want to play Retribution",  GOSSIP_SENDER_FIRSTLOGIN, 6);
-    }
-    else if (getClass() == CLASS_HUNTER)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Beast Mastery",GOSSIP_SENDER_FIRSTLOGIN, 7);
-        AddGossipMenuItem(Icon::BAG, "I want to play Marksmanship", GOSSIP_SENDER_FIRSTLOGIN, 8);
-        AddGossipMenuItem(Icon::BAG, "I want to play Survival",     GOSSIP_SENDER_FIRSTLOGIN, 9);
-    }
-    else if (getClass() == CLASS_ROGUE)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Assassination",GOSSIP_SENDER_FIRSTLOGIN, 10);
-        AddGossipMenuItem(Icon::BAG, "I want to play Combat",       GOSSIP_SENDER_FIRSTLOGIN, 11);
-        AddGossipMenuItem(Icon::BAG, "I want to play Subtlety",     GOSSIP_SENDER_FIRSTLOGIN, 12);
-    }
-    else if (getClass() == CLASS_PRIEST)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Discipline",   GOSSIP_SENDER_FIRSTLOGIN, 13);
-        AddGossipMenuItem(Icon::BAG, "I want to play Holy",         GOSSIP_SENDER_FIRSTLOGIN, 14);
-        AddGossipMenuItem(Icon::BAG, "I want to play Shadow",       GOSSIP_SENDER_FIRSTLOGIN, 15);
-    }
-    else if (getClass() == CLASS_SHAMAN)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Elemental",    GOSSIP_SENDER_FIRSTLOGIN, 16);
-        AddGossipMenuItem(Icon::BAG, "I want to play Enhancement",  GOSSIP_SENDER_FIRSTLOGIN, 17);
-        AddGossipMenuItem(Icon::BAG, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 18);
-    }
-    else if (getClass() == CLASS_MAGE)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Arcane",       GOSSIP_SENDER_FIRSTLOGIN, 19);
-        AddGossipMenuItem(Icon::BAG, "I want to play Fire",         GOSSIP_SENDER_FIRSTLOGIN, 20);
-        AddGossipMenuItem(Icon::BAG, "I want to play Frost",        GOSSIP_SENDER_FIRSTLOGIN, 21);
-    }
-    else if (getClass() == CLASS_WARLOCK)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Affliction",   GOSSIP_SENDER_FIRSTLOGIN, 22);
-        AddGossipMenuItem(Icon::BAG, "I want to play Demonology",   GOSSIP_SENDER_FIRSTLOGIN, 23);
-        AddGossipMenuItem(Icon::BAG, "I want to play Destruction",  GOSSIP_SENDER_FIRSTLOGIN, 24);
-    }
-    else if (getClass() == CLASS_DRUID)
-    {
-        AddGossipMenuItem(Icon::BAG, "I want to play Balance",      GOSSIP_SENDER_FIRSTLOGIN, 25);
-        AddGossipMenuItem(Icon::BAG, "I want to play Feral",        GOSSIP_SENDER_FIRSTLOGIN, 26);
-        AddGossipMenuItem(Icon::BAG, "I want to play Restoration",  GOSSIP_SENDER_FIRSTLOGIN, 27);
-    }
 
-    AddGossipMenuItem(Icon::GEAR, "Do not show this again", GOSSIP_SENDER_FIRSTLOGIN, 30);
+    if (!GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
+    {
+        if (getClass() == CLASS_WARRIOR)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Arms", GOSSIP_SENDER_FIRSTLOGIN, 1);
+            AddGossipMenuItem(Icon::BAG, "I want to play Fury", GOSSIP_SENDER_FIRSTLOGIN, 2);
+            AddGossipMenuItem(Icon::BAG, "I want to play Protection", GOSSIP_SENDER_FIRSTLOGIN, 3);
+        }
+        else if (getClass() == CLASS_PALADIN)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Holy", GOSSIP_SENDER_FIRSTLOGIN, 4);
+            AddGossipMenuItem(Icon::BAG, "I want to play Protection", GOSSIP_SENDER_FIRSTLOGIN, 5);
+            AddGossipMenuItem(Icon::BAG, "I want to play Retribution", GOSSIP_SENDER_FIRSTLOGIN, 6);
+        }
+        else if (getClass() == CLASS_HUNTER)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Beast Mastery", GOSSIP_SENDER_FIRSTLOGIN, 7);
+            AddGossipMenuItem(Icon::BAG, "I want to play Marksmanship", GOSSIP_SENDER_FIRSTLOGIN, 8);
+            AddGossipMenuItem(Icon::BAG, "I want to play Survival", GOSSIP_SENDER_FIRSTLOGIN, 9);
+        }
+        else if (getClass() == CLASS_ROGUE)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Assassination", GOSSIP_SENDER_FIRSTLOGIN, 10);
+            AddGossipMenuItem(Icon::BAG, "I want to play Combat", GOSSIP_SENDER_FIRSTLOGIN, 11);
+            AddGossipMenuItem(Icon::BAG, "I want to play Subtlety", GOSSIP_SENDER_FIRSTLOGIN, 12);
+        }
+        else if (getClass() == CLASS_PRIEST)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Discipline", GOSSIP_SENDER_FIRSTLOGIN, 13);
+            AddGossipMenuItem(Icon::BAG, "I want to play Holy", GOSSIP_SENDER_FIRSTLOGIN, 14);
+            AddGossipMenuItem(Icon::BAG, "I want to play Shadow", GOSSIP_SENDER_FIRSTLOGIN, 15);
+        }
+        else if (getClass() == CLASS_SHAMAN)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Elemental", GOSSIP_SENDER_FIRSTLOGIN, 16);
+            AddGossipMenuItem(Icon::BAG, "I want to play Enhancement", GOSSIP_SENDER_FIRSTLOGIN, 17);
+            AddGossipMenuItem(Icon::BAG, "I want to play Restoration", GOSSIP_SENDER_FIRSTLOGIN, 18);
+        }
+        else if (getClass() == CLASS_MAGE)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Arcane", GOSSIP_SENDER_FIRSTLOGIN, 19);
+            AddGossipMenuItem(Icon::BAG, "I want to play Fire", GOSSIP_SENDER_FIRSTLOGIN, 20);
+            AddGossipMenuItem(Icon::BAG, "I want to play Frost", GOSSIP_SENDER_FIRSTLOGIN, 21);
+        }
+        else if (getClass() == CLASS_WARLOCK)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Affliction", GOSSIP_SENDER_FIRSTLOGIN, 22);
+            AddGossipMenuItem(Icon::BAG, "I want to play Demonology", GOSSIP_SENDER_FIRSTLOGIN, 23);
+            AddGossipMenuItem(Icon::BAG, "I want to play Destruction", GOSSIP_SENDER_FIRSTLOGIN, 24);
+        }
+        else if (getClass() == CLASS_DRUID)
+        {
+            AddGossipMenuItem(Icon::BAG, "I want to play Balance", GOSSIP_SENDER_FIRSTLOGIN, 25);
+            AddGossipMenuItem(Icon::BAG, "I want to play Feral", GOSSIP_SENDER_FIRSTLOGIN, 26);
+            AddGossipMenuItem(Icon::BAG, "I want to play Restoration", GOSSIP_SENDER_FIRSTLOGIN, 27);
+        }
 
-    ObjectGuid guid = GetObjectGuid();
+        AddGossipMenuItem(Icon::GEAR, "Do not show this again", GOSSIP_SENDER_FIRSTLOGIN, 30);
 
-    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+        ObjectGuid guid = GetObjectGuid();
+
+        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-            if (pItem->GetEntry() == 6948) // Hearthstone
-                guid = pItem->GetObjectGuid();
+        if (pItem->GetEntry() == 6948) // Hearthstone
+            guid = pItem->GetObjectGuid();
 
-    if (!PlayerTalkClass->GetGossipMenu().Empty())
-        PlayerTalkClass->SendGossipMenu("Please select your spec!", guid);
+        if (!PlayerTalkClass->GetGossipMenu().Empty())
+            PlayerTalkClass->SendGossipMenu("Please select your spec!", guid);
+    }
 }
 
 void Player::OnFirstLogin()

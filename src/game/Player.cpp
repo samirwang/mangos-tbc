@@ -16157,6 +16157,8 @@ void Player::SaveToDB()
         return;
     }
 
+    GetSettings()->SaveSettings();
+
     // first save/honor gain after midnight will also update the player's honor fields
     UpdateHonorFields();
 

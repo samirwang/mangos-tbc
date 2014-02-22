@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Custom.h"
+#include "Settings.h"
 
 void Player::PlayerGossip(uint32 sender, uint32 action, std::string code)
 {
@@ -151,6 +152,10 @@ void Player::PlayerGossip(uint32 sender, uint32 action, std::string code)
             AddItemSet(744);
             LearnTalentTemplate(3);
             ApplyEnchantTemplate(3);
+        }
+        else if (action == 30)
+        {
+            GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, 1);
         }
     }
 }
