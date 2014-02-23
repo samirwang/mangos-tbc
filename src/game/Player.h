@@ -916,7 +916,10 @@ struct MultiVendor
     ObjectGuid guid;
 };
 
+class AntiCheat;
+class CFBG;
 class Settings;
+class PlayerGossip;
 
 class MANGOS_DLL_SPEC Player : public Unit
 {

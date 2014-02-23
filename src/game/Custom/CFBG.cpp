@@ -1,6 +1,10 @@
 #include "CFBG.h"
 #include "World.h"
 #include "Custom.h"
+#include "ObjectMgr.h"
+#include "DBCStores.h"
+#include "Player.h"
+#include "BattleGround/BattleGround.h"
 
 CFBG::CFBG(Player* pPlayer)
 {
@@ -236,3 +240,30 @@ bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
     else
         return false;
 }
+
+void CFBG::RewardReputationToXBGTeam(BattleGround* pBG, uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId)
+{
+    FactionEntry const* a_factionEntry = sFactionStore.LookupEntry(faction_ally);
+    FactionEntry const* h_factionEntry = sFactionStore.LookupEntry(faction_horde);
+
+    if (!a_factionEntry || !h_factionEntry)
+        return;
+
+    for (BattleGround::BattleGroundPlayerMap::const_iterator itr = pBG->GetPlayers().begin(); itr != pBG->GetPlayers().end(); ++itr)
+    {
+        if (itr->second.OfflineRemoveTime)
+            continue;
+
+        Player* plr = sObjectMgr.GetPlayer(itr->first);
+
+        if (!plr)
+        {
+            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr->first.GetString().c_str());
+            continue;
+        }
+
+        if (plr->GetTeam() == teamId) // Check if player is playing in the team that capped and then reward by original team.
+            plr->GetReputationMgr().ModifyReputation(plr->GetOTeam() == ALLIANCE ? a_factionEntry : h_factionEntry, gain);
+    }
+}
+

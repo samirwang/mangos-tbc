@@ -2,6 +2,7 @@
 #define _CFBG_H
 
 #include "Player.h"
+#include "BattleGround/BattleGround.h"
 
 class CFBG
 {
@@ -38,6 +39,8 @@ public:
     bool GetFakeOnNextTick() { return m_FakeOnNextTick; }
 
     bool SendBattleGroundChat(ChatMsg msgtype, std::string message);
+
+    static void RewardReputationToXBGTeam(BattleGround* pBG, uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId);
 
 private:
     Player* m_player;

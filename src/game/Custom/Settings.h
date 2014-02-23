@@ -1,6 +1,7 @@
 #ifndef _SETTINGS_H
 #define _SETTINGS_H
 
+#include "Player.h"
 #include "Database/DatabaseEnv.h"
 
 enum DataTypeId

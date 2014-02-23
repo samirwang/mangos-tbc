@@ -2,6 +2,7 @@
 #include "Timer.h"
 #include "World.h"
 #include "AntiCheat.h"
+#include "MapManager.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
