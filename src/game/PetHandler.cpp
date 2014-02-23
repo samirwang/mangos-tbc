@@ -247,7 +247,10 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
                             pet->AttackStop();
                         pet->GetMotionMaster()->Clear();
                         if (((Creature*)pet)->AI())
+                        {
                             ((Creature*)pet)->AI()->AttackStart(unit_target);
+                            _player->SetInCombatWith(unit_target);
+                        }
                     }
                 }
 
