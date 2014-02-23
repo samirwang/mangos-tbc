@@ -22,7 +22,7 @@ void World::SendWorldChat(ObjectGuid guid, std::string msg)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->WChatOn())
-        pPlayer->BoxChat << msg << "\n";
+        pPlayer->BoxChat << msg << std::endl;
 }
 
 void World::SendGMMessage(std::string msg)
@@ -31,7 +31,7 @@ void World::SendGMMessage(std::string msg)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
-        pPlayer->BothChat << msg << "\n";
+        pPlayer->BothChat << msg << std::endl;
 }
 
 SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)

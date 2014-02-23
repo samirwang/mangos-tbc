@@ -6,7 +6,7 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
 {
     if (pPlayer->isInCombat())
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!" << std::endl;
         return true;
     }
 
@@ -44,7 +44,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
 
     if (pPlayer->isInCombat())
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!" << std::endl;
         return true;
     }
 
@@ -54,7 +54,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         pPlayer->SendMultiVendorInventory(action, pCreature->GetObjectGuid());
     else if (action == 1) // Teleport To: Shopping Mall
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to The Shopping Mall\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to The Shopping Mall" << std::endl;
         if (pPlayer->GetTeam() == HORDE)
             pPlayer->TeleportTo(530, 237.497f, 2696.65f, 90.755f, 3.25544f);
         else
@@ -62,17 +62,17 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 2) // Teleport To: Neutral Mall
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to Neutral shopping mall\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to Neutral shopping mall" << std::endl;
         pPlayer->TeleportTo(530, -248.403f, 939.569f, 84.3788f, 1.53148f);
     }
     else if (action == 3) // Teleport To: Gurubashi Arena
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to Gurubashi Arena\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to Gurubashi Arena" << std::endl;
         pPlayer->TeleportTo(0, -13235.7f, 213.741f, 31.2181f, 1.14919f);
     }
     else if (action == 4) // Teleport To: Stormspire
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to The Stormspire\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Welcome to The Stormspire" << std::endl;
 
         if (pPlayer->GetTeam() == ALLIANCE)
             pPlayer->TeleportTo(530, 4201.07f, 3100.86f, 335.821f, 4.02089f);
@@ -103,17 +103,17 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action == 102) // Talents Reset
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Talents Reset\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Talents Reset" << std::endl;
         pPlayer->resetTalents(true);
     }
     else if (action == 103) // Weapon skills maxed
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Weapon skills maxed\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Weapon skills maxed" << std::endl;
         pPlayer->UpdateSkillsToMaxSkillsForLevel();
     }
     else if (action == 104) // Cooldowns reset
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Cooldowns reset\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " Cooldowns reset" << std::endl;
         pPlayer->RemoveArenaSpellCooldowns();
     }
     else if (action == 105) // Show bank
@@ -127,7 +127,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     else if (action == 109)
     {
         pPlayer->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, false);
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " Template menu will be shown on next login\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " Template menu will be shown on next login" << std::endl;
     }
     else if (action == 200) // Change Level
     {
@@ -144,7 +144,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
         {
             if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             {
-                pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You cannot have any gear equipped while changing level\n";
+                pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You cannot have any gear equipped while changing level" << std::endl;
                 return true;
             }
         }
@@ -325,11 +325,11 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     else if (action == 1339)
     {
         if (sender == CHAT_BOX)
-            pPlayer->BoxChat << "Boxchat\n";
+            pPlayer->BoxChat << "Boxchat" << std::endl;
         else if (sender == CHAT_WIDE)
-            pPlayer->WideChat << "WideChat\n";
+            pPlayer->WideChat << "WideChat" << std::endl;
         else if (sender == CHAT_BOTH)
-            pPlayer->BothChat << "BothChat\n";
+            pPlayer->BothChat << "BothChat" << std::endl;
     }
 
     if(pPlayer->PlayerTalkClass->GetGossipMenu().MenuItemCount() > 0)

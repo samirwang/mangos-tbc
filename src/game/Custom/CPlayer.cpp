@@ -252,7 +252,7 @@ void Player::CreatePet(uint32 entry, bool classcheck)
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
     if (!cinfo)
     {
-        BoxChat << MSG_COLOR_WHITE << " This pet seems to be removed from the database. Please report that creature " << entry << " is missing.\n";
+        BoxChat << MSG_COLOR_WHITE << " This pet seems to be removed from the database. Please report that creature " << entry << " is missing." << std::endl;
         return;
     }
 
@@ -345,20 +345,20 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     if (!pItem)
     {
         if (sendername != "")
-            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot.\n";
+            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot." << std::endl;
 
         return;
     }
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid);
     if (!spellInfo)
     {
-        BoxChat << "Invalid spellid " << spellid << " report to devs\n";
+        BoxChat << "Invalid spellid " << spellid << " report to devs" << std::endl;
         return;
     }
     uint32 enchantid = spellInfo->EffectMiscValue[0];
     if (!enchantid)
     {
-        BoxChat << "Invalid enchantid " << enchantid << " report to devs\n";
+        BoxChat << "Invalid enchantid " << enchantid << " report to devs" << std::endl;
         return;
     }
 
@@ -366,7 +366,7 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
         !((1 << pItem->GetProto()->InventoryType) & spellInfo->EquippedItemInventoryTypeMask))
     {
         if (sendername != "")
-            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped\n";
+            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped" << std::endl;
 
         return;
     }
@@ -376,7 +376,7 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
 
     if (sendername != "")
-        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!\n";
+        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!" << std::endl;
 }
 
 void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
@@ -386,7 +386,7 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(cEntry);
     if (!cinfo)
     {
-        BoxChat << MSG_COLOR_WHITE << "This vendor seems to be removed from the database. Please report that creature " << cEntry << " is missing.\n";
+        BoxChat << MSG_COLOR_WHITE << "This vendor seems to be removed from the database. Please report that creature " << cEntry << " is missing." << std::endl;
         return;
     }
 
@@ -496,7 +496,7 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
     if (!cinfo)
     {
-        BoxChat << MSG_COLOR_WHITE << "This vendor seems to be removed from the database. Please report that creature " << entry << " is missing.\n";
+        BoxChat << MSG_COLOR_WHITE << "This vendor seems to be removed from the database. Please report that creature " << entry << " is missing." << std::endl;
         return false;
     }
 

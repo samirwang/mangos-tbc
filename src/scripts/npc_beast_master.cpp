@@ -4,12 +4,12 @@ bool GossipHello_beast_master(Player *pPlayer, Creature *pCreature)
 {
     if (pPlayer->isInCombat())
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!" << std::endl;
         return true;
     }
     else if (pPlayer->getClass() != CLASS_HUNTER)
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are no hunter!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are no hunter!" << std::endl;
         return true;
     }
 
@@ -40,7 +40,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
 
     if (pPlayer->isInCombat())
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!" << std::endl;
         return true;
     }
     else if (action == 0)
@@ -54,7 +54,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23148); // Dive
             pPlayer->GetPet()->learnSpell(27051); // Screech
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "bat\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "bat" << std::endl;
         }
     }
     else if (action == 2) // Bear 23584
@@ -65,7 +65,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(27049); // Claw
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "bear\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "bear" << std::endl;
         }
     }
     else if (action == 3) // Boar 21878
@@ -78,7 +78,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27685); // Charge
             pPlayer->GetPet()->learnSpell(23110); // Dash
             pPlayer->GetPet()->learnSpell(35298); // Gore
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "boar\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "boar" << std::endl;
         }
     }
     else if (action == 4) // Carrion Bird 18707
@@ -91,7 +91,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27049); // Claw
             pPlayer->GetPet()->learnSpell(23148); // Dive
             pPlayer->GetPet()->learnSpell(27051); // Screech
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "carrion bird\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "carrion bird" << std::endl;
         }
     }
     else if (action == 5) // Cat 20671
@@ -104,7 +104,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27049); // Claw
             pPlayer->GetPet()->learnSpell(23110); // Dash
             pPlayer->GetPet()->learnSpell(24453); // Prowl
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "cat\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "cat" << std::endl;
         }
     }
     else if (action == 6) // Crab 18241
@@ -114,7 +114,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         if (pPlayer->GetPet())
         {
             pPlayer->GetPet()->learnSpell(27049); // Claw
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "crab\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "crab" << std::endl;
         }
     }
     else if (action == 7) // Crocolisk 20773
@@ -124,7 +124,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         if (pPlayer->GetPet())
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "crocolisk\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "crocolisk" << std::endl;
         }
     }
     else if (action == 8) // Dragonhawk 18155
@@ -136,7 +136,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23148); // Dive
             pPlayer->GetPet()->learnSpell(35323); // Fire Breath
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "dragonhawk\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "dragonhawk" << std::endl;
         }
     }
     else if (action == 9) // Gorilla 6585
@@ -147,7 +147,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(27063); // Thunderstomp
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "gorilla\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "gorilla" << std::endl;
         }
     }
     else if (action == 10) // Hyena 8300
@@ -158,7 +158,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23110); // Dash
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "hyena\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "hyena" << std::endl;
         }
     }
     else if (action == 11) // Nether Ray 17731
@@ -169,7 +169,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23148); // Dive
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "nether ray\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "nether ray" << std::endl;
         }
     }
     else if (action == 12) // Raptor 20634
@@ -181,7 +181,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(27049); // Claw
             pPlayer->GetPet()->learnSpell(23110); // Dash
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "raptor\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "raptor" << std::endl;
         }
     }
     else if (action == 13)
@@ -206,7 +206,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23110); // Dash
             pPlayer->GetPet()->learnSpell(35298); // Gore
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "ravager\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "ravager" << std::endl;
         }
     }
     else if (action == 15) // Scorpid 21864
@@ -217,7 +217,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27049); // Claw
             pPlayer->GetPet()->learnSpell(27060); // Scorpid Poision
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "scorpid\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "scorpid" << std::endl;
         }
     }
     else if (action == 16) // Serpent 19784
@@ -228,7 +228,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(35392); // Poision Spit
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "serpent\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "serpent" << std::endl;
         }
     }
     else if (action == 17) // Spider 16170
@@ -239,7 +239,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(4167);  // Web
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "spider\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "spider" << std::endl;
         }
     }
     else if (action == 18) // Tallstrider 22807
@@ -250,7 +250,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23110); // Dash
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "tallstrider\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "tallstrider" << std::endl;
         }
     }
     else if (action == 19) // Turtle 5431
@@ -261,7 +261,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
         {
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(26064); // Spell Shield
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "turtle\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "turtle" << std::endl;
         }
     }
     else if (action == 20) // Warp Stalker 23219
@@ -273,7 +273,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(27049); // Claw
             pPlayer->GetPet()->learnSpell(35346); // Warp
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "warp stalker\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "warp stalker" << std::endl;
         }
     }
     else if (action == 21) // Wind Serpent 20673
@@ -285,7 +285,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(27050); // Bite
             pPlayer->GetPet()->learnSpell(23148); // Dive
             pPlayer->GetPet()->learnSpell(25012); // Lightning Breath
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "wind serpent\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "wind serpent" << std::endl;
         }
     }
     else if (action == 22) // Wolf 17280
@@ -298,7 +298,7 @@ bool GossipSelect_beast_master(Player *pPlayer, Creature *pCreature, uint32 /*se
             pPlayer->GetPet()->learnSpell(23110); // Dash
             pPlayer->GetPet()->learnSpell(27685); // Charge
             pPlayer->GetPet()->learnSpell(24604); // Furious Howl
-            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "wolf\n";
+            pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << tamedmsg << "wolf" << std::endl;
         }
     }
 

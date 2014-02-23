@@ -4,7 +4,7 @@ bool GossipHello_npc_enchant(Player *pPlayer, Creature *pCreature)
 {
     if (pPlayer->isInCombat())
     {
-        pPlayer->BothChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!\n";
+        pPlayer->BothChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " You are in combat!" << std::endl;
         return true;
     }
 
@@ -65,7 +65,7 @@ bool GossipSelect_npc_enchant(Player *pPlayer, Creature *pCreature, uint32 sende
 
     if (pPlayer->isInCombat())
     {
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!\n";
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(cName) << " You are in combat!" << std::endl;
         return true;
     }
     else if (action == 0)
