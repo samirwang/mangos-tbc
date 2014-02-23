@@ -21,7 +21,8 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
     if (pPlayer->GetAreaId() != 3738 || pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Stormspire", GOSSIP_SENDER_MAIN, 4);
 
-    if (pPlayer->GetAreaId() != 1741 && pPlayer->GetAreaId() != 2177)
+    if ((pPlayer->GetAreaId() != 1741 && pPlayer->GetAreaId() != 2177) ||
+        pPlayer->isGameMaster())
         pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Gurubashi Arena", GOSSIP_SENDER_MAIN, 3);
 
     pPlayer->AddGossipMenuItem(Icon::GEAR, "Open Tools                  ", GOSSIP_SENDER_MAIN, 100);
