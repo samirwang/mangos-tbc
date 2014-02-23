@@ -898,6 +898,10 @@ bool IsPositiveEffect(SpellEntry const* spellproto, SpellEffectIndex effIndex)
             break;
     }
 
+    // Shadow sight must be negative, to prevent remove from rogues/druids.
+    if(spellproto->Id == 34709)
+        return false;
+
     // non-positive targets
     if (!IsPositiveTarget(spellproto->EffectImplicitTargetA[effIndex], spellproto->EffectImplicitTargetB[effIndex]))
         return false;
