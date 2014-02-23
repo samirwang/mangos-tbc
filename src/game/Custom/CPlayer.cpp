@@ -41,12 +41,55 @@ void Player::Sometimes()
     }
 }
 
+void Player::LoadCountryData()
+{
+    std::ostringstream ss;
+
+    ss << "SELECT"
+        << " c.iso_code_2, c.iso_code_3, c.country"
+        << " FROM"
+        << " ip2nationcountries c,"
+        << " ip2nation i"
+        << " WHERE"
+        << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
+        << " AND"
+        << " c.code = i.country"
+        << " ORDER BY"
+        << " i.ip DESC"
+        << " LIMIT 1";
+
+    if (QueryResult* result = LoginDatabase.PQuery(ss.str().c_str()))
+    {
+        Field* fields = result->Fetch();
+
+        m_Country.ISO2 = fields[0].GetCppString();
+        m_Country.ISO3 = fields[1].GetCppString();
+        m_Country.FULL = fields[2].GetCppString();
+
+        delete result;
+    }
+
+    if (GetSession()->GetRemoteAddress() == "127.0.0.1")
+    {
+        m_Country.ISO2 = "Local";
+        m_Country.ISO3 = "Local";
+        m_Country.FULL = "Local";
+    }
+}
+
 void Player::OnLogin()
 {
     GetSettings()->LoadSettings();
     GetCFBG()->SetFakeValues();
 
+    LoadCountryData();
+
     SetWChat(GetSettings()->GetSetting(SETTING_UINT_WCHAT));
+
+    if (!GetCFBG()->NativeTeam())
+        GetCFBG()->SetFakeOnNextTick();
+
+    GetPlayerGossip()->PlayerGossipHello(GOSSIP_SENDER_FIRSTLOGIN);
 
     if (GetTotalPlayedTime() < 1)
     {
@@ -55,11 +98,6 @@ void Player::OnLogin()
 
         OnFirstLogin();
     }
-
-    if (!GetCFBG()->NativeTeam())
-        GetCFBG()->SetFakeOnNextTick();
-
-    GetPlayerGossip()->PlayerGossipHello(GOSSIP_SENDER_FIRSTLOGIN);
 }
 
 void Player::OnFirstLogin()

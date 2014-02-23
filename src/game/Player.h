@@ -912,8 +912,28 @@ enum MessageTypes
 
 struct MultiVendor
 {
+    MultiVendor()
+    {
+        entry = 0;
+        guid = ObjectGuid();
+    }
+
     uint32 entry;
     ObjectGuid guid;
+};
+
+struct Country 
+{
+    Country()
+    {
+        ISO2 = "";
+        ISO3 = "";
+        FULL = "";
+    }
+
+    std::string ISO2;
+    std::string ISO3;
+    std::string FULL;
 };
 
 class AntiCheat;
@@ -979,9 +999,12 @@ public:
     void LearnTalentTemplate(uint8 spec);
     void ApplyEnchantTemplate(uint8 spec);
 
+    void LoadCountryData();
+
     std::stringstream BoxChat;
     std::stringstream WideChat;
     std::stringstream BothChat;
+
 private:
     AntiCheat* m_AntiCheat;
     CFBG* m_CFBG;
@@ -991,6 +1014,7 @@ private:
     DelayedSpellLearn m_DelayedSpellLearn;
 
     bool m_wChatOn;
+    Country m_Country;
 
     ObjectGuid m_LastGossipGuid;
 
