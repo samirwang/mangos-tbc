@@ -40,12 +40,18 @@ include_directories(
 
 set(SRC_GRP_CUSTOM
     Custom/AntiCheat.cpp
+    Custom/AntiCheat.h
     Custom/CChat.cpp
+    Custom/CFBG.cpp
+    Custom/CFBG.h
     Custom/CPlayer.cpp
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp
-    Custom/Warden
+    Custom/PlayerGossip.cpp
+    Custom/PlayerGossip.h
+    Custom/Settings.cpp
+    Custom/Settings.h
     Custom/sc_creature.cpp
     Custom/sc_creature.h
     Custom/sc_grid_searchers.cpp
