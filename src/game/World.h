@@ -443,9 +443,13 @@ struct CliCommandHolder
 class World
 {
 public:
+    typedef UNORDERED_MAP<uint32, WorldSession*> SessionMap;
+
     uint32 GetSaveInterval();
-    void SendWorldChat(ObjectGuid guid, std::string msg);
-    void SendGMMessage(std::string msg);
+
+    SessionMap::const_iterator GetSessionsBegin() { return m_sessions.begin(); }
+    SessionMap::const_iterator GetSessionsEnd() { return m_sessions.end(); }
+    
     // !Custom
     public:
         static volatile uint32 m_worldLoopCounter;
@@ -633,7 +637,6 @@ public:
 
         typedef UNORDERED_MAP<uint32, Weather*> WeatherMap;
         WeatherMap m_weathers;
-        typedef UNORDERED_MAP<uint32, WorldSession*> SessionMap;
         SessionMap m_sessions;
         uint32 m_maxActiveSessionCount;
         uint32 m_maxQueuedSessionCount;

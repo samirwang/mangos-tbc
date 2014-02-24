@@ -3,6 +3,7 @@
 #include "World.h"
 #include "AntiCheat.h"
 #include "MapManager.h"
+#include "Custom.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
@@ -257,7 +258,7 @@ void AntiCheat::HandleCheatReport(const char* hack)
     {
         std::ostringstream ss;
         ss << "Player " << m_player->GetName() << " was caught " << hack;
-        sWorld.SendGMMessage(ss.str());
+        sCustom.SendGMMessage(ss.str());
         m_CheatReportTimer[1] = 1000;
         m_LastHack = hack;
     }

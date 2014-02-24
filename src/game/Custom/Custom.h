@@ -106,6 +106,9 @@ public:
         var &= ~flag;
     }
 
+    void SendWorldChat(ObjectGuid guid, std::string msg);
+    void SendGMMessage(std::string msg);
+
     SpellContainer GetSpellContainerByCreatureEntry(uint32 entry);
     SpellContainer* GetCachedSpellContainer(uint32 crval);
 

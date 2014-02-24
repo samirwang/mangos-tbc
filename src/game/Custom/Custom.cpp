@@ -16,18 +16,18 @@ Custom::~Custom()
         delete *itr;
 }
 
-void World::SendWorldChat(ObjectGuid guid, std::string msg)
+void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
 {
-    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+    for (World::SessionMap::const_iterator itr = sWorld.GetSessionsBegin(); itr != sWorld.GetSessionsEnd(); ++itr)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->WChatOn())
         pPlayer->BoxChat << msg << std::endl;
 }
 
-void World::SendGMMessage(std::string msg)
+void Custom::SendGMMessage(std::string msg)
 {
-    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+    for (World::SessionMap::const_iterator itr = sWorld.GetSessionsBegin(); itr != sWorld.GetSessionsEnd(); ++itr)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)

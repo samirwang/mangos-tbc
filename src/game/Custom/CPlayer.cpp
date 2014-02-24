@@ -156,7 +156,7 @@ void Player::SendWorldChatMsg(std::string msg)
     std::ostringstream ss;
     ss << m_session->GetPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
 
-    sWorld.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
+    sCustom.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
 }
 
 void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
