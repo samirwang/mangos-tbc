@@ -89,8 +89,6 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
 void AntiCheat::HandleSpeedCheat()
 {
-    bool othercheat = false;
-
     bool back = m_MoveInfo[0].HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
@@ -113,11 +111,12 @@ void AntiCheat::HandleSpeedCheat()
     float dy = m_MoveInfo[1].GetPos()->y - m_MoveInfo[0].GetPos()->y;
     float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
 
-    float c_mstime = m_MoveInfo[0].GetTime() - m_MoveInfo[1].GetTime();
+    float c_mstime = abs(int32(m_MoveInfo[0].GetTime() - m_MoveInfo[1].GetTime()));
     float s_mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime());
+    float difftime = abs(c_mstime - s_mstime);
 
     if ((c_mstime + s_mstime) / 2 > s_mstime * 1.1)
-        othercheat = true;
+        c_mstime = s_mstime;
 
     float speedmod = c_mstime / 1000;
 
@@ -127,9 +126,6 @@ void AntiCheat::HandleSpeedCheat()
 
     dist = floor(dist * 10.f) / 10.f;
     maxdist = ceil(maxdist * 10.f) / 10.f;
-
-    if (maxdist / 2 > dist)
-        dist = maxdist; // If player is standing still we do not subtract a lot.
 
     if (IsFalling())
     {
@@ -141,7 +137,7 @@ void AntiCheat::HandleSpeedCheat()
             maxdist *= 3;
     }
 
-    if (dist > maxdist || othercheat)
+    if (dist > maxdist)
         HandleCheatReport("speedhacking");
 }
 
