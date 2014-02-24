@@ -143,57 +143,61 @@ void AntiCheat::HandleSpeedCheat()
 
 void AntiCheat::HandleHeightCheat()
 {
-    if (!IsFlying() && (!IsFalling() || m_Opcode[0] == MSG_MOVE_JUMP) && !IsRooted() && !IsSwimming())
-    {
-        float Size = m_player->GetObjectBoundingRadius();
+    if (IsFlying() || IsRooted() || IsSwimming() || (IsFalling() && m_Opcode[0] != MSG_MOVE_JUMP))
+        return;
 
-        float x = m_MoveInfo[0].GetPos()->x;
-        float y = m_MoveInfo[0].GetPos()->y;
-        float z = m_MoveInfo[0].GetPos()->z;
-        float o = m_MoveInfo[0].GetPos()->o;
+    float Size = m_player->GetObjectBoundingRadius();
 
-        Map* pMap = m_player->GetMap();
+    float x = m_MoveInfo[0].GetPos()->x;
+    float y = m_MoveInfo[0].GetPos()->y;
+    float z = m_MoveInfo[0].GetPos()->z;
+    float o = m_MoveInfo[0].GetPos()->o;
 
-        if (!pMap)
-            return;
+    Map* pMap = m_player->GetMap();
 
-        float floor_z[5];
+    if (!pMap)
+        return;
 
-        // Forward
-        float fx = x + cosf(o)*1;
-        float fy = y + sinf(o)*1;
-        floor_z[0] = pMap->GetHeight(fx, fy, z);
+    float floor_z[5];
 
-        // Backward
-        float bx = x + cosf(o)*-1;
-        float by = y + sinf(o)*-1;
-        floor_z[1] = pMap->GetHeight(bx, by, z);
+    // Forward
+    float fx = x + cosf(o)*1;
+    float fy = y + sinf(o)*1;
+    floor_z[0] = pMap->GetHeight(fx, fy, z);
 
-        // Right
-        float rx = x + cos(o - (M_PI / 2))*1;
-        float ry = y + sin(o - (M_PI / 2))*1;
-        floor_z[2] = pMap->GetHeight(rx, ry, z);
+    // Backward
+    float bx = x + cosf(o)*-1;
+    float by = y + sinf(o)*-1;
+    floor_z[1] = pMap->GetHeight(bx, by, z);
 
-        // Left
-        float lx = x + cos(o - (M_PI / 2))*-1;
-        float ly = y + sin(o - (M_PI / 2))*-1;
-        floor_z[3] = pMap->GetHeight(lx, ly, z);
+    // Right
+    float rx = x + cos(o - (M_PI / 2))*1;
+    float ry = y + sin(o - (M_PI / 2))*1;
+    floor_z[2] = pMap->GetHeight(rx, ry, z);
 
-        // Current
-        floor_z[4] = pMap->GetHeight(x, y, z);
+    // Left
+    float lx = x + cos(o - (M_PI / 2))*-1;
+    float ly = y + sin(o - (M_PI / 2))*-1;
+    floor_z[3] = pMap->GetHeight(lx, ly, z);
 
-        uint8 diffing = 0;
-        for (uint8 i = 0; i < 5; i++)
-            if (abs(z - floor_z[i]) > 1)
-                ++diffing;
+    // Current
+    floor_z[4] = pMap->GetHeight(x, y, z);
 
-        if (diffing == 5 && m_player->getDeathState() == ALIVE)
-            HandleCheatReport(m_Opcode[0] == MSG_MOVE_JUMP ? "jump hacking" : "height hacking");
-    }
+    uint8 diffing = 0;
+    for (uint8 i = 0; i <= 4; i++)
+        if (abs(z - floor_z[i]) > 1)
+            ++diffing;
+
+    if (diffing == 5 && m_player->getDeathState() == ALIVE)
+        HandleCheatReport(m_Opcode[0] == MSG_MOVE_JUMP ? "jump hacking" : "height hacking");
 }
 
 void AntiCheat::HandleClimbCheat()
 {
+
+    if (IsFlying() || IsFalling() || IsSwimming())
+        return;
+
     float dist[2];
     float deltaZ[2];
     float floor_z[2];
@@ -233,7 +237,7 @@ void AntiCheat::HandleClimbCheat()
     for (uint8 i = 0; i < 2; i++)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
-    if (angle[0] > 1.9f && angle[1] > 1.9f && !IsFlying() && !IsFalling() && !IsSwimming())
+    if (angle[0] > 1.9f && angle[1] > 1.9f)
         HandleCheatReport("wallclimbing");
 }
 
