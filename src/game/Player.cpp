@@ -5858,7 +5858,10 @@ void Player::CheckAreaExploreAndOutdoor()
         }
     }
     else if (sWorld.getConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK) && !isGameMaster())
+    {
         RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
+        GetAntiCheat()->SkipAntiCheat();
+    }
 
     if (areaFlag == 0xffff)
         return;
