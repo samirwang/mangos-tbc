@@ -32,13 +32,8 @@ bool AntiCheat::IsFlying()
 bool AntiCheat::IsFalling()
 {
     for (uint8 i = 0; i < 2; i++)
-    {
-        if (m_MoveInfo[i].HasMovementFlag(MOVEFLAG_FALLING) ||
-            m_MoveInfo[i].HasMovementFlag(MOVEFLAG_FALLINGFAR) ||
-            m_MoveInfo[i].HasMovementFlag(MOVEFLAG_SAFE_FALL))
-
-            return true;
-    }
+    if (m_MoveInfo[i].HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL)))
+        return true;
 
     return false;
 }
@@ -46,11 +41,8 @@ bool AntiCheat::IsFalling()
 bool AntiCheat::IsSwimming()
 {
     for (uint8 i = 0; i < 2; i++)
-    {
-        if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_SWIMMING) ||
-            m_MoveInfo[1].HasMovementFlag(MOVEFLAG_SWIMMING))
-            return true;
-    }
+    if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_SWIMMING))
+        return true;
 
     return false;
 }
@@ -58,11 +50,8 @@ bool AntiCheat::IsSwimming()
 bool AntiCheat::IsRooted()
 {
     for (uint8 i = 0; i < 2; i++)
-    {
-        if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_ROOT) ||
-            m_MoveInfo[1].HasMovementFlag(MOVEFLAG_ROOT))
-            return true;
-    }
+    if (m_MoveInfo[i].HasMovementFlag(MOVEFLAG_ROOT))
+        return true;
 
     return false;
 }
