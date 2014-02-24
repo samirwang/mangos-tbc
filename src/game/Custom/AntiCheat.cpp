@@ -137,7 +137,7 @@ void AntiCheat::HandleSpeedCheat()
 
     if (IsFalling())
     {
-        float deltaZ = m_MoveInfo[1].GetPos()->z - m_MoveInfo[0].GetPos()->z;
+        float deltaZ = abs(m_MoveInfo[1].GetPos()->z - m_MoveInfo[0].GetPos()->z);
         float angle = MapManager::NormalizeOrientation(tan(deltaZ / dist));
 
         // Sliding the ground which can be really fast.
