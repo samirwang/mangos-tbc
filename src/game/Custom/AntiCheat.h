@@ -40,5 +40,8 @@ private:
     bool m_GmFly;
     int32 m_CheatReportTimer[2];
     const char* m_LastHack;
+    uint32 m_ServerTime;
+    uint32 m_HeightDelay;
+    uint32 m_SpeedDelay;
 };
 #endif

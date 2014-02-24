@@ -16,6 +16,9 @@ AntiCheat::AntiCheat(Player* pPlayer)
     m_CheatReportTimer[0] = 0;
     m_CheatReportTimer[1] = 0;
     m_LastHack = "";
+    m_ServerTime = 0;
+    m_HeightDelay = 0;
+    m_SpeedDelay = 0;
 
     for (uint8 i = 0; i < 2; i++)
         m_Opcode[i] = MSG_NULL_ACTION;
@@ -71,13 +74,11 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
     m_MoveInfo[0] = MoveInfo;
     m_Opcode[0] = opcode;
+    m_ServerTime = WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime());
 
     if (!SkipChecks && !m_player->GetTransport() && !m_player->IsTaxiFlying())
     {
-        if ((m_Opcode[0] == MSG_MOVE_HEARTBEAT && WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 100) ||
-            WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime()) >= 1000)
-            HandleSpeedCheat();
-
+        HandleSpeedCheat();
         HandleHeightCheat();
         HandleClimbCheat();
     }
@@ -89,6 +90,13 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
 
 void AntiCheat::HandleSpeedCheat()
 {
+    m_SpeedDelay += m_ServerTime;
+
+    if (!(m_Opcode[0] == MSG_MOVE_HEARTBEAT && m_ServerTime >= 100) || m_ServerTime >= 1000)
+        return;
+
+    m_SpeedDelay = 0;
+
     bool back = m_MoveInfo[0].HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
@@ -143,7 +151,14 @@ void AntiCheat::HandleSpeedCheat()
 
 void AntiCheat::HandleHeightCheat()
 {
-    if (IsFlying() || IsRooted() || IsSwimming() || (IsFalling() && m_Opcode[0] != MSG_MOVE_JUMP))
+    m_HeightDelay += m_ServerTime;
+
+    if (!((!IsFlying() && !IsRooted() && !IsSwimming() && !IsFalling() && m_HeightDelay > 500) || (IsFalling() && m_Opcode[0] == MSG_MOVE_JUMP)))
+        return;
+
+    m_HeightDelay = 0;
+
+    if (!m_player->getDeathState() == ALIVE)
         return;
 
     float Size = m_player->GetObjectBoundingRadius();
@@ -158,37 +173,35 @@ void AntiCheat::HandleHeightCheat()
     if (!pMap)
         return;
 
-    float floor_z[5];
+    float heightrange = 1.f;
+    const float range = m_player->GetObjectBoundingRadius() / 2;
+    const uint8 ranges = 2;
+    const uint8 points = 8;
 
-    // Forward
-    float fx = x + cosf(o)*1;
-    float fy = y + sinf(o)*1;
-    floor_z[0] = pMap->GetHeight(fx, fy, z);
+//    m_player->BoxChat << "x: " << x << " y: " << y << " z: " << z << std::endl;
 
-    // Backward
-    float bx = x + cosf(o)*-1;
-    float by = y + sinf(o)*-1;
-    floor_z[1] = pMap->GetHeight(bx, by, z);
+    bool notcheat = false;
 
-    // Right
-    float rx = x + cos(o - (M_PI / 2))*1;
-    float ry = y + sin(o - (M_PI / 2))*1;
-    floor_z[2] = pMap->GetHeight(rx, ry, z);
+    for (uint8 i = 1; i <= ranges; i++)
+    {
+        for (uint8 j = 1; j <= points; ++j)
+        {
+            float angle = MapManager::NormalizeOrientation((M_PI_F / points) * j);
+            float radius = float(ranges * i);
 
-    // Left
-    float lx = x + cos(o - (M_PI / 2))*-1;
-    float ly = y + sin(o - (M_PI / 2))*-1;
-    floor_z[3] = pMap->GetHeight(lx, ly, z);
+            float cx = ((cos(angle)*radius) + x);
+            float cy = ((sin(angle)*radius) + y);
+            float cz = pMap->GetHeight(cx, cy, z);
 
-    // Current
-    floor_z[4] = pMap->GetHeight(x, y, z);
+            if (abs(cz - z) < heightrange)
+                notcheat = true;
 
-    uint8 diffing = 0;
-    for (uint8 i = 0; i <= 4; i++)
-        if (abs(z - floor_z[i]) > 1)
-            ++diffing;
+//             m_player->BoxChat << "i: " << uint32(i) << " j: " << uint32(j) << std::endl;
+//             m_player->BoxChat << "cx: " << cx << " cy: " << cy << " cz: " << cz << std::endl;
+        }
+    }
 
-    if (diffing == 5 && m_player->getDeathState() == ALIVE)
+    if (!notcheat)
         HandleCheatReport(m_Opcode[0] == MSG_MOVE_JUMP ? "jump hacking" : "height hacking");
 }
 
