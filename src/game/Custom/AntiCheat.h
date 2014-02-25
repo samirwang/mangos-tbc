@@ -21,45 +21,120 @@
 
 #include "Player.h"
 
+class AntiCheat_speed;
+class AntiCheat_height;
+class AntiCheat_climb;
+
 class AntiCheat
 {
 public:
     AntiCheat(Player* pPlayer);
     ~AntiCheat() {}
 
-    void HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode);
+    void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
+
     void SetGMFly(bool value) { m_GmFly = value; }
-    void SkipAntiCheat() { m_SkipAntiCheat = true; }
-    int32 GetCheatReportTimer(uint8 index) { return m_CheatReportTimer[index]; }
-    void AlterCheatReportTimer(uint8 index, int32 change) { m_CheatReportTimer[index] += change; }
+    void SkipAntiCheat(bool value = true) { m_SkipAntiCheat = value; }
+
+    bool IsGMFly() { return m_GmFly; }
 
 private:
-    void HandleSpeedCheat();
-    void HandleHeightCheat();
-    void HandleClimbCheat();
-    uint32 GetOldMoveTime() { return m_OldMoveTime; }
+    AntiCheat_speed* m_SpeedCheat;
+    AntiCheat_height* m_HeightCheat;
+    AntiCheat_climb* m_ClimbCheat;
 
-    void HandleCheatReport(const char* hack);
+    Player* m_player;
+    bool m_SkipAntiCheat;
+    bool m_GmFly;
+};
+
+class AntiCheat_module // Must only be used as parent
+{
+public:
+    AntiCheat_module()
+    {
+        m_CurOpcode = MSG_NULL_ACTION;
+        m_OldOpcode = MSG_NULL_ACTION;
+
+        m_CurServerTime = WorldTimer::getMSTime();
+        m_OldServerTime = WorldTimer::getMSTime();
+
+        m_CTimeDiff = 0;
+        m_STimeDiff = 0;
+        m_CSTimeDiff = 0;
+
+        m_PrevPacketTime = 0;
+        m_DetectionDelay = 0;
+
+        m_MoveDist = 0;
+        m_DeltaZ = 0;
+        m_LastCheat = false;
+    }
+
+    ~AntiCheat_module() { }
+
+    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+    void SetOldValues();
 
     bool IsFlying();
     bool IsFalling();
     bool IsSwimming();
     bool IsRooted();
 
-
+protected:
     Player* m_player;
+    
+    MovementInfo m_CurMoveInfo;
+    MovementInfo m_OldMoveInfo;
 
-    MovementInfo m_MoveInfo[2];
-    Opcodes m_Opcode[2];
+    Opcodes m_CurOpcode;
+    Opcodes m_OldOpcode;
 
-    uint32 m_OldMoveTime;
-    float m_OldMoveSpeed;
-    bool m_SkipAntiCheat;
-    bool m_GmFly;
-    int32 m_CheatReportTimer[2];
-    const char* m_LastHack;
-    uint32 m_ServerTime;
-    uint32 m_HeightDelay;
-    uint32 m_SpeedDelay;
+    uint32 m_CurServerTime;
+    uint32 m_OldServerTime;
+
+    uint32 m_CTimeDiff;
+    uint32 m_STimeDiff;
+    int32 m_CSTimeDiff;
+
+    uint32 m_PrevPacketTime;
+    uint32 m_DetectionDelay;
+
+    float m_MoveDist;
+    float m_DeltaZ;
+
+    bool m_LastCheat;
 };
+
+class AntiCheat_speed : public AntiCheat_module
+{
+public:
+    AntiCheat_speed(Player* pPlayer)
+    {
+        m_player = pPlayer;
+        m_OldMoveSpeed = 0;
+    }
+
+    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
+
+private:
+    float m_OldMoveSpeed;
+};
+
+class AntiCheat_height : public AntiCheat_module
+{
+public:
+    AntiCheat_height(Player* pPlayer) { m_player = pPlayer; }
+
+    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
+};
+
+class AntiCheat_climb : public AntiCheat_module
+{
+public:
+    AntiCheat_climb(Player* pPlayer) { m_player = pPlayer; }
+
+    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
+};
+
 #endif

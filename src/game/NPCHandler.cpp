@@ -34,6 +34,7 @@
 #include "Guild.h"
 #include "GuildMgr.h"
 #include "Chat.h"
+#include "PlayerGossip.h"
 
 enum StableResultCode
 {

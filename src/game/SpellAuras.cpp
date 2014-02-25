@@ -46,6 +46,7 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "MapManager.h"
+#include "AntiCheat.h"
 
 #define NULL_AURA_SLOT 0xFF
 

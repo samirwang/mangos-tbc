@@ -39,9 +39,6 @@
 #include "SharedDefines.h"
 #include "Chat.h"
 #include "GossipDef.h"
-#include "AntiCheat.h"
-#include "CFBG.h"
-#include "PlayerGossip.h"
 
 #include<string>
 #include<vector>

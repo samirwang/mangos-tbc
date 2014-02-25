@@ -35,6 +35,7 @@
 #include "GridNotifiersImpl.h"
 #include "Chat.h"
 #include "Custom.h"
+#include "CFBG.h"
 
 namespace MaNGOS
 {

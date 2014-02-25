@@ -52,6 +52,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
+#include "AntiCheat.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {

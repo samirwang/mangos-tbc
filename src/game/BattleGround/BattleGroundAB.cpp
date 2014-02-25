@@ -28,6 +28,7 @@
 #include "WorldPacket.h"
 #include "MapManager.h"
 #include "DBCStores.h"                                   // TODO REMOVE this when graveyard handling for pvp is updated
+#include "CFBG.h"
 
 BattleGroundAB::BattleGroundAB()
 {

@@ -16,106 +16,92 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Player.h"
-#include "Timer.h"
-#include "World.h"
 #include "AntiCheat.h"
-#include "MapManager.h"
-#include "Custom.h"
+
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
     m_player = pPlayer;
 
-    m_OldMoveTime = 0;
-    m_OldMoveSpeed = 0;
-    m_SkipAntiCheat = 1;
-    m_GmFly = 0;
-    m_CheatReportTimer[0] = 0;
-    m_CheatReportTimer[1] = 0;
-    m_LastHack = "";
-    m_ServerTime = 0;
-    m_HeightDelay = 0;
-    m_SpeedDelay = 0;
-
-    for (uint8 i = 0; i < 2; i++)
-        m_Opcode[i] = MSG_NULL_ACTION;
+    m_SpeedCheat = new AntiCheat_speed(pPlayer);
+    m_HeightCheat = new AntiCheat_height(pPlayer);
+    m_ClimbCheat = new AntiCheat_climb(pPlayer);
 }
 
-bool AntiCheat::IsFlying()
+
+bool AntiCheat_module::IsFlying()
 {
-    return m_player->HasAuraType(SPELL_AURA_FLY) || m_GmFly;
+    return m_player->HasAuraType(SPELL_AURA_FLY) || m_player->GetAntiCheat()->IsGMFly();
 }
 
-bool AntiCheat::IsFalling()
+bool AntiCheat_module::IsFalling()
 {
-    for (uint8 i = 0; i < 2; i++)
-    if (m_MoveInfo[i].HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL)))
-        return true;
-
-    return false;
+    return m_CurMoveInfo.HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL));
 }
 
-bool AntiCheat::IsSwimming()
+bool AntiCheat_module::IsSwimming()
 {
-    for (uint8 i = 0; i < 2; i++)
-    if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_SWIMMING))
-        return true;
-
-    return false;
+    return m_CurMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING);
 }
 
-bool AntiCheat::IsRooted()
+bool AntiCheat_module::IsRooted()
 {
-    for (uint8 i = 0; i < 2; i++)
-    if (m_MoveInfo[i].HasMovementFlag(MOVEFLAG_ROOT))
-        return true;
-
-    return false;
+    return m_CurMoveInfo.HasMovementFlag(MOVEFLAG_ROOT);
 }
 
-void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
+void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
-    bool SkipChecks = m_SkipAntiCheat;
-    m_SkipAntiCheat = false;
-
-    m_MoveInfo[0] = MoveInfo;
-    m_Opcode[0] = opcode;
-    m_ServerTime = WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime());
-
-    if (m_ServerTime == 0)
-        m_ServerTime = 1;
-
-    if (!SkipChecks && !m_player->GetTransport() && !m_player->IsTaxiFlying())
-    {
-        HandleSpeedCheat();
-        HandleHeightCheat();
-        HandleClimbCheat();
-    }
-
-    m_MoveInfo[1] = MoveInfo;
-    m_Opcode[1] = opcode;
-    m_OldMoveTime = WorldTimer::getMSTime();
+    m_SpeedCheat->DetectHack(MoveInfo, Opcode);
+    m_HeightCheat->DetectHack(MoveInfo, Opcode);
+    m_ClimbCheat->DetectHack(MoveInfo, Opcode);
 }
 
-void AntiCheat::HandleSpeedCheat()
+void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
-    m_SpeedDelay += m_ServerTime;
+    m_CurMoveInfo = MoveInfo;
+    m_CurOpcode = Opcode;
+    m_CurServerTime = WorldTimer::getMSTime();
 
-    if (!((m_Opcode[0] == MSG_MOVE_HEARTBEAT && m_SpeedDelay >= 100) || m_SpeedDelay >= 500))
+    m_CTimeDiff = WorldTimer::getMSTimeDiff(m_OldServerTime, m_CurServerTime);
+    m_STimeDiff = WorldTimer::getMSTimeDiff(m_OldMoveInfo.GetTime(), m_CurMoveInfo.GetTime());
+    m_CSTimeDiff = m_CTimeDiff - m_STimeDiff;
+
+    m_DetectionDelay += WorldTimer::getMSTimeDiff(m_PrevPacketTime, m_CurServerTime);
+    m_PrevPacketTime = m_CurServerTime;
+
+    float dx = m_OldMoveInfo.GetPos()->x - m_CurMoveInfo.GetPos()->x;
+    float dy = m_OldMoveInfo.GetPos()->y - m_CurMoveInfo.GetPos()->y;
+    m_MoveDist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
+
+   m_DeltaZ = abs(m_OldMoveInfo.GetPos()->z - m_CurMoveInfo.GetPos()->z);
+}
+
+void AntiCheat_module::SetOldValues()
+{
+    m_OldMoveInfo = m_CurMoveInfo;
+    m_OldOpcode = m_CurOpcode;
+    m_OldServerTime = m_CurServerTime;
+
+    m_DetectionDelay = 0;
+    m_LastCheat = false;
+}
+
+void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+{
+    AntiCheat_module::DetectHack(MoveInfo, Opcode);
+
+    if (!(m_DetectionDelay > 10))
         return;
 
-    m_SpeedDelay = 0;
-
-    bool back = m_MoveInfo[0].HasMovementFlag(MOVEFLAG_BACKWARD);
+    bool back = m_CurMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
 
-    if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_WALK_MODE))
+    if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
         speed = m_player->GetSpeed(MOVE_WALK);
-    else if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_SWIMMING))
+    else if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING))
         speed = m_player->GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
-    else if (m_MoveInfo[0].HasMovementFlag(MOVEFLAG_FLYING))
+    else if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_FLYING))
         speed = m_player->GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
     else
         speed = m_player->GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
@@ -125,58 +111,54 @@ void AntiCheat::HandleSpeedCheat()
 
     m_OldMoveSpeed = speed;
 
-    float dx = m_MoveInfo[1].GetPos()->x - m_MoveInfo[0].GetPos()->x;
-    float dy = m_MoveInfo[1].GetPos()->y - m_MoveInfo[0].GetPos()->y;
-    float dist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
-
-    float c_mstime = abs(int32(m_MoveInfo[0].GetTime() - m_MoveInfo[1].GetTime()));
-    float s_mstime = WorldTimer::getMSTimeDiff(m_OldMoveTime, WorldTimer::getMSTime());
-    float difftime = abs(c_mstime - s_mstime);
-
-    if ((c_mstime + s_mstime) / 2 > s_mstime * 1.1)
-        c_mstime = s_mstime;
-
-    float speedmod = c_mstime / 1000;
+    float speedmod = m_CTimeDiff / 1000.f;
 
     float maxdist = highspeed * speedmod;
 
     const size_t listsize = 15;
 
-    dist = floor(dist * 10.f) / 10.f;
+    float dist = floor(m_MoveDist * 10.f) / 10.f;
     maxdist = ceil(maxdist * 10.f) / 10.f;
 
     if (IsFalling())
     {
-        float deltaZ = abs(m_MoveInfo[1].GetPos()->z - m_MoveInfo[0].GetPos()->z);
-        float angle = MapManager::NormalizeOrientation(tan(deltaZ / dist));
+        float angle = MapManager::NormalizeOrientation(tan(m_DeltaZ / dist));
 
         // Sliding the ground which can be really fast.
         if (angle > 1.9f)
             maxdist *= 3;
     }
 
+    bool LastCheat = m_LastCheat;
+    m_player->BothChat << m_DetectionDelay;
+
+    SetOldValues();
+
     if (dist > maxdist)
-        HandleCheatReport("speedhacking");
+    {
+        if (LastCheat)
+            m_player->BothChat << "Speedhack: " << dist << " " << maxdist << " " << m_STimeDiff << std::endl;
+
+        m_LastCheat = true;
+    }
 }
 
-void AntiCheat::HandleHeightCheat()
+void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
-    m_HeightDelay += m_ServerTime;
+    AntiCheat_module::DetectHack(MoveInfo, Opcode);
 
-    if (!((!IsFlying() && !IsRooted() && !IsSwimming() && !IsFalling() && m_HeightDelay > 500) || (IsFalling() && m_Opcode[0] == MSG_MOVE_JUMP)))
+    if (!((!IsFlying() && !IsRooted() && !IsSwimming() && !IsFalling() && m_DetectionDelay > 500) || (IsFalling() && m_CurOpcode == MSG_MOVE_JUMP)))
         return;
-
-    m_HeightDelay = 0;
 
     if (!m_player->getDeathState() == ALIVE)
         return;
 
     float Size = m_player->GetObjectBoundingRadius();
-
-    float x = m_MoveInfo[0].GetPos()->x;
-    float y = m_MoveInfo[0].GetPos()->y;
-    float z = m_MoveInfo[0].GetPos()->z;
-    float o = m_MoveInfo[0].GetPos()->o;
+    
+    float x = m_CurMoveInfo.GetPos()->x;
+    float y = m_CurMoveInfo.GetPos()->y;
+    float z = m_CurMoveInfo.GetPos()->z;
+    float o = m_CurMoveInfo.GetPos()->o;
 
     Map* pMap = m_player->GetMap();
 
@@ -215,11 +197,14 @@ void AntiCheat::HandleHeightCheat()
     }
 
     if (!notcheat)
-        HandleCheatReport(m_Opcode[0] == MSG_MOVE_JUMP ? "jump hacking" : "height hacking");
+        m_player->BothChat << (m_CurOpcode == MSG_MOVE_JUMP ? "jump hacking" : "height hacking") << std::endl;
+
+    SetOldValues();
 }
 
-void AntiCheat::HandleClimbCheat()
+void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
+    AntiCheat_module::DetectHack(MoveInfo, Opcode);
 
     if (IsFlying() || IsFalling() || IsSwimming())
         return;
@@ -229,18 +214,16 @@ void AntiCheat::HandleClimbCheat()
     float floor_z[2];
     float angle[2];
 
-    float dx = m_MoveInfo[1].GetPos()->x - m_MoveInfo[0].GetPos()->x;
-    float dy = m_MoveInfo[1].GetPos()->y - m_MoveInfo[0].GetPos()->y;
-    dist[0] = sqrt((dx * dx) + (dy * dy)); // Traveled distance
+    dist[0] = m_MoveDist;
 
     float Size = m_player->GetObjectBoundingRadius();
     dist[1] = Size * 2;
 
 
-    float x = m_MoveInfo[0].GetPos()->x;
-    float y = m_MoveInfo[0].GetPos()->y;
-    float z = m_MoveInfo[0].GetPos()->z;
-    float o = m_MoveInfo[0].GetPos()->o;
+    float x = m_CurMoveInfo.GetPos()->x;
+    float y = m_CurMoveInfo.GetPos()->y;
+    float z = m_CurMoveInfo.GetPos()->z;
+    float o = m_CurMoveInfo.GetPos()->o;
 
     Map* pMap = m_player->GetMap();
 
@@ -248,44 +231,23 @@ void AntiCheat::HandleClimbCheat()
         return;
 
     // Forward
-    float fx = x + cosf(o)*1;
-    float fy = y + sinf(o)*1;
+    float fx = x + cosf(o) * 1;
+    float fy = y + sinf(o) * 1;
     floor_z[0] = pMap->GetHeight(fx, fy, z);
 
     // Backward
     float bx = x + cosf(o)*-1;
     float by = y + sinf(o)*-1;
     floor_z[1] = pMap->GetHeight(bx, by, z);
-    
-    deltaZ[0] = fabs(m_MoveInfo[0].GetPos()->z - m_MoveInfo[1].GetPos()->z);
+
+    deltaZ[0] = m_DeltaZ;
     deltaZ[1] = fabs(floor_z[0] - floor_z[1]);
 
     for (uint8 i = 0; i < 2; i++)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
     if (angle[0] > 1.9f && angle[1] > 1.9f)
-        HandleCheatReport("wallclimbing");
-}
+        m_player->BothChat << "wallclimbing" << std::endl;
 
-void AntiCheat::HandleCheatReport(const char* hack)
-{
-    if (m_player->isGameMaster())
-        return;
-
-    bool newhack = hack != m_LastHack;
-
-    if (m_CheatReportTimer[0] <= 0 || newhack)
-    {
-        CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", m_player->GetGUIDLow(), m_player->GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
-        m_CheatReportTimer[0] = 5000;
-    }
-
-    if (m_CheatReportTimer[1] <= 0 || newhack)
-    {
-        std::ostringstream ss;
-        ss << "Player " << m_player->GetName() << " was caught " << hack;
-        sCustom.SendGMMessage(ss.str());
-        m_CheatReportTimer[1] = 1000;
-        m_LastHack = hack;
-    }
+    SetOldValues();
 }

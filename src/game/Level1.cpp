@@ -35,6 +35,7 @@
 #include "Mail.h"
 #include "Util.h"
 #include "SpellMgr.h"
+#include "AntiCheat.h"
 #ifdef _DEBUG_VMAPS
 #include "VMapFactory.h"
 #endif

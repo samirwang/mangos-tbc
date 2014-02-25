@@ -24,6 +24,8 @@
 #include "ObjectMgr.h"
 #include "DBCStores.h"
 #include "Settings.h"
+#include "CFBG.h"
+#include "PlayerGossip.h"
 
 void Player::CUpdate(uint32 diff)
 {
@@ -32,10 +34,6 @@ void Player::CUpdate(uint32 diff)
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
-
-    for (uint8 i = 0; i < 2; i++)
-    if (GetAntiCheat()->GetCheatReportTimer(i) > 0)
-        GetAntiCheat()->AlterCheatReportTimer(i, int32(diff*-1));
 }
 
 void Player::Sometimes()

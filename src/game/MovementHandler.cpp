@@ -29,6 +29,7 @@
 #include "WaypointMovementGenerator.h"
 #include "MapPersistentStateMgr.h"
 #include "ObjectMgr.h"
+#include "AntiCheat.h"
 
 void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 {
@@ -278,7 +279,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
         plMover->UpdateFallInformationIfNeed(movementInfo, opcode);
 
     if (plMover)
-        plMover->GetAntiCheat()->HandleMovementCheat(movementInfo, opcode);
+        plMover->GetAntiCheat()->DetectHacks(movementInfo, opcode);
 
     WorldPacket data(opcode, recv_data.size());
     data << mover->GetPackGUID();             // write guid

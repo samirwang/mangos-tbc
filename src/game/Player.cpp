@@ -64,6 +64,10 @@
 #include "SQLStorages.h"
 #include "Custom.h"
 #include "Settings.h"
+#include "AntiCheat.h"
+#include "CFBG.h"
+#include "Settings.h"
+#include "PlayerGossip.h"
 
 #include <cmath>
 
