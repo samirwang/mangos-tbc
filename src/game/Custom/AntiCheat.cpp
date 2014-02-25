@@ -166,7 +166,7 @@ void AntiCheat::HandleHeightCheat()
         return;
 
     float heightrange = 1.f;
-    const float range = m_player->GetObjectBoundingRadius() / 2;
+    const float firstrange = 0.5f;
     const uint8 ranges = 2;
     const uint8 points = 8;
 
@@ -179,7 +179,7 @@ void AntiCheat::HandleHeightCheat()
         for (uint8 j = 1; j <= points; ++j)
         {
             float angle = MapManager::NormalizeOrientation((M_PI_F / points) * j);
-            float radius = float(ranges * i);
+            float radius = float(firstrange * i);
 
             float cx = ((cos(angle)*radius) + x);
             float cy = ((sin(angle)*radius) + y);
@@ -191,6 +191,14 @@ void AntiCheat::HandleHeightCheat()
 //             m_player->BoxChat << "i: " << uint32(i) << " j: " << uint32(j) << std::endl;
 //             m_player->BoxChat << "cx: " << cx << " cy: " << cy << " cz: " << cz << std::endl;
         }
+    }
+
+    if (!notcheat)
+    {
+        float cz = pMap->GetHeight(x, y, z);
+
+        if (abs(cz - z) < heightrange)
+            notcheat = true;
     }
 
     if (!notcheat)

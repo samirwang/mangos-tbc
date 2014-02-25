@@ -944,6 +944,11 @@ class PlayerGossip;
 class MANGOS_DLL_SPEC Player : public Unit
 {
     // Custom
+    friend class AntiCheat;
+    friend class CFBG;
+    friend class Settings;
+    friend class PlayerGossip;
+
 public:
     typedef std::vector<uint32> DelayedSpellLearn;
 
