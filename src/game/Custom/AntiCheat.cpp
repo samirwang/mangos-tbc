@@ -65,6 +65,9 @@ void AntiCheat::HandleMovementCheat(MovementInfo& MoveInfo, Opcodes opcode)
     m_Opcode[0] = opcode;
     m_ServerTime = WorldTimer::getMSTimeDiff(GetOldMoveTime(), WorldTimer::getMSTime());
 
+    if (m_ServerTime == 0)
+        m_ServerTime = 1;
+
     if (!SkipChecks && !m_player->GetTransport() && !m_player->IsTaxiFlying())
     {
         HandleSpeedCheat();
@@ -81,7 +84,7 @@ void AntiCheat::HandleSpeedCheat()
 {
     m_SpeedDelay += m_ServerTime;
 
-    if (!(m_Opcode[0] == MSG_MOVE_HEARTBEAT && m_ServerTime >= 100) || m_ServerTime >= 1000)
+    if (!((m_Opcode[0] == MSG_MOVE_HEARTBEAT && m_SpeedDelay >= 100) || m_SpeedDelay >= 500))
         return;
 
     m_SpeedDelay = 0;
