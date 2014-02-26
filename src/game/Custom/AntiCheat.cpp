@@ -230,6 +230,7 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     if (!notcheat)
     {
         std::ostringstream ss;
+        ss << std::endl;
         ss << "Distance to ground: " << abs(cz - z) << " " << (z > cz ? "above" : "under");
 
         ReportPlayer((m_CurOpcode == MSG_MOVE_JUMP ? "jumphacking" : (z > cz ? "flyhacking" : "planehacking")), ss.str());
@@ -285,6 +286,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     if (angle[0] > 1.9f && angle[1] > 1.9f)
     {
         std::ostringstream ss;
+        ss << std::endl;
         ss << "Distance: " << m_MoveDist;
 
         ReportPlayer("climbhacking", ss.str());
