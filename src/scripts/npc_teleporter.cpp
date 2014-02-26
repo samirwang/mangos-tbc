@@ -26,7 +26,7 @@ bool GossipHello_teleporter(Player* pPlayer, Creature* pCreature)
         pPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Gurubashi Arena", GOSSIP_SENDER_MAIN, 3);
 
     pPlayer->AddGossipMenuItem(Icon::GEAR, "Open Tools                  ", GOSSIP_SENDER_MAIN, 100);
-    //pPlayer->AddGossipMenuItem(Icon::GEAR, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
+    pPlayer->AddGossipMenuItem(Icon::GEAR, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
     pPlayer->AddGossipMenuItem(Icon::BAG, "Open Vendors                ", GOSSIP_SENDER_MAIN, 300);
     pPlayer->AddGossipMenuItem(Icon::SWORDS, "Queue for battle            ", GOSSIP_SENDER_MAIN, 400);
 
@@ -140,7 +140,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     }
     else if (action >= 201 && action <= 203)
     {
-        for (uint8 i = SLOT_HEAD; i < EQUIPMENT_SLOT_END; ++i)
+        for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
         {
             if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             {
@@ -155,6 +155,8 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
             pPlayer->SetLevel(49);
         else if (action == 203)
             pPlayer->SetLevel(19);
+
+        pPlayer->resetTalents(true);
     }
     else if (action == 300)
     {
