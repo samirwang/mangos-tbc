@@ -1,64 +1,10 @@
-# C(ontinued)-MaNGOS -- README
+# LilleCarlProCore1337H4CK5Emu
 
-This file is part of the CMaNGOS Project. See [AUTHORS](AUTHORS.md) file for Copyright information
+This is a fork of CMaNGOS TBC!
+http://github.com/cmangos/mangos-tbc
+http://cmangos.net
 
-## Welcome to C(ontinued)-MaNGOS
-
-C(ontinued)-MaNGOS is a free project with the following goal:
-
-  **Doing WoW-Emulation Right!**
-
-This means, we want to focus on:
-
-* WoW-Emulation
-    This project is about developing a server software that is able to
-    emulate a well known MMORPG service.
-
-* Doing
-  * This project is focused on developing content!
-  * Also there are many other aspects that need to be done and are
-    considered equally important.
-  * Anyone who wants to do stuff is very welcome to do so!
-
-* Right
-  * Our goal must always be to provide the best code that we can.
-  * Being 'right' is defined by the behavior of the system
-    we want to emulate.
-  * Developing things right also includes documenting and discussing
-    _how_ to do things better, hence...
-  * Learning and Teaching are very important in our view, and must
-    always be part of what we do.
-
-To be able to accomplish these goals, we support and promote:
-
-* Freedom
-  * of our work: Our work - including our code - is released under the GPL
-    So everbody is free to use and contribute to this open source project
-  * for our developers and contributers on things that interest them.
-    No one here is telling anybody _what_ to do.
-    If you want somebody to do something for you, pay him,
-    but we are here to enjoy.
-  * to have FUN with developing.
-
-* A friendly environment
-  * We try to let personal issues behind us.
-  * We only argue about content, and not about thin air!
-  * We follow the [Netiquette](http://tools.ietf.org/html/rfc1855).
-
--- The C(ontinued)-MaNGOS Team!
-
-## Further information
-
-  You can find further information about CMaNGOS at the following places:
-  * [CMaNGOS Forum](http://cmangos.net/)
-  * CMaNGOS IRC channel: #cmangos on irc.rizon.net
-  * [GitHub repositories](https://github.com/cmangos/)
-  * [Issue tracker](https://github.com/cmangos/issues/issues)
-  * [Pull Requests](https://github.com/cmangos/mangos-tbc/pulls)
-  * [Current build status on Travis CI](https://travis-ci.org/cmangos/mangos-tbc/)
-  * [Wiki](https://github.com/cmangos/issues/wiki) with additional information on installation
-  * [Contributing Guidelines](CONTRIBUTING.md)
-  * Documentation can be found in the doc/ subdirectory and on the github wiki
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Lillecarl/mangos-tbc/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 ## License
 
@@ -93,7 +39,4 @@ To be able to accomplish these goals, we support and promote:
   modify this file, you may extend this exception to your version of the
   file, but you are not obligated to do so.  If you do not wish to do
   so, delete this exception statement from your version.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Lillecarl/mangos-tbc/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
