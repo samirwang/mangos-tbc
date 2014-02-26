@@ -253,7 +253,8 @@ void PlayerGossip::PlayerGossipSelect(uint32 sender, uint32 action, std::string 
             m_player->LearnTalentTemplate(3);
             m_player->ApplyEnchantTemplate(3);
         }
-        else if (action == 30)
-            m_player->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, 1);
+
+        m_player->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, 1);
+        m_player->BoxChat << sCustom.ChatNameWrapper("Template System") << " If you want to show this menu again you can enable it by the teleporter npc" << std::endl;
     }
 }

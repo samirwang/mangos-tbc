@@ -127,7 +127,7 @@ bool GossipSelect_teleporter(Player* pPlayer, Creature* pCreature, uint32 sender
     else if (action == 109)
     {
         pPlayer->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, false);
-        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " Template menu will be shown on next login" << std::endl;
+        pPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " template menu will be shown on next login" << std::endl;
     }
     else if (action == 200) // Change Level
     {
