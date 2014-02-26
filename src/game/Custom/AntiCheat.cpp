@@ -19,6 +19,7 @@
 #include "AntiCheat.h"
 #include "Custom.h"
 #include "World.h"
+#include "Mail.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
@@ -270,7 +271,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
     if (angle[0] > 1.9f && angle[1] > 1.9f)
-        ReportPlayer("climbhack");
+        ReportPlayer("climbhacking");
 
     SetOldValues();
 }

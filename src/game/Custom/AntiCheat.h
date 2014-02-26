@@ -21,6 +21,7 @@
 
 #include "Player.h"
 
+class AntiCheat_module;
 class AntiCheat_speed;
 class AntiCheat_height;
 class AntiCheat_climb;
@@ -29,7 +30,12 @@ class AntiCheat
 {
 public:
     AntiCheat(Player* pPlayer);
-    ~AntiCheat() {}
+    ~AntiCheat()
+    {
+        delete m_SpeedCheat;
+        delete m_HeightCheat;
+        delete m_ClimbCheat;
+    }
 
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
 
