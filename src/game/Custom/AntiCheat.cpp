@@ -33,6 +33,13 @@ AntiCheat::AntiCheat(Player* pPlayer)
     m_ClimbCheat = new AntiCheat_climb(pPlayer);
 }
 
+AntiCheat::~AntiCheat()
+{
+    delete m_SpeedCheat;
+    delete m_HeightCheat;
+    delete m_ClimbCheat;
+}
+
 
 bool AntiCheat_module::IsFlying()
 {
@@ -217,11 +224,16 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     float cz = pMap->GetHeight(x, y, z);
 
     if (!notcheat)
-        if (abs(cz - z) < heightrange)
-            notcheat = true;
+    if (abs(cz - z) < heightrange)
+        notcheat = true;
 
     if (!notcheat)
-        ReportPlayer((m_CurOpcode == MSG_MOVE_JUMP ? "jumphacking" : (z > cz ? "flyhacking" : "planehacking")));
+    {
+        std::ostringstream ss;
+        ss << "Distance to ground: " << abs(cz - z) << " " << (z > cz ? "above" : "under");
+
+        ReportPlayer((m_CurOpcode == MSG_MOVE_JUMP ? "jumphacking" : (z > cz ? "flyhacking" : "planehacking")), ss.str());
+    }
 
     SetOldValues();
 }
@@ -271,7 +283,12 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
     if (angle[0] > 1.9f && angle[1] > 1.9f)
-        ReportPlayer("climbhacking");
+    {
+        std::ostringstream ss;
+        ss << "Distance: " << m_MoveDist;
+
+        ReportPlayer("climbhacking", ss.str());
+    }
 
     SetOldValues();
 }

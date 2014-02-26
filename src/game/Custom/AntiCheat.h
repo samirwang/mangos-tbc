@@ -30,12 +30,7 @@ class AntiCheat
 {
 public:
     AntiCheat(Player* pPlayer);
-    ~AntiCheat()
-    {
-        delete m_SpeedCheat;
-        delete m_HeightCheat;
-        delete m_ClimbCheat;
-    }
+    ~AntiCheat();
 
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
 
@@ -120,6 +115,7 @@ public:
         m_OldMoveSpeed = 0;
         m_DetectStreak = 0;
     }
+    ~AntiCheat_speed() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
 
@@ -132,6 +128,7 @@ class AntiCheat_height : public AntiCheat_module
 {
 public:
     AntiCheat_height(Player* pPlayer) { m_player = pPlayer; }
+    ~AntiCheat_height() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
 };
@@ -140,6 +137,7 @@ class AntiCheat_climb : public AntiCheat_module
 {
 public:
     AntiCheat_climb(Player* pPlayer) { m_player = pPlayer; }
+    ~AntiCheat_climb() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
 };
