@@ -7512,6 +7512,11 @@ float Unit::GetSpeed(UnitMoveType mtype) const
     return m_speed_rate[mtype] * baseMoveSpeed[mtype];
 }
 
+float Unit::GetBaseSpeed(UnitMoveType mtype) const
+{
+    return baseMoveSpeed[mtype];
+}
+
 struct SetSpeedRateHelper
 {
     explicit SetSpeedRateHelper(UnitMoveType _mtype, bool _forced) : mtype(_mtype), forced(_forced) {}

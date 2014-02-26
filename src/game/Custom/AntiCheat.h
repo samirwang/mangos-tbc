@@ -36,6 +36,7 @@ public:
     void SetGMFly(bool value) { m_GmFly = value; }
     void SkipAntiCheat(bool value = true) { m_SkipAntiCheat = value; }
 
+    bool SkippingAntiCheat() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
 
 private:
@@ -68,13 +69,13 @@ public:
 
         m_MoveDist = 0;
         m_DeltaZ = 0;
-        m_LastCheat = false;
     }
 
     ~AntiCheat_module() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
     void SetOldValues();
+    void ReportPlayer(std::string hack, std::string misc = "");
 
     bool IsFlying();
     bool IsFalling();
@@ -102,8 +103,6 @@ protected:
 
     float m_MoveDist;
     float m_DeltaZ;
-
-    bool m_LastCheat;
 };
 
 class AntiCheat_speed : public AntiCheat_module
@@ -113,12 +112,14 @@ public:
     {
         m_player = pPlayer;
         m_OldMoveSpeed = 0;
+        m_DetectStreak = 0;
     }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
 
 private:
     float m_OldMoveSpeed;
+    uint32 m_DetectStreak;
 };
 
 class AntiCheat_height : public AntiCheat_module

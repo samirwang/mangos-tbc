@@ -17,11 +17,15 @@
 */
 
 #include "AntiCheat.h"
-
+#include "Custom.h"
+#include "World.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
     m_player = pPlayer;
+
+    m_SkipAntiCheat = true;
+    m_GmFly = false;
 
     m_SpeedCheat = new AntiCheat_speed(pPlayer);
     m_HeightCheat = new AntiCheat_height(pPlayer);
@@ -54,6 +58,8 @@ void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
     m_SpeedCheat->DetectHack(MoveInfo, Opcode);
     m_HeightCheat->DetectHack(MoveInfo, Opcode);
     m_ClimbCheat->DetectHack(MoveInfo, Opcode);
+
+    m_SkipAntiCheat = false;
 }
 
 void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
@@ -83,17 +89,30 @@ void AntiCheat_module::SetOldValues()
     m_OldServerTime = m_CurServerTime;
 
     m_DetectionDelay = 0;
-    m_LastCheat = false;
+}
+
+void AntiCheat_module::ReportPlayer(std::string hack, std::string misc)
+{
+    if (m_player->isGameMaster() || m_player->GetAntiCheat()->SkippingAntiCheat())
+        return;
+
+    CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", m_player->GetGUIDLow(), m_player->GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
+
+    std::ostringstream ss;
+    ss << "Player " << m_player->GetName() << " was caught " << hack << " " << misc;
+
+    sCustom.SendGMMessage(ss.str());
 }
 
 void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat_module::DetectHack(MoveInfo, Opcode);
 
-    if (!(m_DetectionDelay > 10))
+    if (!(m_DetectionDelay >= 500))
         return;
 
-    bool back = m_CurMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD);
+    bool back = m_CurMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD) &&
+        m_OldMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
 
@@ -129,18 +148,24 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
             maxdist *= 3;
     }
 
-    bool LastCheat = m_LastCheat;
-    m_player->BothChat << m_DetectionDelay;
-
-    SetOldValues();
-
     if (dist > maxdist)
     {
-        if (LastCheat)
-            m_player->BothChat << "Speedhack: " << dist << " " << maxdist << " " << m_STimeDiff << std::endl;
+        ++m_DetectStreak;
 
-        m_LastCheat = true;
+        if (m_DetectStreak >= 2)
+        {
+            std::ostringstream ss;
+            ss << std::endl;
+            ss << "TimeDiff: " << m_STimeDiff << " Distance Traveled: " << dist << " Distance Allowed: " << maxdist << std::endl;
+            ss << "DetectStreak: " << m_DetectStreak;
+
+            ReportPlayer("speedhacking", ss.str());
+        }
     }
+    else
+        m_DetectStreak = 0;
+
+    SetOldValues();
 }
 
 void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
@@ -188,16 +213,14 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         }
     }
 
-    if (!notcheat)
-    {
-        float cz = pMap->GetHeight(x, y, z);
+    float cz = pMap->GetHeight(x, y, z);
 
+    if (!notcheat)
         if (abs(cz - z) < heightrange)
             notcheat = true;
-    }
 
     if (!notcheat)
-        m_player->BothChat << (m_CurOpcode == MSG_MOVE_JUMP ? "jump hacking" : "height hacking") << std::endl;
+        ReportPlayer((m_CurOpcode == MSG_MOVE_JUMP ? "jumphacking" : (z > cz ? "flyhacking" : "planehacking")));
 
     SetOldValues();
 }
@@ -247,7 +270,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
     if (angle[0] > 1.9f && angle[1] > 1.9f)
-        m_player->BothChat << "wallclimbing" << std::endl;
+        ReportPlayer("climbhack");
 
     SetOldValues();
 }
