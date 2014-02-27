@@ -41,7 +41,7 @@ enum StringSettings
 class Settings
 {
 public:
-    Settings(Player* pPlayer);
+    explicit Settings(Player* pPlayer);
     ~Settings() { };
 
     typedef std::map<FloatSettings, float>      FloatContainer;

@@ -24,7 +24,7 @@
 class PlayerGossip
 {
 public:
-    PlayerGossip(Player* pPlayer);
+    explicit PlayerGossip(Player* pPlayer);
     ~PlayerGossip() {};
 
     void PlayerGossipHello(uint32 sender);

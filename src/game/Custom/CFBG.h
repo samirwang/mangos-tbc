@@ -25,7 +25,7 @@
 class CFBG
 {
 public:
-    CFBG(Player* pPlayer);
+    explicit CFBG(Player* pPlayer);
     ~CFBG() { };
 
     typedef std::vector<ObjectGuid> FakedPlayers;
