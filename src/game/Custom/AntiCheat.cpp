@@ -205,9 +205,9 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     bool notcheat = false;
 
-    for (uint8 i = 1; i <= ranges; i++)
+    for (auto i = 1; i <= ranges; ++i)
     {
-        for (uint8 j = 1; j <= points; ++j)
+        for (auto j = 1; j <= points; ++j)
         {
             float angle = MapManager::NormalizeOrientation((M_PI_F / points) * j);
             float radius = float(firstrange * i);
@@ -280,7 +280,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     deltaZ[0] = m_DeltaZ;
     deltaZ[1] = fabs(floor_z[0] - floor_z[1]);
 
-    for (uint8 i = 0; i < 2; i++)
+    for (auto i = 0; i < 2; ++i)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
     if (angle[0] > 1.9f && angle[1] > 1.9f)

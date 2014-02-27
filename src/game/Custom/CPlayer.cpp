@@ -128,7 +128,7 @@ void Player::AddItemSet(uint32 setid)
     ItemSetEntry const* set = sItemSetStore.LookupEntry(setid);
     if (set)
     {
-        for (uint8 i = 0; i < 17; ++i)
+        for (auto i = 0; i < 17; ++i)
         {
             uint32 itemid = set->itemId[i];
             if (itemid)
@@ -137,7 +137,7 @@ void Player::AddItemSet(uint32 setid)
                     Items.push_back(itemid);
                 else
                 {
-                    for (std::vector<uint32>::const_iterator itr = Items.begin(); itr != Items.end(); ++itr)
+                    for (auto itr = Items.cbegin(); itr != Items.cend(); ++itr)
                         DestroyItemCount(*itr, 1, true);
 
                     BoxChat << "Not enough space to store itemset" << std::endl;
@@ -230,7 +230,7 @@ void Player::FillGreenSpellList()
 
         SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
 
-        for (SpellContainer::const_iterator itr = classSpellContainer.begin(); itr != classSpellContainer.end(); ++itr)
+        for (auto itr = classSpellContainer.cbegin(); itr != classSpellContainer.cend(); ++itr)
             allSpellContainer->push_back(*itr);
 
         sCustom.CacheSpellContainer(getClass(), allSpellContainer);
@@ -242,7 +242,7 @@ void Player::FillGreenSpellList()
     m_DelayedSpellLearn.clear();
 
 
-    for (SpellContainer::const_iterator itr = allSpellContainer->begin(); itr != allSpellContainer->end(); ++itr)
+    for (auto itr = allSpellContainer->cbegin(); itr != allSpellContainer->cend(); ++itr)
     {
         TrainerSpell const* tSpell = &*itr;
 
@@ -256,7 +256,7 @@ void Player::FillGreenSpellList()
 
                 if (SpellEntry const* spellInfo = sSpellStore.LookupEntry(tSpell->spell))
                 {
-                    for (uint8 i = 0; i < MAX_EFFECT_INDEX; i++)
+                    for (auto i = 0; i < MAX_EFFECT_INDEX; ++i)
                     {
                         if (spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
                         {
@@ -284,7 +284,7 @@ void Player::LearnGreenSpells()
 
     learnSpell(spellid, false);
 
-    m_DelayedSpellLearn.erase(m_DelayedSpellLearn.begin());
+    m_DelayedSpellLearn.erase(m_DelayedSpellLearn.cbegin());
 
     if (m_DelayedSpellLearn.empty())
         FillGreenSpellList();
@@ -368,7 +368,7 @@ void Player::CreatePet(uint32 entry, bool classcheck)
     // visual effect for levelup
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,70);
 
-    for (int x = 0; x < 6; x++)
+    for (auto x = 0; x < 6; x++)
     {
         pet->SetPower(POWER_HAPPINESS,66600000);
         pet->ModifyLoyalty(150000);
@@ -478,7 +478,7 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     size_t count_pos = data.wpos();
     data << uint8(count);
 
-    for (int i = 0; i < numitems; ++i)
+    for (auto i = 0; i < numitems; ++i)
     {
         VendorItem const* crItem = i < customitems ? vItems->GetItem(i) : tItems->GetItem(i - customitems);
 
@@ -633,7 +633,7 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
         }
 
         // item base price
-        for (uint8 i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
+        for (auto i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
         {
             if (iece->reqitem[i] && !HasItemCount(iece->reqitem[i], iece->reqitemcount[i] * count))
             {
@@ -913,7 +913,7 @@ void Player::LearnTalentTemplate(uint8 spec)
 {
     resetTalents(true);
 
-    for (TalentContainer::const_iterator itr = sCustom.GetTalentContainerBegin(); itr != sCustom.GetTalentContainerEnd(); ++itr)
+    for (auto itr = sCustom.GetTalentContainercbegin(); itr != sCustom.GetTalentContainercend(); ++itr)
     if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
         LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
 }
@@ -921,7 +921,7 @@ void Player::LearnTalentTemplate(uint8 spec)
 
 void Player::ApplyEnchantTemplate(uint8 spec)
 {
-    for (EnchantContainer::const_iterator itr = sCustom.GetEnchantContainerBegin(); itr != sCustom.GetEnchantContainerEnd(); ++itr)
+    for (auto itr = sCustom.GetEnchantContainercbegin(); itr != sCustom.GetEnchantContainercend(); ++itr)
     if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
         EnchantItem((*itr)->SpellId, (*itr)->SlotId, "");
 }

@@ -449,6 +449,9 @@ public:
 
     SessionMap::const_iterator GetSessionsBegin() { return m_sessions.begin(); }
     SessionMap::const_iterator GetSessionsEnd() { return m_sessions.end(); }
+
+    SessionMap::const_iterator GetSessionscBegin() { return m_sessions.cbegin(); }
+    SessionMap::const_iterator GetSessionscEnd() { return m_sessions.cend(); }
     
     // !Custom
     public:

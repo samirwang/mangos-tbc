@@ -69,8 +69,8 @@ void CFBG::RecachePlayersFromBG()
 {
     if (BattleGround* bg = m_player->GetBattleGround())
     {
-        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = bg->GetPlayers().begin();
-            itr != bg->GetPlayers().end(); ++itr)
+        for (auto itr = bg->GetPlayers().cbegin();
+            itr != bg->GetPlayers().cend(); ++itr)
         {
             if (Player* player = sObjectMgr.GetPlayer(itr->first))
             {
@@ -106,7 +106,7 @@ void CFBG::RecachePlayersFromBG()
 
 void CFBG::RecachePlayersFromList()
 {
-    for (FakedPlayers::const_iterator itr = m_FakedPlayers.begin(); itr != m_FakedPlayers.end(); ++itr)
+    for (auto itr = m_FakedPlayers.cbegin(); itr != m_FakedPlayers.cend(); ++itr)
     {
         WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
         data << *itr;
@@ -134,7 +134,7 @@ WorldPacket CFBG::BuildNameQuery()
     if (DeclinedName const* names = m_player->GetDeclinedNames())
     {
         data << uint8(1);                                   // is declined
-        for (int i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
+        for (auto i = 0; i < MAX_DECLINED_NAME_CASES; ++i)
             data << names->name[i];
     }
     else
@@ -150,7 +150,7 @@ void CFBG::FakeDisplayID()
         PlayerInfo const* info = sObjectMgr.GetPlayerInfo(m_player->getRace(), m_player->getClass());
         if (!info)
         {
-            for (uint8 i = 1; i <= CLASS_DRUID; i++)
+            for (auto i = 1; i <= CLASS_DRUID; ++i)
             {
                 info = sObjectMgr.GetPlayerInfo(m_player->getRace(), i);
                 if (info)
@@ -235,7 +235,7 @@ bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
         if (pBattleGround->isArena()) // Only fake chat in BG's. CFBG should not interfere with arenas.
             return false;
 
-        for (BattleGround::BattleGroundPlayerMap::const_iterator itr = pBattleGround->GetPlayers().begin(); itr != pBattleGround->GetPlayers().end(); ++itr)
+        for (auto itr = pBattleGround->GetPlayers().cbegin(); itr != pBattleGround->GetPlayers().cend(); ++itr)
         {
             if (Player* pPlayer = sObjectMgr.GetPlayer(itr->first))
             {
@@ -267,7 +267,7 @@ void CFBG::RewardReputationToXBGTeam(BattleGround* pBG, uint32 faction_ally, uin
     if (!a_factionEntry || !h_factionEntry)
         return;
 
-    for (BattleGround::BattleGroundPlayerMap::const_iterator itr = pBG->GetPlayers().begin(); itr != pBG->GetPlayers().end(); ++itr)
+    for (auto itr = pBG->GetPlayers().cbegin(); itr != pBG->GetPlayers().cend(); ++itr)
     {
         if (itr->second.OfflineRemoveTime)
             continue;

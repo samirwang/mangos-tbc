@@ -62,8 +62,8 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
     uint32 addedally = 0;
     uint32 addedhorde = 0;
 
-    for (GroupsQueueType::const_iterator itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].begin();
-        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].end(); ++itr)
+    for (auto itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cbegin();
+        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cend(); ++itr)
     {
         GroupQueueInfo* ginfo = *itr;
         if (!ginfo->IsInvitedToBGInstanceGUID)
@@ -104,8 +104,8 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
     uint32 addedally = bg->GetMaxPlayersPerTeam() - bg->GetFreeSlotsForTeam(ALLIANCE);
     uint32 addedhorde = bg->GetMaxPlayersPerTeam() - bg->GetFreeSlotsForTeam(HORDE);
 
-    for (GroupsQueueType::const_iterator itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].begin();
-        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].end(); ++itr)
+    for (auto itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cbegin();
+        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cend(); ++itr)
     {
         GroupQueueInfo* ginfo = *itr;
         if (!ginfo->IsInvitedToBGInstanceGUID)

@@ -27,16 +27,16 @@
 
 Custom::~Custom()
 {
-    for (CachedSpellContainer::const_iterator itr = m_CachedSpellContainer.begin(); itr != m_CachedSpellContainer.end(); ++itr)
+    for (auto itr = m_CachedSpellContainer.cbegin(); itr != m_CachedSpellContainer.cend(); ++itr)
         delete itr->second;
 
-    for (TalentContainer::const_iterator itr = m_TalentContainer.begin(); itr != m_TalentContainer.end(); ++itr)
+    for (auto itr = m_TalentContainer.cbegin(); itr != m_TalentContainer.cend(); ++itr)
         delete *itr;
 }
 
 void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
 {
-    for (World::SessionMap::const_iterator itr = sWorld.GetSessionsBegin(); itr != sWorld.GetSessionsEnd(); ++itr)
+    for (auto itr = sWorld.GetSessionscBegin(); itr != sWorld.GetSessionscEnd(); ++itr)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->WChatOn())
@@ -45,7 +45,7 @@ void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
 
 void Custom::SendGMMessage(std::string msg)
 {
-    for (World::SessionMap::const_iterator itr = sWorld.GetSessionsBegin(); itr != sWorld.GetSessionsEnd(); ++itr)
+    for (auto itr = sWorld.GetSessionscBegin(); itr != sWorld.GetSessionscEnd(); ++itr)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
@@ -57,7 +57,7 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     SpellContainer spellContainer;
 
     if (TrainerSpellData const* spelldata = sObjectMgr.GetNpcTrainerSpells(entry))
-        for (TrainerSpellMap::const_iterator itr = spelldata->spellList.begin(); itr != spelldata->spellList.end(); ++itr)
+        for (auto itr = spelldata->spellList.cbegin(); itr != spelldata->spellList.cend(); ++itr)
             spellContainer.push_back(itr->second);
 
     const CreatureInfo* creature = sObjectMgr.GetCreatureTemplate(entry);
@@ -69,7 +69,7 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 
     if (trainertemplate)
         if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))
-            for (TrainerSpellMap::const_iterator itr = spelldata2->spellList.begin(); itr != spelldata2->spellList.end(); ++itr)
+            for (auto itr = spelldata2->spellList.cbegin(); itr != spelldata2->spellList.cend(); ++itr)
                 spellContainer.push_back(itr->second);
 
     return spellContainer;
@@ -77,7 +77,7 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 
 SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
 {
-    if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.end())
+    if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.cend())
         return m_CachedSpellContainer[crval];
 
     return NULL;
@@ -182,7 +182,7 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
 {
     std::vector<uint8> playableRaces;
 
-    for (uint8 i = RACE_HUMAN; i <= RACE_DRAENEI; i++)
+    for (uint8 i = RACE_HUMAN; i <= RACE_DRAENEI; ++i)
     {
         if (i == RACE_GOBLIN)
             continue;
@@ -226,7 +226,7 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
     WorldPacket data(SMSG_NPC_TEXT_UPDATE, 100);            // guess size
     data << textid;                                         // can be < 0
 
-    for (uint32 i = 0; i < 8; ++i)
+    for (auto i = 0; i < 8; ++i)
     {
         data << float(0);
         data << text;
@@ -247,7 +247,7 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
 
 void Custom::LoadTalentContainer()
 {
-    for (TalentContainer::const_iterator itr = m_TalentContainer.begin(); itr != m_TalentContainer.end(); ++itr)
+    for (auto itr = m_TalentContainer.cbegin(); itr != m_TalentContainer.cend(); ++itr)
         delete *itr;
 
     m_TalentContainer.clear();
@@ -279,7 +279,7 @@ void Custom::LoadTalentContainer()
 
 void Custom::LoadEnchantContainer()
 {
-    for (EnchantContainer::const_iterator itr = m_EnchantContainer.begin(); itr != m_EnchantContainer.end(); ++itr)
+    for (auto itr = m_EnchantContainer.cbegin(); itr != m_EnchantContainer.cend(); ++itr)
         delete *itr;
 
     m_EnchantContainer.clear();

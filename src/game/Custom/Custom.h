@@ -165,7 +165,7 @@ public:
 
     uint32 GetFakePlayerBytes(uint8 race, uint8 gender)
     {
-        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.cend())
             return m_FakePlayerBytesContainer[race].PlayerBytes[gender];
 
         return 0;
@@ -173,7 +173,7 @@ public:
 
     uint32 GetFakePlayerBytes2(uint8 race, uint8 gender)
     {
-        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.cend())
             return m_FakePlayerBytesContainer[race].PlayerBytes2[gender];
 
         return 0;
@@ -184,12 +184,12 @@ public:
     std::string GetSlotName(uint8 slotid) { return m_SlotNames[slotid]; }
 
     void LoadTalentContainer();
-    TalentContainer::const_iterator GetTalentContainerBegin() { return m_TalentContainer.begin(); }
-    TalentContainer::const_iterator GetTalentContainerEnd() { return m_TalentContainer.end(); }
+    TalentContainer::const_iterator GetTalentContainercbegin() { return m_TalentContainer.cbegin(); }
+    TalentContainer::const_iterator GetTalentContainercend() { return m_TalentContainer.cend(); }
 
     void LoadEnchantContainer();
-    EnchantContainer::const_iterator GetEnchantContainerBegin() { return m_EnchantContainer.begin(); }
-    EnchantContainer::const_iterator GetEnchantContainerEnd() { return m_EnchantContainer.end(); }
+    EnchantContainer::const_iterator GetEnchantContainercbegin() { return m_EnchantContainer.cbegin(); }
+    EnchantContainer::const_iterator GetEnchantContainercend() { return m_EnchantContainer.cend(); }
 
 private:
     static const std::string m_ClassColor[];

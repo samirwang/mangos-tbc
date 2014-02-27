@@ -48,16 +48,16 @@ void Settings::SaveSettings()
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.PExecute("DELETE FROM player_settings WHERE guid = %u", m_player->GetGUIDLow());
 
-    for (FloatContainer::const_iterator itr = m_FloatContainer.begin(); itr != m_FloatContainer.end(); ++itr)
+    for (auto itr = m_FloatContainer.cbegin(); itr != m_FloatContainer.cend(); ++itr)
         CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, FloatSetting) VALUES (%u, %u, %u, %f)", m_player->GetGUIDLow(), itr->first, SETTING_FLOAT, itr->second);
 
-    for (IntContainer::const_iterator itr = m_IntContainer.begin(); itr != m_IntContainer.end(); ++itr)
+    for (auto itr = m_IntContainer.cbegin(); itr != m_IntContainer.cend(); ++itr)
         CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, IntSetting) VALUES (%u, %u, %u, %i)", m_player->GetGUIDLow(), itr->first, SETTING_INT, itr->second);
 
-    for (UintContainer::const_iterator itr = m_UintContainer.begin(); itr != m_UintContainer.end(); ++itr)
+    for (auto itr = m_UintContainer.cbegin(); itr != m_UintContainer.cend(); ++itr)
         CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, UintSetting) VALUES (%u, %u, %u, %u)", m_player->GetGUIDLow(), itr->first, SETTING_UINT, itr->second);
 
-    for (StringContainer::const_iterator itr = m_StringContainer.begin(); itr != m_StringContainer.end(); ++itr)
+    for (auto itr = m_StringContainer.cbegin(); itr != m_StringContainer.cend(); ++itr)
         CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, '%s')", m_player->GetGUIDLow(), itr->first, SETTING_STRING, itr->second.c_str());
 
     CharacterDatabase.CommitTransaction();
