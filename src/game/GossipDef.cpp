@@ -23,6 +23,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "Formulas.h"
+#include "CPlayer.h"
 
 GossipMenu::GossipMenu(WorldSession* session) : m_session(session)
 {
@@ -154,7 +155,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
     Player* player = GetMenuSession()->GetPlayer();
 
     if (player)
-        player->SetLastGossipGuid(objectGuid);
+        player->GetCPlayer()->SetLastGossipGuid(objectGuid);
 
     WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));           // guess size
     data << ObjectGuid(objectGuid);

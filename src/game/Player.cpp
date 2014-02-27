@@ -68,6 +68,7 @@
 #include "CFBG.h"
 #include "Settings.h"
 #include "PlayerGossip.h"
+#include "CPlayer.h"
 
 #include <cmath>
 
@@ -390,7 +391,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_CFBG = new CFBG(this);
     m_Settings = new Settings(this);
     m_PlayerGossip = new PlayerGossip(this);
-    m_wChatOn = true;
+    m_CPlayer = new CPlayer(this);
 
     m_transport = 0;
 
@@ -1147,7 +1148,7 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     if (!IsInWorld())
         return;
 
-    CUpdate(update_diff);
+    GetCPlayer()->CUpdate(update_diff);
 
     // Undelivered mail
     if (m_nextMailDelivereTime && m_nextMailDelivereTime <= time(NULL))
@@ -18071,7 +18072,7 @@ void Player::TakeExtendedCost(uint32 extendedCostId, uint32 count)
 bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     if (vendorGuid == GetObjectGuid())
-        return BuyItemFromMultiVendor(item, count, bag, slot);
+        return GetCPlayer()->BuyItemFromMultiVendor(item, count, bag, slot);
 
     // cheating attempt
     if (count < 1) count = 1;
@@ -20677,7 +20678,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
     DETAIL_LOG("TalentID: %u Rank: %u Spell: %u\n", talentId, talentRank, spellid);
 
     // Possibly learn new spells after talent learn
-    FillGreenSpellList();
+    GetCPlayer()->FillGreenSpellList();
 }
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)

@@ -42,6 +42,7 @@
 #include "Pet.h"
 #include "SocialMgr.h"
 #include "Custom.h"
+#include "CPlayer.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
 {
@@ -1277,7 +1278,7 @@ void WorldSession::HandleSetTitleOpcode(WorldPacket& recv_data)
 void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
 {
     if (Player* player = GetPlayer())
-        player->Sometimes();
+        player->GetCPlayer()->Sometimes();
 
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;

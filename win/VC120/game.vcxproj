@@ -557,6 +557,7 @@
     <ClInclude Include="..\..\src\game\CreatureLinkingMgr.h" />
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h" />
     <ClInclude Include="..\..\src\game\Custom\CFBG.h" />
+    <ClInclude Include="..\..\src\game\Custom\CPlayer.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
     <ClInclude Include="..\..\src\game\Custom\PlayerGossip.h" />
     <ClInclude Include="..\..\src\game\Custom\sc_creature.h" />

@@ -35,6 +35,7 @@
 #include "GuildMgr.h"
 #include "Chat.h"
 #include "PlayerGossip.h"
+#include "CPlayer.h"
 
 enum StableResultCode
 {
@@ -342,7 +343,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
 
     recv_data >> guid >> menuId >> gossipListId;
 
-    if (_player->GetLastGossipGuid() != guid)
+    if (_player->GetCPlayer()->GetLastGossipGuid() != guid)
         return; // Possible hack attempt
 
     if (_player->PlayerTalkClass->GossipOptionCoded(gossipListId))

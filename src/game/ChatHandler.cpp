@@ -36,6 +36,7 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "CFBG.h"
+#include "CPlayer.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {
@@ -309,9 +310,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (msg.empty())
                 break;
 
-            if (GetPlayer()->WChatOn())
+            if (GetPlayer()->GetCPlayer()->WChatOn())
             {
-                GetPlayer()->SendWorldChatMsg(msg);
+                GetPlayer()->GetCPlayer()->SendWorldChatMsg(msg);
                 break;
             }
 

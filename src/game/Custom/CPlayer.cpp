@@ -26,8 +26,21 @@
 #include "Settings.h"
 #include "CFBG.h"
 #include "PlayerGossip.h"
+#include "CPlayer.h"
 
-void Player::CUpdate(uint32 diff)
+CPlayer::CPlayer(Player* pPlayer)
+{
+    m_player = pPlayer;
+
+    m_wChatOn = false;
+}
+
+CPlayer::~CPlayer()
+{
+    delete m_player;
+}
+
+void CPlayer::CUpdate(uint32 diff)
 {
     LearnGreenSpells();
 
@@ -36,28 +49,28 @@ void Player::CUpdate(uint32 diff)
     SendSavedChat(CHAT_BOTH, BothChat);
 }
 
-void Player::Sometimes()
+void CPlayer::Sometimes()
 {
-    if (GetCFBG()->GetRecache())
+    if (m_player->GetCFBG()->GetRecache())
     {
-        GetCFBG()->RecachePlayersFromList();
-        GetCFBG()->RecachePlayersFromBG();
+        m_player->GetCFBG()->RecachePlayersFromList();
+        m_player->GetCFBG()->RecachePlayersFromBG();
     }
 
-    if (GetCFBG()->GetFakeOnNextTick())
+    if (m_player->GetCFBG()->GetFakeOnNextTick())
     {
-        GetCFBG()->SetFakeOnNextTick(false);
+        m_player->GetCFBG()->SetFakeOnNextTick(false);
 
-        SetByteValue(UNIT_FIELD_BYTES_0, 0, GetCFBG()->getFRace());
-        setFaction(GetCFBG()->getFFaction());
-        GetCFBG()->FakeDisplayID();
+        m_player->SetByteValue(UNIT_FIELD_BYTES_0, 0, m_player->GetCFBG()->getFRace());
+        m_player->setFaction(m_player->GetCFBG()->getFFaction());
+        m_player->GetCFBG()->FakeDisplayID();
 
-        SetUInt32Value(PLAYER_BYTES, GetCFBG()->getFPlayerBytes());
-        SetUInt32Value(PLAYER_BYTES_2, GetCFBG()->getFPlayerBytes2());
+        m_player->SetUInt32Value(PLAYER_BYTES, m_player->GetCFBG()->getFPlayerBytes());
+        m_player->SetUInt32Value(PLAYER_BYTES_2, m_player->GetCFBG()->getFPlayerBytes2());
     }
 }
 
-void Player::LoadCountryData()
+void CPlayer::LoadCountryData()
 {
     std::ostringstream ss;
 
@@ -67,7 +80,7 @@ void Player::LoadCountryData()
         << " ip2nationcountries c,"
         << " ip2nation i"
         << " WHERE"
-        << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
+        << " i.ip < INET_ATON('" << m_player->GetSession()->GetRemoteAddress() << "')"
         << " AND"
         << " c.code = i.country"
         << " ORDER BY"
@@ -85,7 +98,7 @@ void Player::LoadCountryData()
         delete result;
     }
 
-    if (GetSession()->GetRemoteAddress() == "127.0.0.1")
+    if (m_player->GetSession()->GetRemoteAddress() == "127.0.0.1")
     {
         m_Country.ISO2 = "Local";
         m_Country.ISO3 = "Local";
@@ -93,35 +106,35 @@ void Player::LoadCountryData()
     }
 }
 
-void Player::OnLogin()
+void CPlayer::OnLogin()
 {
-    GetSettings()->LoadSettings();
-    GetCFBG()->SetFakeValues();
+    m_player->GetSettings()->LoadSettings();
+    m_player->GetCFBG()->SetFakeValues();
 
     LoadCountryData();
 
-    SetWChat(GetSettings()->GetSetting(SETTING_UINT_WCHAT));
+    SetWChat(m_player->GetSettings()->GetSetting(SETTING_UINT_WCHAT));
 
-    if (!GetCFBG()->NativeTeam())
-        GetCFBG()->SetFakeOnNextTick();
+    if (!m_player->GetCFBG()->NativeTeam())
+        m_player->GetCFBG()->SetFakeOnNextTick();
 
-    GetPlayerGossip()->PlayerGossipHello(GOSSIP_SENDER_FIRSTLOGIN);
+    m_player->GetPlayerGossip()->PlayerGossipHello(GOSSIP_SENDER_FIRSTLOGIN);
 
-    if (GetTotalPlayedTime() < 1)
+    if (m_player->GetTotalPlayedTime() < 1)
     {
-        m_Played_time[PLAYED_TIME_TOTAL] += 1;
-        m_Played_time[PLAYED_TIME_LEVEL] += 1;
+        m_player->m_Played_time[PLAYED_TIME_TOTAL] += 1;
+        m_player->m_Played_time[PLAYED_TIME_LEVEL] += 1;
 
         OnFirstLogin();
     }
 }
 
-void Player::OnFirstLogin()
+void CPlayer::OnFirstLogin()
 {
     FillGreenSpellList();
 }
 
-void Player::AddItemSet(uint32 setid)
+void CPlayer::AddItemSet(uint32 setid)
 {
     std::vector<uint32> Items;
 
@@ -133,12 +146,12 @@ void Player::AddItemSet(uint32 setid)
             uint32 itemid = set->itemId[i];
             if (itemid)
             {
-                if (StoreNewItemInBestSlots(itemid, 1))
+                if (m_player->StoreNewItemInBestSlots(itemid, 1))
                     Items.push_back(itemid);
                 else
                 {
                     for (auto itr = Items.cbegin(); itr != Items.cend(); ++itr)
-                        DestroyItemCount(*itr, 1, true);
+                        m_player->DestroyItemCount(*itr, 1, true);
 
                     BoxChat << "Not enough space to store itemset" << std::endl;
                     break;
@@ -148,34 +161,34 @@ void Player::AddItemSet(uint32 setid)
     }
 }
 
-std::string Player::GetNameLink(bool applycolors)
+std::string CPlayer::GetNameLink(bool applycolors)
 {
-    std::string name = GetName();
-    std::string teamcolor = GetOTeam() == ALLIANCE ? MSG_COLOR_DARKBLUE : MSG_COLOR_RED;
+    std::string name = m_player->GetName();
+    std::string teamcolor = m_player->GetOTeam() == ALLIANCE ? MSG_COLOR_DARKBLUE : MSG_COLOR_RED;
     std::ostringstream ss;
 
-    if (isGameMaster())
+    if (m_player->isGameMaster())
         teamcolor = MSG_COLOR_PURPLE;
 
     ss << "|Hplayer:" << name << "|h";
 
     if (applycolors)
-        ss << teamcolor << "[" << sCustom.GetClassColor(getClass()) << name << teamcolor << "]|h";
+        ss << teamcolor << "[" << sCustom.GetClassColor(m_player->getClass()) << name << teamcolor << "]|h";
     else
         ss << "[" << name << "]|h";
 
     return ss.str();
 }
 
-void Player::SendWorldChatMsg(std::string msg)
+void CPlayer::SendWorldChatMsg(std::string msg)
 {
     std::ostringstream ss;
-    ss << m_session->GetPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
+    ss << m_player->GetCPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
 
-    sCustom.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
+    sCustom.SendWorldChat(m_player->GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
 }
 
-void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
+void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
 {
     if (!ss.str().empty())
     {
@@ -186,12 +199,12 @@ void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
             const char* msg = item.c_str();
 
             if (type == CHAT_BOX || type == CHAT_BOTH)
-                ChatHandler(GetSession()).SendSysMessage(msg);
+                ChatHandler(m_player->GetSession()).SendSysMessage(msg);
             if (type == CHAT_WIDE || type == CHAT_BOTH)
             {
                 WorldPacket data(SMSG_NOTIFICATION, (strlen(msg) + 1));
                 data << msg;
-                GetSession()->SendPacket(&data);
+                m_player->GetSession()->SendPacket(&data);
             }
         }
 
@@ -200,11 +213,11 @@ void Player::SendSavedChat(MessageTypes type, std::stringstream &ss)
     }
 }
 
-void Player::FillGreenSpellList()
+void CPlayer::FillGreenSpellList()
 {
     uint32 trainerid = 0;
 
-    switch (getClass())
+    switch (m_player->getClass())
     {
     case CLASS_WARRIOR: trainerid = 26332;  break;
     case CLASS_PALADIN: trainerid = 26327;  break;
@@ -222,7 +235,7 @@ void Player::FillGreenSpellList()
     if (!trainerid)
         return;
 
-    SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(getClass());
+    SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(m_player->getClass());
 
     if (!allSpellContainer)
     {
@@ -233,7 +246,7 @@ void Player::FillGreenSpellList()
         for (auto itr = classSpellContainer.cbegin(); itr != classSpellContainer.cend(); ++itr)
             allSpellContainer->push_back(*itr);
 
-        sCustom.CacheSpellContainer(getClass(), allSpellContainer);
+        sCustom.CacheSpellContainer(m_player->getClass(), allSpellContainer);
     }
 
     if (allSpellContainer->empty())
@@ -246,11 +259,11 @@ void Player::FillGreenSpellList()
     {
         TrainerSpell const* tSpell = &*itr;
 
-        TrainerSpellState state = GetTrainerSpellState(tSpell, tSpell->reqLevel);
+        TrainerSpellState state = m_player->GetTrainerSpellState(tSpell, tSpell->reqLevel);
 
         if (state == TRAINER_SPELL_GREEN)
         {
-            if (IsInWorld())
+            if (m_player->IsInWorld())
             {
                 bool CastLearned = false;
 
@@ -262,7 +275,7 @@ void Player::FillGreenSpellList()
                         {
                             CastLearned = true;
 
-                            if (!HasSpell(spellInfo->EffectTriggerSpell[i]))
+                            if (!m_player->HasSpell(spellInfo->EffectTriggerSpell[i]))
                                 m_DelayedSpellLearn.push_back(spellInfo->EffectTriggerSpell[i]);
                         }
                     }
@@ -275,14 +288,14 @@ void Player::FillGreenSpellList()
     }
 }
 
-void Player::LearnGreenSpells()
+void CPlayer::LearnGreenSpells()
 {
     if (m_DelayedSpellLearn.empty())
         return;
 
     uint32 spellid = m_DelayedSpellLearn.front();
 
-    learnSpell(spellid, false);
+    m_player->learnSpell(spellid, false);
 
     m_DelayedSpellLearn.erase(m_DelayedSpellLearn.cbegin());
 
@@ -290,17 +303,9 @@ void Player::LearnGreenSpells()
         FillGreenSpellList();
 }
 
-Team Player::GetTeam() const
+void CPlayer::CreatePet(uint32 entry, bool classcheck)
 {
-    if (GetBattleGround())
-        return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
-
-    return GetOTeam();
-}
-
-void Player::CreatePet(uint32 entry, bool classcheck)
-{
-    if (classcheck && getClass() != CLASS_HUNTER)
+    if (classcheck && m_player->getClass() != CLASS_HUNTER)
         return;
 
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
@@ -310,7 +315,7 @@ void Player::CreatePet(uint32 entry, bool classcheck)
         return;
     }
 
-    CreatureCreatePos pos(GetSession()->GetPlayer(), GetOrientation());
+    CreatureCreatePos pos(m_player->GetSession()->GetPlayer(), m_player->GetOrientation());
 
     Creature* pCreature = new Creature;
 
@@ -329,8 +334,8 @@ void Player::CreatePet(uint32 entry, bool classcheck)
 
     //--------------------------------------------------
 
-    if (GetPetGuid())
-        UnsummonPetTemporaryIfAny();
+    if (m_player->GetPetGuid())
+        m_player->UnsummonPetTemporaryIfAny();
 
     Pet* pet = new Pet(HUNTER_PET);
 
@@ -341,12 +346,12 @@ void Player::CreatePet(uint32 entry, bool classcheck)
         return;
     }
 
-    pet->SetOwnerGuid(GetObjectGuid());
-    pet->SetCreatorGuid(GetObjectGuid());
-    pet->setFaction(getFaction());
+    pet->SetOwnerGuid(m_player->GetObjectGuid());
+    pet->SetCreatorGuid(m_player->GetObjectGuid());
+    pet->setFaction(m_player->getFaction());
     pet->SetUInt32Value(UNIT_CREATED_BY_SPELL, 13481);
 
-    if (IsPvP())
+    if (m_player->IsPvP())
         pet->SetPvP(true);
 
     if (!pet->InitStatsForLevel(pCreature->getLevel()))
@@ -377,10 +382,10 @@ void Player::CreatePet(uint32 entry, bool classcheck)
     }
 
     // caster have pet now
-    SetPet(pet);
+    m_player->SetPet(pet);
 
     pet->SavePetToDB(PET_SAVE_AS_CURRENT);
-    PetSpellInitialize();
+    m_player->PetSpellInitialize();
     pet->learnSpell(27052);
     pet->learnSpell(35698);
     pet->learnSpell(25076);
@@ -393,9 +398,9 @@ void Player::CreatePet(uint32 entry, bool classcheck)
     delete pCreature;
 }
 
-void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
+void CPlayer::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
 {
-    Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
+    Item* pItem = m_player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
     if (!pItem)
     {
         if (sendername != "")
@@ -425,15 +430,15 @@ void Player::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
         return;
     }
 
-    ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, false);
+    m_player->ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, false);
     pItem->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
-    ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
+    m_player->ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
 
     if (sendername != "")
         BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!" << std::endl;
 }
 
-void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
+void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
 {
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
 
@@ -444,11 +449,11 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
         return;
     }
 
-    Creature* pCreature = GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
+    Creature* pCreature = m_player->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
         DEBUG_LOG("WORLD: SendMultiVendorInventory - %s not found or you can't interact with him.", guid.GetString().c_str());
-        SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, guid, 0);
+        m_player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, guid, 0);
         return;
     }
 
@@ -459,10 +464,10 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     if (!vItems && !tItems)
     {
         WorldPacket data(SMSG_LIST_INVENTORY, (8 + 1 + 1));
-        data << GetObjectGuid();
+        data << m_player->GetObjectGuid();
         data << uint8(0);                                   // count==0, next will be error code
         data << uint8(0);                                   // "Vendor has no inventory"
-        GetSession()->SendPacket(&data);
+        m_player->GetSession()->SendPacket(&data);
         return;
     }
 
@@ -472,7 +477,7 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     uint8 count = 0;
 
     WorldPacket data(SMSG_LIST_INVENTORY, (8 + 1 + numitems * 8 * 4));
-    data << GetObjectGuid();
+    data << m_player->GetObjectGuid();
     SetMultiVendor(cEntry, guid);
 
     size_t count_pos = data.wpos();
@@ -488,14 +493,14 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
             ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(itemId);
             if (pProto)
             {
-                if (!isGameMaster())
+                if (!m_player->isGameMaster())
                 {
                     // class wrong item skip only for bindable case
-                    if ((pProto->AllowableClass & getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP)
+                    if ((pProto->AllowableClass & m_player->getClassMask()) == 0 && pProto->Bonding == BIND_WHEN_PICKED_UP)
                         continue;
 
                     // race wrong item skip always
-                    if ((pProto->AllowableRace & getRaceMask()) == 0)
+                    if ((pProto->AllowableRace & m_player->getRaceMask()) == 0)
                         continue;
                 }
 
@@ -516,29 +521,29 @@ void Player::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     if (count == 0)
     {
         data << uint8(0);                                   // "Vendor has no inventory"
-        GetSession()->SendPacket(&data);
+        m_player->GetSession()->SendPacket(&data);
         return;
     }
 
     data.put<uint8>(count_pos, count);
-    GetSession()->SendPacket(&data);
+    m_player->GetSession()->SendPacket(&data);
 }
 
 // Return true is the bought item has a max count to force refresh of window by caller
-bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot)
+bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     DEBUG_LOG("WORLD: BuyItemFromMultiVendor");
 
     // cheating attempt
     if (count < 1) count = 1;
 
-    if (!isAlive())
+    if (!m_player->isAlive())
         return false;
 
     ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(item);
     if (!pProto)
     {
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, NULL, item, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, NULL, item, 0);
         return false;
     }
 
@@ -554,11 +559,11 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
         return false;
     }
 
-    Creature* pCreature = GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
+    Creature* pCreature = m_player->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
         DEBUG_LOG("WORLD: BuyItemFromMultiVendor - %s not found or you can't interact with him.", guid.GetString().c_str());
-        SendBuyError(BUY_ERR_DISTANCE_TOO_FAR, NULL, item, 0);
+        m_player->SendBuyError(BUY_ERR_DISTANCE_TOO_FAR, NULL, item, 0);
         return false;
     }
 
@@ -567,7 +572,7 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
 
     if ((!vItems || vItems->Empty()) && (!tItems || tItems->Empty()))
     {
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
     }
 
@@ -580,14 +585,14 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
 
     if (vendorslot >= vCount + tCount)
     {
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
     }
 
     VendorItem const* crItem = vendorslot < vCount ? vItems->GetItem(vendorslot) : tItems->GetItem(vendorslot - vCount);
     if (!crItem || crItem->item != item) // store diff item (cheating)
     {
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
     }
 
@@ -598,14 +603,14 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
     {
         if (pCreature->GetVendorItemCurrentCount(crItem) < totalCount)
         {
-            SendBuyError(BUY_ERR_ITEM_ALREADY_SOLD, pCreature, item, 0);
+            m_player->SendBuyError(BUY_ERR_ITEM_ALREADY_SOLD, pCreature, item, 0);
             return false;
         }
     }
 
-    if (uint32(GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
+    if (uint32(m_player->GetReputationRank(pProto->RequiredReputationFaction)) < pProto->RequiredReputationRank)
     {
-        SendBuyError(BUY_ERR_REPUTATION_REQUIRE, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_REPUTATION_REQUIRE, pCreature, item, 0);
         return false;
     }
 
@@ -619,52 +624,52 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
         }
 
         // honor points price
-        if (GetHonorPoints() < (iece->reqhonorpoints * count))
+        if (m_player->GetHonorPoints() < (iece->reqhonorpoints * count))
         {
-            SendEquipError(EQUIP_ERR_NOT_ENOUGH_HONOR_POINTS, NULL, NULL);
+            m_player->SendEquipError(EQUIP_ERR_NOT_ENOUGH_HONOR_POINTS, NULL, NULL);
             return false;
         }
 
         // arena points price
-        if (GetArenaPoints() < (iece->reqarenapoints * count))
+        if (m_player->GetArenaPoints() < (iece->reqarenapoints * count))
         {
-            SendEquipError(EQUIP_ERR_NOT_ENOUGH_ARENA_POINTS, NULL, NULL);
+            m_player->SendEquipError(EQUIP_ERR_NOT_ENOUGH_ARENA_POINTS, NULL, NULL);
             return false;
         }
 
         // item base price
         for (auto i = 0; i < MAX_EXTENDED_COST_ITEMS; ++i)
         {
-            if (iece->reqitem[i] && !HasItemCount(iece->reqitem[i], iece->reqitemcount[i] * count))
+            if (iece->reqitem[i] && !m_player->HasItemCount(iece->reqitem[i], iece->reqitemcount[i] * count))
             {
-                SendEquipError(EQUIP_ERR_VENDOR_MISSING_TURNINS, NULL, NULL);
+                m_player->SendEquipError(EQUIP_ERR_VENDOR_MISSING_TURNINS, NULL, NULL);
                 return false;
             }
         }
 
         // check for personal arena rating requirement
-        if (GetMaxPersonalArenaRatingRequirement() < iece->reqpersonalarenarating)
+        if (m_player->GetMaxPersonalArenaRatingRequirement() < iece->reqpersonalarenarating)
         {
             // probably not the proper equip err
-            SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, NULL);
+            m_player->SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, NULL);
             return false;
         }
     }
 
-    if (crItem->conditionId && !isGameMaster() && !sObjectMgr.IsPlayerMeetToCondition(crItem->conditionId, this, pCreature->GetMap(), pCreature, CONDITION_FROM_VENDOR))
+    if (crItem->conditionId && !m_player->isGameMaster() && !sObjectMgr.IsPlayerMeetToCondition(crItem->conditionId, m_player, pCreature->GetMap(), pCreature, CONDITION_FROM_VENDOR))
     {
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, item, 0);
         return false;
     }
 
     uint32 price = pProto->BuyPrice * count;
 
     // reputation discount
-    price = uint32(floor(price * GetReputationPriceDiscount(pCreature)));
+    price = uint32(floor(price * m_player->GetReputationPriceDiscount(pCreature)));
 
-    if (GetMoney() < price)
+    if (m_player->GetMoney() < price)
     {
-        SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, pCreature, item, 0);
+        m_player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, pCreature, item, 0);
         return false;
     }
 
@@ -679,52 +684,52 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
 
     Item* pItem = NULL;
 
-    if ((bag == NULL_BAG && slot == NULL_SLOT) || IsInventoryPos(bag, slot))
+    if ((bag == NULL_BAG && slot == NULL_SLOT) || m_player->IsInventoryPos(bag, slot))
     {
         ItemPosCountVec dest;
-        InventoryResult msg = CanStoreNewItem(bag, slot, dest, item, totalCount);
+        InventoryResult msg = m_player->CanStoreNewItem(bag, slot, dest, item, totalCount);
         if (msg != EQUIP_ERR_OK)
         {
-            SendEquipError(msg, NULL, NULL, item);
+            m_player->SendEquipError(msg, NULL, NULL, item);
             return false;
         }
 
-        ModifyMoney(-int32(price));
+        m_player->ModifyMoney(-int32(price));
 
         if (crItem->ExtendedCost)
-            TakeExtendedCost(crItem->ExtendedCost, count);
+            m_player->TakeExtendedCost(crItem->ExtendedCost, count);
 
-        pItem = StoreNewItem(dest, item, true);
+        pItem = m_player->StoreNewItem(dest, item, true);
     }
-    else if (IsEquipmentPos(bag, slot))
+    else if (m_player->IsEquipmentPos(bag, slot))
     {
         if (totalCount != 1)
         {
-            SendEquipError(EQUIP_ERR_ITEM_CANT_BE_EQUIPPED, NULL, NULL);
+            m_player->SendEquipError(EQUIP_ERR_ITEM_CANT_BE_EQUIPPED, NULL, NULL);
             return false;
         }
 
         uint16 dest;
-        InventoryResult msg = CanEquipNewItem(slot, dest, item, false);
+        InventoryResult msg = m_player->CanEquipNewItem(slot, dest, item, false);
         if (msg != EQUIP_ERR_OK)
         {
-            SendEquipError(msg, NULL, NULL, item);
+            m_player->SendEquipError(msg, NULL, NULL, item);
             return false;
         }
 
-        ModifyMoney(-int32(price));
+        m_player->ModifyMoney(-int32(price));
 
         if (crItem->ExtendedCost)
-            TakeExtendedCost(crItem->ExtendedCost, count);
+            m_player->TakeExtendedCost(crItem->ExtendedCost, count);
 
-        pItem = EquipNewItem(dest, item, true);
+        pItem = m_player->EquipNewItem(dest, item, true);
 
         if (pItem)
-            AutoUnequipOffhandIfNeed();
+            m_player->AutoUnequipOffhandIfNeed();
     }
     else
     {
-        SendEquipError(EQUIP_ERR_ITEM_DOESNT_GO_TO_SLOT, NULL, NULL);
+        m_player->SendEquipError(EQUIP_ERR_ITEM_DOESNT_GO_TO_SLOT, NULL, NULL);
         return false;
     }
 
@@ -738,14 +743,14 @@ bool Player::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 s
     data << uint32(vendorslot + 1); // numbered from 1 at client
     data << uint32(crItem->maxcount > 0 ? new_count : 0xFFFFFFFF);
     data << uint32(count);
-    GetSession()->SendPacket(&data);
+    m_player->GetSession()->SendPacket(&data);
 
-    SendNewItem(pItem, totalCount, true, false, false);
+    m_player->SendNewItem(pItem, totalCount, true, false, false);
 
     return crItem->maxcount != 0;
 }
 
-bool Player::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
+bool CPlayer::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
 {
     DEBUG_LOG("WORLD: SellItemToMultiVendor");
 
@@ -759,39 +764,39 @@ bool Player::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
     if (!itemGuid)
         return false;
 
-    Creature* pCreature = GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
+    Creature* pCreature = m_player->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
         DEBUG_LOG("WORLD: SellItemToMultiVendor - %s not found or you can't interact with him.", guid.GetString().c_str());
-        SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, itemGuid, 0);
+        m_player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, itemGuid, 0);
         return false;
     }
 
     // remove fake death
-    if (hasUnitState(UNIT_STAT_DIED))
-        RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
+    if (m_player->hasUnitState(UNIT_STAT_DIED))
+        m_player->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    Item* pItem = GetItemByGuid(itemGuid);
+    Item* pItem = m_player->GetItemByGuid(itemGuid);
     if (pItem)
     {
         // prevent sell not owner item
-        if (GetObjectGuid() != pItem->GetOwnerGuid())
+        if (m_player->GetObjectGuid() != pItem->GetOwnerGuid())
         {
-            SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+            m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
             return false;
         }
 
         // prevent sell non empty bag by drag-and-drop at vendor's item list
         if (pItem->IsBag() && !((Bag*)pItem)->IsEmpty())
         {
-            SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+            m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
             return false;
         }
 
         // prevent sell currently looted item
-        if (GetLootGuid() == pItem->GetObjectGuid())
+        if (m_player->GetLootGuid() == pItem->GetObjectGuid())
         {
-            SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+            m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
             return false;
         }
 
@@ -805,7 +810,7 @@ bool Player::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
             // prevent sell more items that exist in stack (possible only not from client)
             if (count > pItem->GetCount())
             {
-                SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+                m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
                 return false;
             }
         }
@@ -817,48 +822,48 @@ bool Player::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
             {
                 if (count < pItem->GetCount())              // need split items
                 {
-                    Item* pNewItem = pItem->CloneItem(count, this);
+                    Item* pNewItem = pItem->CloneItem(count, m_player);
                     if (!pNewItem)
                     {
                         sLog.outError("WORLD: SellItemToMultiVendor - could not create clone of item %u; count = %u", pItem->GetEntry(), count);
-                        SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+                        m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
                         return false;
                     }
 
                     pItem->SetCount(pItem->GetCount() - count);
-                    ItemRemovedQuestCheck(pItem->GetEntry(), count);
-                    if (IsInWorld())
-                        pItem->SendCreateUpdateToPlayer(this);
-                    pItem->SetState(ITEM_CHANGED, this);
+                    m_player->ItemRemovedQuestCheck(pItem->GetEntry(), count);
+                    if (m_player->IsInWorld())
+                        pItem->SendCreateUpdateToPlayer(m_player);
+                    pItem->SetState(ITEM_CHANGED, m_player);
 
-                    AddItemToBuyBackSlot(pNewItem);
-                    if (IsInWorld())
-                        pNewItem->SendCreateUpdateToPlayer(this);
+                    m_player->AddItemToBuyBackSlot(pNewItem);
+                    if (m_player->IsInWorld())
+                        pNewItem->SendCreateUpdateToPlayer(m_player);
                 }
                 else
                 {
-                    ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());
-                    RemoveItem(pItem->GetBagSlot(), pItem->GetSlot(), true);
-                    pItem->RemoveFromUpdateQueueOf(this);
-                    AddItemToBuyBackSlot(pItem);
+                    m_player->ItemRemovedQuestCheck(pItem->GetEntry(), pItem->GetCount());
+                    m_player->RemoveItem(pItem->GetBagSlot(), pItem->GetSlot(), true);
+                    pItem->RemoveFromUpdateQueueOf(m_player);
+                    m_player->AddItemToBuyBackSlot(pItem);
                 }
 
                 uint32 money = pProto->SellPrice * count;
 
-                ModifyMoney(money);
+                m_player->ModifyMoney(money);
             }
             else
-                SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
+                m_player->SendSellError(SELL_ERR_CANT_SELL_ITEM, pCreature, itemGuid, 0);
 
             return true;
         }
     }
 
-    SendSellError(SELL_ERR_CANT_FIND_ITEM, pCreature, itemGuid, 0);
+    m_player->SendSellError(SELL_ERR_CANT_FIND_ITEM, pCreature, itemGuid, 0);
     return false;
 }
 
-bool Player::BuyBackItemFromMultiVendor(uint32 slot)
+bool CPlayer::BuyBackItemFromMultiVendor(uint32 slot)
 {
     DEBUG_LOG("WORLD: BuyBackItemFromMultiVendor");
 
@@ -867,61 +872,61 @@ bool Player::BuyBackItemFromMultiVendor(uint32 slot)
     GetMultiVendor(entry, vendorGuid);
 
 
-    Creature* pCreature = GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_NONE);
+    Creature* pCreature = m_player->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
         DEBUG_LOG("WORLD: BuyBackItemFromMultiVendor - %s not found or you can't interact with him.", vendorGuid.GetString().c_str());
-        SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
+        m_player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
         return false;
     }
 
     // remove fake death
-    if (hasUnitState(UNIT_STAT_DIED))
-        RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
+    if (m_player->hasUnitState(UNIT_STAT_DIED))
+        m_player->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
-    Item* pItem = GetItemFromBuyBackSlot(slot);
+    Item* pItem = m_player->GetItemFromBuyBackSlot(slot);
     if (pItem)
     {
-        uint32 price = GetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + slot - BUYBACK_SLOT_START);
-        if (GetMoney() < price)
+        uint32 price = m_player->GetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + slot - BUYBACK_SLOT_START);
+        if (m_player->GetMoney() < price)
         {
-            SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, pCreature, pItem->GetEntry(), 0);
+            m_player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, pCreature, pItem->GetEntry(), 0);
             return false;
         }
 
         ItemPosCountVec dest;
-        InventoryResult msg = CanStoreItem(NULL_BAG, NULL_SLOT, dest, pItem, false);
+        InventoryResult msg = m_player->CanStoreItem(NULL_BAG, NULL_SLOT, dest, pItem, false);
         if (msg == EQUIP_ERR_OK)
         {
-            ModifyMoney(-(int32)price);
-            RemoveItemFromBuyBackSlot(slot, false);
-            ItemAddedQuestCheck(pItem->GetEntry(), pItem->GetCount());
-            StoreItem(dest, pItem, true);
+            m_player->ModifyMoney(-(int32)price);
+            m_player->RemoveItemFromBuyBackSlot(slot, false);
+            m_player->ItemAddedQuestCheck(pItem->GetEntry(), pItem->GetCount());
+            m_player->StoreItem(dest, pItem, true);
         }
         else
-            SendEquipError(msg, pItem, NULL);
+            m_player->SendEquipError(msg, pItem, NULL);
 
         return true;
     }
     else
-        SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, 0, 0);
+        m_player->SendBuyError(BUY_ERR_CANT_FIND_ITEM, pCreature, 0, 0);
 
     return false;
 }
 
-void Player::LearnTalentTemplate(uint8 spec)
+void CPlayer::LearnTalentTemplate(uint8 spec)
 {
-    resetTalents(true);
+    m_player->resetTalents(true);
 
     for (auto itr = sCustom.GetTalentContainercbegin(); itr != sCustom.GetTalentContainercend(); ++itr)
-    if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
-        LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
+    if ((*itr)->ClassId == m_player->getClass() && (*itr)->SpecId == spec)
+        m_player->LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
 }
 
 
-void Player::ApplyEnchantTemplate(uint8 spec)
+void CPlayer::ApplyEnchantTemplate(uint8 spec)
 {
     for (auto itr = sCustom.GetEnchantContainercbegin(); itr != sCustom.GetEnchantContainercend(); ++itr)
-    if ((*itr)->ClassId == getClass() && (*itr)->SpecId == spec)
+    if ((*itr)->ClassId == m_player->getClass() && (*itr)->SpecId == spec)
         EnchantItem((*itr)->SpellId, (*itr)->SlotId, "");
 }

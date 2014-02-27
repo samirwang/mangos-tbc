@@ -24,6 +24,7 @@
 #include "Log.h"
 #include "SocialMgr.h"
 #include "GossipDef.h"
+#include "CPlayer.h"
 
 Custom::~Custom()
 {
@@ -39,8 +40,8 @@ void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
     for (auto itr = sWorld.GetSessionscBegin(); itr != sWorld.GetSessionscEnd(); ++itr)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
-    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->WChatOn())
-        pPlayer->BoxChat << msg << std::endl;
+    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->GetCPlayer()->WChatOn())
+        pPlayer->GetCPlayer()->BoxChat << msg << std::endl;
 }
 
 void Custom::SendGMMessage(std::string msg)
@@ -49,7 +50,7 @@ void Custom::SendGMMessage(std::string msg)
     if (itr->second)
     if (Player* pPlayer = itr->second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
-        pPlayer->BothChat << msg << std::endl;
+        pPlayer->GetCPlayer()->BothChat << msg << std::endl;
 }
 
 SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
@@ -202,8 +203,8 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
 
 bool ChatHandler::HandleWToggleCommand(char* /*args*/)
 {
-    m_session->GetPlayer()->ToggleWChat();
-    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->WChatOn() ? "en" : "dis");
+    m_session->GetPlayer()->GetCPlayer()->ToggleWChat();
+    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->GetCPlayer()->WChatOn() ? "en" : "dis");
 
     return true;
 }
@@ -213,8 +214,8 @@ bool ChatHandler::HandleWChatCommand(char* args)
     if (!*args)
         return false;
 
-    if (m_session->GetPlayer()->WChatOn())
-        m_session->GetPlayer()->SendWorldChatMsg(args);
+    if (m_session->GetPlayer()->GetCPlayer()->WChatOn())
+        m_session->GetPlayer()->GetCPlayer()->SendWorldChatMsg(args);
     else
         PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
 

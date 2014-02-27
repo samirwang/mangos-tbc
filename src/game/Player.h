@@ -900,129 +900,36 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
-enum MessageTypes
-{
-    CHAT_BOX,
-    CHAT_WIDE,
-    CHAT_BOTH
-};
-
-struct MultiVendor
-{
-    MultiVendor()
-    {
-        entry = 0;
-        guid = ObjectGuid();
-    }
-
-    uint32 entry;
-    ObjectGuid guid;
-};
-
-struct Country 
-{
-    Country()
-    {
-        ISO2 = "";
-        ISO3 = "";
-        FULL = "";
-    }
-
-    std::string ISO2;
-    std::string ISO3;
-    std::string FULL;
-};
-
 class AntiCheat;
 class CFBG;
 class Settings;
 class PlayerGossip;
+class CPlayer;
 
 class MANGOS_DLL_SPEC Player : public Unit
 {
-    // Custom
-    friend class AntiCheat;
-    friend class CFBG;
-    friend class Settings;
-    friend class PlayerGossip;
+        friend class AntiCheat;
+        friend class CFBG;
+        friend class Settings;
+        friend class PlayerGossip;
+        friend class CPlayer;
 
-public:
-    typedef std::vector<uint32> DelayedSpellLearn;
+    public:
+        AntiCheat* GetAntiCheat() { return m_AntiCheat; }
+        CFBG* GetCFBG() { return m_CFBG; }
+        Settings* GetSettings() { return m_Settings; }
+        PlayerGossip* GetPlayerGossip() { return m_PlayerGossip; }
+        CPlayer* GetCPlayer() { return m_CPlayer; }
 
-    AntiCheat* GetAntiCheat() { return m_AntiCheat; }
-    CFBG* GetCFBG() { return m_CFBG; }
-    Settings* GetSettings() { return m_Settings; }
-    PlayerGossip* GetPlayerGossip() { return m_PlayerGossip; }
+    private:
+        AntiCheat* m_AntiCheat;
+        CFBG* m_CFBG;
+        Settings* m_Settings;
+        PlayerGossip* m_PlayerGossip;
+        CPlayer* m_CPlayer;
 
-    void CUpdate(uint32 diff);
-    void Sometimes();
-    void OnLogin();
-    void OnFirstLogin();
+        // --------------------------------------
 
-    void AddItemSet(uint32 setid);
-
-    std::string GetNameLink(bool applycolors = false);
-    void SendWorldChatMsg(std::string msg);
-    bool WChatOn() { return m_wChatOn; }
-    void SetWChat(bool value) { m_wChatOn = value; }
-    void ToggleWChat() { m_wChatOn = !m_wChatOn; }
-
-    void SendSavedChat(MessageTypes type, std::stringstream &ss);
-    void FillGreenSpellList();
-    void LearnGreenSpells();
-
-    void CreatePet(uint32 entry, bool classcheck = true);
-    void EnchantItem(uint32 spellid, uint8 slot, const char* sendername = "Enchanting");
-
-    void AddGossipMenuItem(Icon::Icon icon, std::string message, uint32 sender, uint32 action)
-    {
-        PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
-    }
-
-    void SetLastGossipGuid(ObjectGuid guid) { m_LastGossipGuid = guid; }
-    ObjectGuid GetLastGossipGuid() { return m_LastGossipGuid; }
-
-    void SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid);
-    bool BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot);
-    bool SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count);
-    bool BuyBackItemFromMultiVendor(uint32 slot);
-
-    void SetMultiVendor(uint32 entry, ObjectGuid guid)
-    {
-        m_MultiVendor.entry = entry;
-        m_MultiVendor.guid = guid;
-    }
-    void GetMultiVendor(uint32& entry, ObjectGuid& guid)
-    {
-        entry = m_MultiVendor.entry;
-        guid = m_MultiVendor.guid;
-    }
-
-    void LearnTalentTemplate(uint8 spec);
-    void ApplyEnchantTemplate(uint8 spec);
-
-    void LoadCountryData();
-
-    std::stringstream BoxChat;
-    std::stringstream WideChat;
-    std::stringstream BothChat;
-
-private:
-    AntiCheat* m_AntiCheat;
-    CFBG* m_CFBG;
-    Settings* m_Settings;
-    PlayerGossip* m_PlayerGossip;
-
-    DelayedSpellLearn m_DelayedSpellLearn;
-
-    bool m_wChatOn;
-    Country m_Country;
-
-    ObjectGuid m_LastGossipGuid;
-
-    MultiVendor m_MultiVendor;
-
-    // !Custom
         friend class WorldSession;
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
