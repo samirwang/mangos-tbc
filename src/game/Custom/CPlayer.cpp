@@ -151,8 +151,8 @@ void CPlayer::AddItemSet(uint32 setid)
                     Items.push_back(itemid);
                 else
                 {
-                    for (auto itr = Items.cbegin(); itr != Items.cend(); ++itr)
-                        m_player->DestroyItemCount(*itr, 1, true);
+                    for (auto& itr : Items)
+                        m_player->DestroyItemCount(itr, 1, true);
 
                     BoxChat << "Not enough space to store itemset" << std::endl;
                     break;
@@ -244,8 +244,8 @@ void CPlayer::FillGreenSpellList()
 
         SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
 
-        for (auto itr = classSpellContainer.cbegin(); itr != classSpellContainer.cend(); ++itr)
-            allSpellContainer->push_back(*itr);
+        for (auto& itr : classSpellContainer)
+            allSpellContainer->push_back(itr);
 
         sCustom.CacheSpellContainer(m_player->getClass(), allSpellContainer);
     }
@@ -919,15 +919,15 @@ void CPlayer::LearnTalentTemplate(uint8 spec)
 {
     m_player->resetTalents(true);
 
-    for (auto itr = sCustom.GetTalentContainercbegin(); itr != sCustom.GetTalentContainercend(); ++itr)
-    if ((*itr)->ClassId == m_player->getClass() && (*itr)->SpecId == spec)
-        m_player->LearnTalent((*itr)->TalentId, (*itr)->TalentRank - 1);
+    for (auto& itr : sCustom.GetTalentContainer())
+    if (itr->ClassId == m_player->getClass() && itr->SpecId == spec)
+        m_player->LearnTalent(itr->TalentId, itr->TalentRank - 1);
 }
 
 
 void CPlayer::ApplyEnchantTemplate(uint8 spec)
 {
-    for (auto itr = sCustom.GetEnchantContainercbegin(); itr != sCustom.GetEnchantContainercend(); ++itr)
-    if ((*itr)->ClassId == m_player->getClass() && (*itr)->SpecId == spec)
-        EnchantItem((*itr)->SpellId, (*itr)->SlotId, "");
+    for (auto& itr : sCustom.GetEnchantContainer())
+    if (itr->ClassId == m_player->getClass() && itr->SpecId == spec)
+        EnchantItem(itr->SpellId, itr->SlotId, "");
 }

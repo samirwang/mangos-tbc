@@ -45,6 +45,7 @@ set(SRC_GRP_CUSTOM
     Custom/CFBG.cpp
     Custom/CFBG.h
     Custom/CPlayer.cpp
+    Custom/CPlayer.h
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp

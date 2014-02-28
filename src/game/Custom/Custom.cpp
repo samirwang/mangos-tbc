@@ -28,27 +28,27 @@
 
 Custom::~Custom()
 {
-    for (auto itr = m_CachedSpellContainer.cbegin(); itr != m_CachedSpellContainer.cend(); ++itr)
-        delete itr->second;
+    for (auto& itr : m_CachedSpellContainer)
+        delete itr.second;
 
-    for (auto itr = m_TalentContainer.cbegin(); itr != m_TalentContainer.cend(); ++itr)
-        delete *itr;
+    for (auto& itr : m_TalentContainer)
+        delete itr;
 }
 
 void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
 {
-    for (auto itr = sWorld.GetSessionscBegin(); itr != sWorld.GetSessionscEnd(); ++itr)
-    if (itr->second)
-    if (Player* pPlayer = itr->second->GetPlayer())
+    for (auto& itr : sWorld.GetSessionMap())
+    if (itr.second)
+    if (Player* pPlayer = itr.second->GetPlayer())
     if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->GetCPlayer()->WChatOn())
         pPlayer->GetCPlayer()->BoxChat << msg << std::endl;
 }
 
 void Custom::SendGMMessage(std::string msg)
 {
-    for (auto itr = sWorld.GetSessionscBegin(); itr != sWorld.GetSessionscEnd(); ++itr)
-    if (itr->second)
-    if (Player* pPlayer = itr->second->GetPlayer())
+    for (auto& itr : sWorld.GetSessionMap())
+    if (itr.second)
+    if (Player* pPlayer = itr.second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
         pPlayer->GetCPlayer()->BothChat << msg << std::endl;
 }
@@ -58,8 +58,8 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     SpellContainer spellContainer;
 
     if (TrainerSpellData const* spelldata = sObjectMgr.GetNpcTrainerSpells(entry))
-        for (auto itr = spelldata->spellList.cbegin(); itr != spelldata->spellList.cend(); ++itr)
-            spellContainer.push_back(itr->second);
+        for (auto& itr : spelldata->spellList)
+            spellContainer.push_back(itr.second);
 
     const CreatureInfo* creature = sObjectMgr.GetCreatureTemplate(entry);
 
@@ -70,8 +70,8 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 
     if (trainertemplate)
         if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))
-            for (auto itr = spelldata2->spellList.cbegin(); itr != spelldata2->spellList.cend(); ++itr)
-                spellContainer.push_back(itr->second);
+            for (auto& itr : spelldata2->spellList)
+                spellContainer.push_back(itr.second);
 
     return spellContainer;
 }
@@ -248,8 +248,8 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
 
 void Custom::LoadTalentContainer()
 {
-    for (auto itr = m_TalentContainer.cbegin(); itr != m_TalentContainer.cend(); ++itr)
-        delete *itr;
+    for (auto& itr : m_TalentContainer)
+        delete itr;
 
     m_TalentContainer.clear();
 
@@ -280,8 +280,8 @@ void Custom::LoadTalentContainer()
 
 void Custom::LoadEnchantContainer()
 {
-    for (auto itr = m_EnchantContainer.cbegin(); itr != m_EnchantContainer.cend(); ++itr)
-        delete *itr;
+    for (auto& itr : m_EnchantContainer)
+        delete itr;
 
     m_EnchantContainer.clear();
 

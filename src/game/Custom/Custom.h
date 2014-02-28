@@ -184,12 +184,10 @@ public:
     std::string GetSlotName(uint8 slotid) { return m_SlotNames[slotid]; }
 
     void LoadTalentContainer();
-    TalentContainer::const_iterator GetTalentContainercbegin() { return m_TalentContainer.cbegin(); }
-    TalentContainer::const_iterator GetTalentContainercend() { return m_TalentContainer.cend(); }
+    const TalentContainer GetTalentContainer() { return m_TalentContainer; }
 
     void LoadEnchantContainer();
-    EnchantContainer::const_iterator GetEnchantContainercbegin() { return m_EnchantContainer.cbegin(); }
-    EnchantContainer::const_iterator GetEnchantContainercend() { return m_EnchantContainer.cend(); }
+    const EnchantContainer GetEnchantContainer() { return m_EnchantContainer; }
 
 private:
     static const std::string m_ClassColor[];

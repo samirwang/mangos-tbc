@@ -70,10 +70,9 @@ void CFBG::RecachePlayersFromBG()
 {
     if (BattleGround* bg = m_player->GetBattleGround())
     {
-        for (auto itr = bg->GetPlayers().cbegin();
-            itr != bg->GetPlayers().cend(); ++itr)
+        for (auto& itr : bg->GetPlayers())
         {
-            if (Player* player = sObjectMgr.GetPlayer(itr->first))
+            if (Player* player = sObjectMgr.GetPlayer(itr.first))
             {
                 if (!player->GetCFBG()->NativeTeam())
                 {
@@ -98,7 +97,7 @@ void CFBG::RecachePlayersFromBG()
             else
             {
                 WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-                data << itr->first;
+                data << itr.first;
                 m_player->GetSession()->SendPacket(&data);
             }
         }
@@ -107,13 +106,13 @@ void CFBG::RecachePlayersFromBG()
 
 void CFBG::RecachePlayersFromList()
 {
-    for (auto itr = m_FakedPlayers.cbegin(); itr != m_FakedPlayers.cend(); ++itr)
+    for (auto& itr : m_FakedPlayers)
     {
         WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-        data << *itr;
+        data << itr;
         m_player->GetSession()->SendPacket(&data);
 
-        if (Player* player = sObjectMgr.GetPlayer(*itr))
+        if (Player* player = sObjectMgr.GetPlayer(itr))
         {
             WorldPacket data = player->GetCFBG()->BuildNameQuery();
             m_player->GetSession()->SendPacket(&data);
@@ -236,9 +235,9 @@ bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
         if (pBattleGround->isArena()) // Only fake chat in BG's. CFBG should not interfere with arenas.
             return false;
 
-        for (auto itr = pBattleGround->GetPlayers().cbegin(); itr != pBattleGround->GetPlayers().cend(); ++itr)
+        for (auto& itr : pBattleGround->GetPlayers())
         {
-            if (Player* pPlayer = sObjectMgr.GetPlayer(itr->first))
+            if (Player* pPlayer = sObjectMgr.GetPlayer(itr.first))
             {
                 if (m_player->GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
                 {
@@ -268,16 +267,16 @@ void CFBG::RewardReputationToXBGTeam(BattleGround* pBG, uint32 faction_ally, uin
     if (!a_factionEntry || !h_factionEntry)
         return;
 
-    for (auto itr = pBG->GetPlayers().cbegin(); itr != pBG->GetPlayers().cend(); ++itr)
+    for (auto& itr : pBG->GetPlayers())
     {
-        if (itr->second.OfflineRemoveTime)
+        if (itr.second.OfflineRemoveTime)
             continue;
 
-        Player* plr = sObjectMgr.GetPlayer(itr->first);
+        Player* plr = sObjectMgr.GetPlayer(itr.first);
 
         if (!plr)
         {
-            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr->first.GetString().c_str());
+            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr.first.GetString().c_str());
             continue;
         }
 
@@ -298,10 +297,9 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
     uint32 addedally = 0;
     uint32 addedhorde = 0;
 
-    for (auto itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cbegin();
-        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cend(); ++itr)
+    for (auto& itr : m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE])
     {
-        GroupQueueInfo* ginfo = *itr;
+        GroupQueueInfo* ginfo = itr;
         if (!ginfo->IsInvitedToBGInstanceGUID)
         {
             bool makeally = addedally < addedhorde;
@@ -311,7 +309,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
             ginfo->GroupTeam = makeally ? ALLIANCE : HORDE;
 
-            if (m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(*itr, maxPlayers))
+            if (m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(itr, maxPlayers))
                 makeally ? addedally += ginfo->Players.size() : addedhorde += ginfo->Players.size();
             else
                 break;
@@ -340,10 +338,9 @@ bool BattleGroundQueue::MixPlayersToBG(BattleGround* bg, BattleGroundBracketId b
     uint32 addedally = bg->GetMaxPlayersPerTeam() - bg->GetFreeSlotsForTeam(ALLIANCE);
     uint32 addedhorde = bg->GetMaxPlayersPerTeam() - bg->GetFreeSlotsForTeam(HORDE);
 
-    for (auto itr = m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cbegin();
-        itr != m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE].cend(); ++itr)
+    for (auto& itr : m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE])
     {
-        GroupQueueInfo* ginfo = *itr;
+        GroupQueueInfo* ginfo = itr;
         if (!ginfo->IsInvitedToBGInstanceGUID)
         {
             bool makeally = addedally < addedhorde;

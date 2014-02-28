@@ -21,8 +21,8 @@
 
 PlayerGossip::~PlayerGossip()
 {
-    for (auto itr = m_ScriptContainer.cbegin(); itr != m_ScriptContainer.cend(); ++itr)
-        delete itr->second;
+    for (auto& itr : m_ScriptContainer)
+        delete itr.second;
 }
 
 void PlayerGossip::RegisterScript(uint32 sender, PlayerGossipScript* pScript)
