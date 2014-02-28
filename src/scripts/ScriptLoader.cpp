@@ -5,6 +5,7 @@ void AddSC_npc_teleporter();
 void AddSC_npc_training_dummy();
 void AddSC_npc_enchant();
 void AddSC_beast_master();
+void AddSC_pgossip_template();
 
 void AddScripts()
 {
@@ -13,4 +14,5 @@ void AddScripts()
     AddSC_npc_training_dummy();
     AddSC_npc_enchant();
     AddSC_beast_master();
+    AddSC_pgossip_template();
 }
