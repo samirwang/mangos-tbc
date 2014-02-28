@@ -903,7 +903,6 @@ class TradeData
 class AntiCheat;
 class CFBG;
 class Settings;
-class PlayerGossip;
 class CPlayer;
 
 class MANGOS_DLL_SPEC Player : public Unit
@@ -911,21 +910,18 @@ class MANGOS_DLL_SPEC Player : public Unit
         friend class AntiCheat;
         friend class CFBG;
         friend class Settings;
-        friend class PlayerGossip;
         friend class CPlayer;
 
     public:
         AntiCheat* GetAntiCheat() { return m_AntiCheat; }
         CFBG* GetCFBG() { return m_CFBG; }
         Settings* GetSettings() { return m_Settings; }
-        PlayerGossip* GetPlayerGossip() { return m_PlayerGossip; }
         CPlayer* GetCPlayer() { return m_CPlayer; }
 
     private:
         AntiCheat* m_AntiCheat;
         CFBG* m_CFBG;
         Settings* m_Settings;
-        PlayerGossip* m_PlayerGossip;
         CPlayer* m_CPlayer;
 
         // --------------------------------------

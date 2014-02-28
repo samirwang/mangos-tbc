@@ -67,7 +67,6 @@
 #include "AntiCheat.h"
 #include "CFBG.h"
 #include "Settings.h"
-#include "PlayerGossip.h"
 #include "CPlayer.h"
 
 #include <cmath>
@@ -390,7 +389,6 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
     m_AntiCheat = new AntiCheat(this);
     m_CFBG = new CFBG(this);
     m_Settings = new Settings(this);
-    m_PlayerGossip = new PlayerGossip(this);
     m_CPlayer = new CPlayer(this);
 
     m_transport = 0;

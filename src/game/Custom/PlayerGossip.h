@@ -19,19 +19,35 @@
 #ifndef _PLAYERGOSSIP_H
 #define _PLAYERGOSSIP_H
 
-#include "Player.h"
+class PlayerGossipScript;
 
 class PlayerGossip
 {
 public:
-    explicit PlayerGossip(Player* pPlayer);
-    ~PlayerGossip() {};
+    PlayerGossip() {}
+    ~PlayerGossip();
 
-    void PlayerGossipHello(uint32 sender);
-    void PlayerGossipSelect(uint32 sender, uint32 action, std::string code);
+    typedef std::map<uint32, PlayerGossipScript*> ScriptContainer;
+
+    void RegisterScript(uint32 sender, PlayerGossipScript* pScript);
+
+    bool GossipHello(Player* pPlayer, uint32 sender);
+    bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code);
 
 private:
-    Player* m_player;
+    ScriptContainer m_ScriptContainer;
+};
+
+#define sPlayerGossip MaNGOS::Singleton<PlayerGossip>::Instance()
+
+class PlayerGossipScript
+{
+public:
+    PlayerGossipScript() {}
+    ~PlayerGossipScript() {}
+
+    virtual bool GossipHello(Player* pPlayer, uint32 sender) { return true; };
+    virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return true; };
 };
 
 #endif

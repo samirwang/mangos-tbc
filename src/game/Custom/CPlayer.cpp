@@ -118,7 +118,8 @@ void CPlayer::OnLogin()
     if (!m_player->GetCFBG()->NativeTeam())
         m_player->GetCFBG()->SetFakeOnNextTick();
 
-    m_player->GetPlayerGossip()->PlayerGossipHello(GOSSIP_SENDER_FIRSTLOGIN);
+    if (!m_player->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
+        sPlayerGossip.GossipHello(m_player, GOSSIP_SENDER_FIRSTLOGIN);
 
     if (m_player->GetTotalPlayedTime() < 1)
     {
