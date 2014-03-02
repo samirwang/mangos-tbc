@@ -43,9 +43,6 @@
     <Filter Include="Custom\Warden">
       <UniqueIdentifier>{6c93fca1-b19a-488c-80b4-f9125e1f0fd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Custom\ScriptSystem">
-      <UniqueIdentifier>{8b64df98-ecf2-401f-9a18-95f609bcade6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Custom\AntiCheat">
       <UniqueIdentifier>{78ef2ba4-0541-45c3-841b-411cc5a14ba1}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="Custom\CPlayer">
       <UniqueIdentifier>{edfb4ec7-cdb9-4398-9801-7031705ba9ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\CPlusMgr">
+      <UniqueIdentifier>{1554c497-b3da-4233-b975-1f65cd76b980}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -571,12 +571,6 @@
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\sc_creature.cpp">
-      <Filter>Custom\ScriptSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\sc_grid_searchers.cpp">
-      <Filter>Custom\ScriptSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
       <Filter>Custom\AntiCheat</Filter>
     </ClCompile>
@@ -594,6 +588,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp">
       <Filter>Custom\CPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
+      <Filter>Custom\CPlusMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1090,12 +1087,6 @@
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h">
       <Filter>Custom\Warden</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\sc_creature.h">
-      <Filter>Custom\ScriptSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\sc_grid_searchers.h">
-      <Filter>Custom\ScriptSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
       <Filter>Custom\AntiCheat</Filter>
     </ClInclude>
@@ -1113,6 +1104,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
       <Filter>Custom\CPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
+      <Filter>Custom\CPlusMgr</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

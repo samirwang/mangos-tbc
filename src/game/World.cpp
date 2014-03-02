@@ -67,6 +67,7 @@
 #include "CreatureLinkingMgr.h"
 #include "WardenDataStorage.h"
 #include "Custom.h"
+#include "CPlusMgr.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1277,8 +1278,8 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading CreatureEventAI Scripts...");
     sEventAIMgr.LoadCreatureEventAI_Scripts();
 
-    sLog.outString("Initializing Scripts...");
-    sScriptMgr.InitScriptLibrary();
+    sLog.outString("Loading CPlus Scripts...");
+    sCPlusMgr.LoadScripts();
 
     sLog.outString("Initializing fake playerbytes...");
     sCustom.LoadFakePlayerBytes();

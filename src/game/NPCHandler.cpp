@@ -36,6 +36,7 @@
 #include "Chat.h"
 #include "PlayerGossip.h"
 #include "CPlayer.h"
+#include "CPlusMgr.h"
 
 enum StableResultCode
 {
@@ -325,7 +326,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket& recv_data)
     if (pCreature->isSpiritGuide())
         pCreature->SendAreaSpiritHealerQueryOpcode(_player);
 
-    if (!sScriptMgr.OnGossipHello(_player, pCreature))
+    if (!sCPlusMgr.OnGossipHello(_player, pCreature))
     {
         _player->PrepareGossipMenu(pCreature, pCreature->GetCreatureInfo()->GossipMenuId);
         _player->SendPreparedGossip(pCreature);
@@ -369,7 +370,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sScriptMgr.OnGossipSelect(_player, pCreature, sender, action, code.empty() ? NULL : code.c_str()))
+        if (!sCPlusMgr.OnGossipSelect(_player, pCreature, sender, action, code))
             _player->OnGossipSelect(pCreature, gossipListId, menuId);
     }
     else if (guid.IsGameObject())
@@ -382,7 +383,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sScriptMgr.OnGossipSelect(_player, pGo, sender, action, code.empty() ? NULL : code.c_str()))
+        if (!sCPlusMgr.OnGossipSelect(_player, pGo, sender, action, code.empty() ? NULL : code.c_str()))
             _player->OnGossipSelect(pGo, gossipListId, menuId);
     }
     else if (guid.IsPlayer() || guid.IsItem())

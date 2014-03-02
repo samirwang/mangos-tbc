@@ -1,8 +1,11 @@
 #include "Precompiled.h"
+#include "CreatureAI.h"
+#include "CPlusMgr.h"
 
-struct MANGOS_DLL_DECL npc_training_dummyAI : public Scripted_NoMovementAI
+class npc_training_dummyAI : public CreatureAI
 {
-    npc_training_dummyAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature){}
+public:
+    npc_training_dummyAI(Creature* pCreature) : CreatureAI(pCreature){}
 
     typedef UNORDERED_MAP<ObjectGuid, uint32> AttackerMap;
     AttackerMap m_AttackerMap;
@@ -49,18 +52,18 @@ struct MANGOS_DLL_DECL npc_training_dummyAI : public Scripted_NoMovementAI
     }
 };
 
-CreatureAI* GetAI_npc_training_dummy(Creature* pCreature)
+class npc_training_dummy : public CreatureScript
 {
-    return new npc_training_dummyAI(pCreature);
-}
+public:
+    npc_training_dummy() : CreatureScript("npc_training_dummy") {}
 
+    CreatureAI* GetCreatureAI(Creature* pCreature)
+    {
+        return new npc_training_dummyAI(pCreature);
+    }
+};
 
 void AddSC_npc_training_dummy()
 {
-    Script* pNewScript;
-
-    pNewScript                  = new Script;
-    pNewScript->Name            = "npc_training_dummy";
-    pNewScript->GetAI           = &GetAI_npc_training_dummy;
-    pNewScript->RegisterSelf();
+    new npc_training_dummy;
 }

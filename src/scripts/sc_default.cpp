@@ -95,25 +95,4 @@ bool AreaTrigger_default(Player* /*player*/, AreaTriggerEntry const* /*atEntry*/
 
 void AddSC_default()
 {
-    Script *newscript;
-
-    newscript = new Script;
-    newscript->Name="default";
-    /*newscript->pGossipHello          = &GossipHello_default;
-    newscript->pQuestAccept          = &QuestAccept_default;
-    newscript->pGossipSelect         = &GossipSelect_default;
-    newscript->pGossipSelectWithCode = &GossipSelectWithCode_default;
-    newscript->pQuestSelect          = &QuestSelect_default;
-    newscript->pQuestComplete        = &QuestComplete_default;
-    newscript->pNPCDialogStatus      = &NPCDialogStatus_default;
-    newscript->pGODialogStatus       = &GODialogStatus_default;
-    newscript->pChooseReward         = &ChooseReward_default;
-    newscript->pItemHello            = &ItemHello_default;
-    newscript->pGOHello              = &GOHello_default;
-    newscript->pAreaTrigger          = &AreaTrigger_default;
-    newscript->pItemQuestAccept      = &ItemQuestAccept_default;
-    newscript->pGOQuestAccept        = &GOQuestAccept_default;
-    newscript->pGOChooseReward       = &GOChooseReward_default;
-
-    newscript->registerSelf();*/
 }

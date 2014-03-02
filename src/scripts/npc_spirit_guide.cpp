@@ -22,18 +22,21 @@ SDCategory: Battlegrounds
 EndScriptData */
 
 #include "Precompiled.h"
+#include "CPlusMgr.h"
+#include "CreatureAI.h"
 
-// **** Script Info ****
-// Spiritguides in battlegrounds resurrecting many players at once
-// every 30 seconds - through a channeled spell, which gets autocasted
-// the whole time
-// if spiritguide despawns all players around him will get teleported
-// to the next spiritguide
-// here i'm not sure, if a dummyspell exist for it
+/**** Script Info ****
+Spiritguides in battlegrounds resurrecting many players at once
+every 30 seconds - through a channeled spell, which gets autocasted
+the whole time
+if spiritguide despawns all players around him will get teleported
+to the next spiritguide
+here i'm not sure, if a dummyspell exist for it
 
-// **** Quick Info ****
-// battleground spiritguides - this script handles gossipHello
-// and JustDied also it let autocast the channel-spell
+**** Quick Info ****
+battleground spiritguides - this script handles gossipHello
+and JustDied also it let autocast the channel-spell
+*/
 
 enum
 {
@@ -45,15 +48,16 @@ enum
     SPELL_WAITING_TO_RESURRECT      = 2584                  // players who cancel this aura don't want a resurrection
 };
 
-struct MANGOS_DLL_DECL npc_spirit_guideAI : public ScriptedAI
+class npc_spirit_guideAI : public CreatureAI
 {
-    npc_spirit_guideAI(Creature* pCreature) : ScriptedAI(pCreature)
+public:
+    npc_spirit_guideAI(Creature* pCreature) : CreatureAI(pCreature)
     {
         pCreature->SetActiveObjectState(true);
         Reset();
     }
 
-    void Reset() override {}
+    void Reset() {}
 
     void UpdateAI(const uint32 /*uiDiff*/) override
     {
@@ -70,11 +74,9 @@ struct MANGOS_DLL_DECL npc_spirit_guideAI : public ScriptedAI
         if (!pMap || !pMap->IsBattleGround())
             return;
 
-        Map::PlayerList const& PlayerList = pMap->GetPlayers();
-
-        for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+        for (auto& itr : pMap->GetPlayers())
         {
-            Player* pPlayer = itr->getSource();
+            Player* pPlayer = itr.getSource();
             if (!pPlayer || !pPlayer->IsWithinDistInMap(m_creature, 20.0f) || !pPlayer->HasAura(SPELL_WAITING_TO_RESURRECT))
                 continue;
 
@@ -85,30 +87,31 @@ struct MANGOS_DLL_DECL npc_spirit_guideAI : public ScriptedAI
 
     void SpellHitTarget(Unit* pUnit, const SpellEntry* pSpellEntry) override
     {
-        if (pSpellEntry->Id == SPELL_SPIRIT_HEAL && pUnit->GetTypeId() == TYPEID_PLAYER
-                && pUnit->HasAura(SPELL_WAITING_TO_RESURRECT))
+        if (pSpellEntry->Id == SPELL_SPIRIT_HEAL && pUnit->GetTypeId() == TYPEID_PLAYER &&
+            pUnit->HasAura(SPELL_WAITING_TO_RESURRECT))
             pUnit->CastSpell(pUnit, SPELL_SPIRIT_HEAL_MANA, true);
     }
 };
 
-bool GossipHello_npc_spirit_guide(Player* pPlayer, Creature* /*pCreature*/)
+class npc_spirit_guide : public CreatureScript
 {
-    pPlayer->CastSpell(pPlayer, SPELL_WAITING_TO_RESURRECT, true);
-    return true;
-}
+public:
+    npc_spirit_guide() : CreatureScript("npc_spirit_guide") {}
 
-CreatureAI* GetAI_npc_spirit_guide(Creature* pCreature)
-{
-    return new npc_spirit_guideAI(pCreature);
-}
+    CreatureAI* GetCreatureAI(Creature* pCreature)
+    {
+        return new npc_spirit_guideAI(pCreature);
+    }
+
+    bool OnGossipHello(Player* pPlayer, Creature* pCreature)
+    {
+        pPlayer->CastSpell(pPlayer, SPELL_WAITING_TO_RESURRECT, true);
+        return true;
+    }
+
+};
 
 void AddSC_battleground()
 {
-    Script* pNewScript;
-
-    pNewScript = new Script;
-    pNewScript->Name = "npc_spirit_guide";
-    pNewScript->GetAI = &GetAI_npc_spirit_guide;
-    pNewScript->pGossipHello = &GossipHello_npc_spirit_guide;
-    pNewScript->RegisterSelf();
+    new npc_spirit_guide;
 }
