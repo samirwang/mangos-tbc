@@ -53,7 +53,7 @@ void Custom::SendGMMessage(std::string msg)
         pPlayer->GetCPlayer()->BothChat << msg << std::endl;
 }
 
-SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
+Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
 {
     SpellContainer spellContainer;
 
@@ -76,7 +76,7 @@ SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     return spellContainer;
 }
 
-SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
+Custom::SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
 {
     if (m_CachedSpellContainer.find(crval) != m_CachedSpellContainer.cend())
         return m_CachedSpellContainer[crval];

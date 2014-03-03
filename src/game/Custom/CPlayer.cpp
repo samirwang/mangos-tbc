@@ -236,13 +236,13 @@ void CPlayer::FillGreenSpellList()
     if (!trainerid)
         return;
 
-    SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(m_player->getClass());
+    Custom::SpellContainer* allSpellContainer = sCustom.GetCachedSpellContainer(m_player->getClass());
 
     if (!allSpellContainer)
     {
-        allSpellContainer = new SpellContainer;
+        allSpellContainer = new Custom::SpellContainer;
 
-        SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
+        Custom::SpellContainer classSpellContainer = sCustom.GetSpellContainerByCreatureEntry(trainerid);
 
         for (auto& itr : classSpellContainer)
             allSpellContainer->push_back(itr);

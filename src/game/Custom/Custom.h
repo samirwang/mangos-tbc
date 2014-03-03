@@ -90,17 +90,17 @@ struct EnchantTemplate
     uint8   SlotId;
 };
 
-typedef std::vector<TrainerSpell> SpellContainer;
-typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
-typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
-typedef std::vector<TalentTemplate*> TalentContainer;
-typedef std::vector<EnchantTemplate*> EnchantContainer;
-
 class Custom
 {
 public:
     Custom() { };
     ~Custom();
+
+    typedef std::vector<TrainerSpell> SpellContainer;
+    typedef std::map<uint32, SpellContainer*> CachedSpellContainer;
+    typedef std::map<uint8, FakePlayerBytes> FakePlayerBytesContainer;
+    typedef std::vector<TalentTemplate*> TalentContainer;
+    typedef std::vector<EnchantTemplate*> EnchantContainer;
 
     // Flip all the bits to get highest possible value!
     static const uint32 maxuint32 = ~0;
