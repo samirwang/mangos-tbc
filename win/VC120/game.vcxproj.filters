@@ -64,6 +64,9 @@
     <Filter Include="Custom\CPlusMgr">
       <UniqueIdentifier>{1554c497-b3da-4233-b975-1f65cd76b980}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom\Transmog">
+      <UniqueIdentifier>{51145723-88f2-46d0-82c5-6e41c48aac09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -592,6 +595,9 @@
     <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
       <Filter>Custom\CPlusMgr</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Transmog.cpp">
+      <Filter>Custom\Transmog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1107,6 +1113,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
       <Filter>Custom\CPlusMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Transmog.h">
+      <Filter>Custom\Transmog</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

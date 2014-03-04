@@ -384,6 +384,7 @@
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
     <ClCompile Include="..\..\src\game\Custom\PlayerGossip.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Settings.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\Transmog.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenDataStorage.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenMac.cpp" />
@@ -561,6 +562,7 @@
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
     <ClInclude Include="..\..\src\game\Custom\PlayerGossip.h" />
     <ClInclude Include="..\..\src\game\Custom\Settings.h" />
+    <ClInclude Include="..\..\src\game\Custom\Transmog.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenMac.h" />
