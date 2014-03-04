@@ -148,6 +148,8 @@ public:
                 pCPlayer->AddGossipMenuItem(Icon::GEAR, "Level: 49", GOSSIP_SENDER_MAIN, 202);
             if (pPlayer->getLevel() != 19)
                 pCPlayer->AddGossipMenuItem(Icon::GEAR, "Level: 19", GOSSIP_SENDER_MAIN, 203);
+            
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 0);
         }
         else if (action >= 201 && action <= 203)
         {
