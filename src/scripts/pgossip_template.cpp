@@ -6,6 +6,8 @@
 class pgossip_templatesystem : public PlayerGossipScript
 {
 public:
+    pgossip_templatesystem() : PlayerGossipScript(GOSSIP_SENDER_FIRSTLOGIN) {}
+
     bool GossipHello(Player* pPlayer, uint32 sender) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
@@ -67,15 +69,8 @@ public:
 
         pCPlayer->AddGossipMenuItem(Icon::GEAR, "Do not show this again", sender, 30);
 
-        ObjectGuid guid = pPlayer->GetObjectGuid();
-
-        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
-        if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-        if (pItem->GetEntry() == 6948) // Hearthstone
-            guid = pItem->GetObjectGuid();
-
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
-            pPlayer->PlayerTalkClass->SendGossipMenu("Please select your spec!", guid);
+            pPlayer->PlayerTalkClass->SendGossipMenu("Please select your spec!", GetHearthStoneOrPlayerGuid(pPlayer));
 
         return true;
     }
@@ -241,7 +236,5 @@ public:
 
 void AddSC_pgossip_template()
 {
-    pgossip_templatesystem* pScript = new pgossip_templatesystem;
-
-    sPlayerGossip.RegisterScript(GOSSIP_SENDER_FIRSTLOGIN, pScript);
+    new pgossip_templatesystem;
 }

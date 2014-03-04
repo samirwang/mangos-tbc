@@ -19,6 +19,8 @@
 #ifndef _PLAYERGOSSIP_H
 #define _PLAYERGOSSIP_H
 
+#define HEARTHSTONE 6948
+
 class PlayerGossipScript;
 
 class PlayerGossip
@@ -43,11 +45,23 @@ private:
 class PlayerGossipScript
 {
 public:
-    PlayerGossipScript() {}
+    PlayerGossipScript(uint32 sender) { sPlayerGossip.RegisterScript(sender, this); }
     ~PlayerGossipScript() {}
 
     virtual bool GossipHello(Player* pPlayer, uint32 sender) { return true; };
     virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return true; };
+
+    ObjectGuid GetHearthStoneOrPlayerGuid(Player* pPlayer)
+    {
+        ObjectGuid guid = pPlayer->GetObjectGuid();
+
+        for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+        if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        if (pItem->GetEntry() == HEARTHSTONE)
+            guid = pItem->GetObjectGuid();
+
+        return guid;
+    }
 };
 
 #endif

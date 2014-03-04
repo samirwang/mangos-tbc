@@ -383,10 +383,25 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sCPlusMgr.OnGossipSelect(_player, pGo, sender, action, code.empty() ? NULL : code.c_str()))
+        if (!sCPlusMgr.OnGossipSelect(_player, pGo, sender, action, code))
             _player->OnGossipSelect(pGo, gossipListId, menuId);
     }
-    else if (guid.IsPlayer() || guid.IsItem())
+    else if (guid.IsItem())
+    {
+        Item* pItem = _player->GetItemByGuid(guid);
+
+        if (!pItem)
+        {
+            DEBUG_LOG("WORLD: HandleGossipSelectOptionOpcode - %s not found or you can't interact with it.", guid.GetString().c_str());
+            return;
+        }
+
+        if (pItem->GetEntry() == HEARTHSTONE)
+            sPlayerGossip.GossipSelect(_player, sender, action, code);
+        else
+            sCPlusMgr.OnGossipSelect(_player, pItem, sender, action, code);
+    }
+    else if (guid.IsPlayer())
         sPlayerGossip.GossipSelect(_player, sender, action, code);
 }
 
