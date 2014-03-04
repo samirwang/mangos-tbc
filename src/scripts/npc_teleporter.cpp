@@ -336,6 +336,7 @@ public:
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send boxmessage", CHAT_BOX, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send widemessage", CHAT_WIDE, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send bothmessage", CHAT_BOTH, 1339);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Show all icons", GOSSIP_SENDER_MAIN, 1340);
         }
         else if (action == 1339)
         {
@@ -345,6 +346,18 @@ public:
                 pCPlayer->WideChat << "WideChat" << std::endl;
             else if (sender == CHAT_BOTH)
                 pCPlayer->BothChat << "BothChat" << std::endl;
+        }
+        else if (action == 1340)
+        {
+            pCPlayer->AddGossipMenuItem(Icon::CHAT,     "Icon::CHAT     ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::BAG,      "Icon::BAG      ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::TAXI,     "Icon::TAXI     ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::TRAINER,  "Icon::TRAINER  ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR,     "Icon::GEAR     ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG,"Icon::MONEY_BAG", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::CHAT_DOTS,"Icon::CHAT_DOTS", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::TABARD,   "Icon::TABARD   ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS,   "Icon::SWORDS   ", GOSSIP_SENDER_MAIN, 0);
         }
 
         if (pPlayer->PlayerTalkClass->GetGossipMenu().MenuItemCount() > 0)

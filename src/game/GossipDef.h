@@ -38,11 +38,11 @@ namespace Icon
         TAXI      = 2,  // flight
         TRAINER   = 3,  // book
         GEAR      = 4,  // interaction wheel
-        MONEY_BAG = 6,  // brown bag with yellow dot
+        MONEY_BAG = 6,  // brown bag with coin
         CHAT_DOTS = 7,  // white chat bubble with black dots
         TABARD    = 8,  // tabard
         SWORDS    = 9,  // two swords
-        DOT       = 10, // yellow dot
+        // DOT       = 10, // yellow dot ----->BROKEN<-----
     };
 }
 
