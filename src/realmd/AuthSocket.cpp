@@ -28,9 +28,9 @@
 #include "AuthSocket.h"
 #include "AuthCodes.h"
 #include "PatchHandler.h"
+#include "Util.h"
 
 #include <openssl/md5.h>
-//#include "Util.h" -- for commented utf8ToUpperOnlyLatin
 
 #include <ace/OS_NS_unistd.h>
 #include <ace/OS_NS_fcntl.h>
@@ -864,6 +864,28 @@ bool AuthSocket::_HandleReconnectProof()
     }
 }
 
+ACE_INET_Addr const& AuthSocket::GetAddressForClient(Realm const& realm, ACE_INET_Addr const& clientAddr)
+{
+    // Attempt to send best address for client
+    if (clientAddr.is_loopback())
+    {
+        // Try guessing if realm is also connected locally
+        if (realm.LocalAddress.is_loopback() || realm.ExternalAddress.is_loopback())
+            return clientAddr;
+
+        // Assume that user connecting from the machine that authserver is located on
+        // has all realms available in his local network
+        return realm.LocalAddress;
+    }
+
+    // Check if connecting client is in the same network
+    if (IsIPAddrInNetwork(realm.LocalAddress, clientAddr, realm.LocalSubnetMask))
+        return realm.LocalAddress;
+
+    // Return external IP
+    return realm.ExternalAddress;
+}
+
 /// %Realm List command handler
 bool AuthSocket::_HandleRealmList()
 {
@@ -948,6 +970,11 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                     name += buf;
                 }
 
+                ACE_INET_Addr clientAddr;
+                peer().get_remote_addr(clientAddr);
+                // We don't need the port number from which client connects with but the realm's port
+                clientAddr.set_port_number(i->second.ExternalAddress.get_port_number());
+
                 // Show offline state for unsupported client builds and locked realms (1.x clients not support locked state show)
                 if (!ok_build || (i->second.allowedSecurityLevel > _accountSecurityLevel))
                     realmflags = RealmFlags(realmflags | REALM_FLAG_OFFLINE);
@@ -955,7 +982,7 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                 pkt << uint32(i->second.icon);              // realm type
                 pkt << uint8(realmflags);                   // realmflags
                 pkt << name;                                // name
-                pkt << i->second.address;                   // address
+                pkt << GetAddressString(GetAddressForClient(i->second, clientAddr)); // address
                 pkt << float(i->second.populationLevel);
                 pkt << uint8(AmountOfCharacters);
                 pkt << uint8(i->second.timezone);           // realm category
@@ -998,6 +1025,11 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                 if (!buildInfo)
                     buildInfo = &i->second.realmBuildInfo;
 
+                ACE_INET_Addr clientAddr;
+                peer().get_remote_addr(clientAddr);
+                // We don't need the port number from which client connects with but the realm's port
+                clientAddr.set_port_number(i->second.ExternalAddress.get_port_number());
+
                 uint8 lock = (i->second.allowedSecurityLevel > _accountSecurityLevel) ? 1 : 0;
 
                 RealmFlags realmFlags = i->second.realmflags;
@@ -1013,7 +1045,7 @@ void AuthSocket::LoadRealmlist(ByteBuffer& pkt, uint32 acctid)
                 pkt << uint8(lock);                         // flags, if 0x01, then realm locked
                 pkt << uint8(realmFlags);                   // see enum RealmFlags
                 pkt << i->first;                            // name
-                pkt << i->second.address;                   // address
+                pkt << GetAddressString(GetAddressForClient(i->second, clientAddr)); // address
                 pkt << float(i->second.populationLevel);
                 pkt << uint8(AmountOfCharacters);
                 pkt << uint8(i->second.timezone);           // realm category (Cfg_Categories.dbc)

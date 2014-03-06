@@ -24,6 +24,7 @@
 #define _REALMLIST_H
 
 #include "Common.h"
+#include "ACE/INET_Addr.h"
 
 struct RealmBuildInfo
 {
@@ -41,7 +42,9 @@ typedef std::set<uint32> RealmBuilds;
 /// Storage object for a realm
 struct Realm
 {
-    std::string address;
+    ACE_INET_Addr ExternalAddress;
+    ACE_INET_Addr LocalAddress;
+    ACE_INET_Addr LocalSubnetMask;
     uint8 icon;
     RealmFlags realmflags;                                  // realmflags
     uint8 timezone;
@@ -72,7 +75,7 @@ class RealmList
         uint32 size() const { return m_realms.size(); }
     private:
         void UpdateRealms(bool init);
-        void UpdateRealm(uint32 ID, const std::string& name, const std::string& address, uint32 port, uint8 icon, RealmFlags realmflags, uint8 timezone, AccountTypes allowedSecurityLevel, float popu, const std::string& builds);
+        void UpdateRealm(uint32 ID, const std::string& name, ACE_INET_Addr const& address, ACE_INET_Addr const& localAddr, ACE_INET_Addr const& localSubmask, uint32 port, uint8 icon, RealmFlags realmflags, uint8 timezone, AccountTypes allowedSecurityLevel, float popu, const std::string& builds);
     private:
         RealmMap m_realms;                                  ///< Internal map of realms
         uint32   m_UpdateInterval;

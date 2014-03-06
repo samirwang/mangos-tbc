@@ -30,6 +30,9 @@
 
 #include "BufferedSocket.h"
 
+class ACE_INET_Addr;
+struct Realm;
+
 /// Handle login commands
 class AuthSocket: public BufferedSocket
 {
@@ -43,6 +46,8 @@ class AuthSocket: public BufferedSocket
         void OnRead() override;
         void SendProof(Sha1Hash sha);
         void LoadRealmlist(ByteBuffer& pkt, uint32 acctid);
+
+        static ACE_INET_Addr const& GetAddressForClient(Realm const& realm, ACE_INET_Addr const& clientAddr);
 
         bool _HandleLogonChallenge();
         bool _HandleLogonProof();
