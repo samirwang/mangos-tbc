@@ -7558,7 +7558,8 @@ void Unit::SetSpeedRate(UnitMoveType mtype, float rate, bool forced)
                 ++((Player*)this)->m_forced_speed_changes[mtype];
             }
 
-            WorldPacket data(Opcodes(SetSpeed2Opc_table[mtype][1]), 18);
+            Opcodes opcode = Opcodes(SetSpeed2Opc_table[mtype][1]);
+            WorldPacket data(opcode, 18);
             data << GetPackGUID();
             data << (uint32)0;                              // moveEvent, NUM_PMOVE_EVTS = 0x39
             if (mtype == MOVE_RUN)
@@ -7570,7 +7571,8 @@ void Unit::SetSpeedRate(UnitMoveType mtype, float rate, bool forced)
         {
             m_movementInfo.UpdateTime(WorldTimer::getMSTime());
 
-            WorldPacket data(Opcodes(SetSpeed2Opc_table[mtype][0]), 64);
+            Opcodes opcode = Opcodes(SetSpeed2Opc_table[mtype][0]);
+            WorldPacket data(opcode, 64);
             data << GetPackGUID();
             data << m_movementInfo;
             data << float(GetSpeed(mtype));

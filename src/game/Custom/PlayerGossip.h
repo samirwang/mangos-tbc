@@ -19,6 +19,12 @@
 #ifndef _PLAYERGOSSIP_H
 #define _PLAYERGOSSIP_H
 
+#include "Common.h"
+#include "Policies/Singleton.h"
+#include "ObjectGuid.h"
+#include "Player.h"
+#include "Item.h"
+
 #define HEARTHSTONE 6948
 
 class PlayerGossipScript;
@@ -27,7 +33,7 @@ class PlayerGossip
 {
 public:
     PlayerGossip() {}
-    ~PlayerGossip();
+    virtual ~PlayerGossip();
 
     typedef std::map<uint32, PlayerGossipScript*> ScriptContainer;
 

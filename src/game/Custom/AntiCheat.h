@@ -21,40 +21,13 @@
 
 #include "Player.h"
 
-class AntiCheat_module;
-class AntiCheat_speed;
-class AntiCheat_height;
-class AntiCheat_climb;
-
-class AntiCheat
-{
-public:
-    explicit AntiCheat(Player* pPlayer);
-    ~AntiCheat();
-
-    void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
-
-    void SetGMFly(bool value) { m_GmFly = value; }
-    void SkipAntiCheat(bool value = true) { m_SkipAntiCheat = value; }
-
-    bool SkippingAntiCheat() { return m_SkipAntiCheat; }
-    bool IsGMFly() { return m_GmFly; }
-
-private:
-    AntiCheat_speed* m_SpeedCheat;
-    AntiCheat_height* m_HeightCheat;
-    AntiCheat_climb* m_ClimbCheat;
-
-    Player* m_player;
-    bool m_SkipAntiCheat;
-    bool m_GmFly;
-};
-
 class AntiCheat_module // Must only be used as parent
 {
 public:
-    AntiCheat_module()
+    explicit AntiCheat_module(Player* pPlayer)
     {
+        m_player = pPlayer;
+
         m_CurOpcode = MSG_NULL_ACTION;
         m_OldOpcode = MSG_NULL_ACTION;
 
@@ -72,7 +45,7 @@ public:
         m_DeltaZ = 0;
     }
 
-    ~AntiCheat_module() { }
+    virtual ~AntiCheat_module() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
     void SetOldValues();
@@ -85,7 +58,7 @@ public:
 
 protected:
     Player* m_player;
-    
+
     MovementInfo m_CurMoveInfo;
     MovementInfo m_OldMoveInfo;
 
@@ -109,14 +82,7 @@ protected:
 class AntiCheat_speed : public AntiCheat_module
 {
 public:
-    explicit AntiCheat_speed(Player* pPlayer)
-    {
-        AntiCheat_module::AntiCheat_module();
-
-        m_player = pPlayer;
-        m_OldMoveSpeed = 0;
-        m_DetectStreak = 0;
-    }
+    explicit AntiCheat_speed(Player* pPlayer) : AntiCheat_module(pPlayer) { }
     ~AntiCheat_speed() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
@@ -129,12 +95,7 @@ private:
 class AntiCheat_height : public AntiCheat_module
 {
 public:
-    explicit AntiCheat_height(Player* pPlayer)
-    {
-        AntiCheat_module::AntiCheat_module(); 
-
-        m_player = pPlayer;
-    }
+    explicit AntiCheat_height(Player* pPlayer) : AntiCheat_module(pPlayer) { }
     ~AntiCheat_height() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
@@ -143,15 +104,35 @@ public:
 class AntiCheat_climb : public AntiCheat_module
 {
 public:
-    explicit AntiCheat_climb(Player* pPlayer)
-    {
-        AntiCheat_module::AntiCheat_module();
+    explicit AntiCheat_climb(Player* pPlayer) : AntiCheat_module(pPlayer) { }
 
-        m_player = pPlayer;
-    }
     ~AntiCheat_climb() { }
 
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
+};
+
+class AntiCheat
+{
+public:
+    explicit AntiCheat(Player* pPlayer);
+    ~AntiCheat();
+
+    void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
+
+    void SetGMFly(bool value) { m_GmFly = value; }
+    void SkipAntiCheat(bool value = true) { m_SkipAntiCheat = value; }
+
+    bool SkippingAntiCheat() { return m_SkipAntiCheat; }
+    bool IsGMFly() { return m_GmFly; }
+
+private:
+    AntiCheat_speed* m_SpeedCheat;
+    AntiCheat_height* m_HeightCheat;
+    AntiCheat_climb* m_ClimbCheat;
+
+    Player* m_player;
+    bool m_SkipAntiCheat;
+    bool m_GmFly;
 };
 
 #endif

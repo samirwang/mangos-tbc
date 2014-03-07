@@ -24,7 +24,7 @@
 #define _REALMLIST_H
 
 #include "Common.h"
-#include "ACE/INET_Addr.h"
+#include "ace/INET_Addr.h"
 
 struct RealmBuildInfo
 {

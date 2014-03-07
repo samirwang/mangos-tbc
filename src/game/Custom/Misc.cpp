@@ -24,6 +24,8 @@
 #include "Log.h"
 #include "World.h"
 #include "Item.h"
+#include "Player.h"
+#include "ObjectMgr.h"
 
 void WorldSession::InitWarden(BigNumber *K, std::string os)
 {

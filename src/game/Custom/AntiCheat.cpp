@@ -20,6 +20,7 @@
 #include "Custom.h"
 #include "World.h"
 #include "Mail.h"
+#include "MapManager.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
@@ -104,7 +105,7 @@ void AntiCheat_module::ReportPlayer(std::string hack, std::string misc)
     if (m_player->isGameMaster() || m_player->GetAntiCheat()->SkippingAntiCheat())
         return;
 
-    CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", m_player->GetGUIDLow(), m_player->GetSession()->GetAccountId(), hack, sWorld.GetGameTime());
+    CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", m_player->GetGUIDLow(), m_player->GetSession()->GetAccountId(), hack.c_str(), uint32(sWorld.GetGameTime()));
 
     std::ostringstream ss;
     ss << "Player " << m_player->GetName() << " was caught " << hack << " " << misc;
@@ -141,8 +142,6 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     float speedmod = m_CTimeDiff / 1000.f;
 
     float maxdist = highspeed * speedmod;
-
-    const size_t listsize = 15;
 
     float dist = floor(m_MoveDist * 10.f) / 10.f;
     maxdist = ceil(maxdist * 10.f) / 10.f;
@@ -185,8 +184,6 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     if (!m_player->getDeathState() == ALIVE)
         return;
-
-    float Size = m_player->GetObjectBoundingRadius();
     
     float x = m_CurMoveInfo.GetPos()->x;
     float y = m_CurMoveInfo.GetPos()->y;

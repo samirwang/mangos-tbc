@@ -298,7 +298,7 @@ void CPlayer::LearnGreenSpells()
 
     m_player->learnSpell(spellid, false);
 
-    m_DelayedSpellLearn.erase(m_DelayedSpellLearn.cbegin());
+    m_DelayedSpellLearn.erase(m_DelayedSpellLearn.begin());
 
     if (m_DelayedSpellLearn.empty())
         FillGreenSpellList();
@@ -399,7 +399,7 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     delete pCreature;
 }
 
-void CPlayer::EnchantItem(uint32 spellid, uint8 slot, const char* sendername)
+void CPlayer::EnchantItem(uint32 spellid, uint8 slot, std::string sendername)
 {
     Item* pItem = m_player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
     if (!pItem)
@@ -510,7 +510,7 @@ void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
                 data << uint32(count);
                 data << uint32(itemId);
                 data << uint32(pProto->DisplayInfoID);
-                data << uint32(sCustom.maxuint32);
+                data << uint32(~0);
                 data << uint32(pProto->BuyPrice);
                 data << uint32(pProto->MaxDurability);
                 data << uint32(pProto->BuyCount);

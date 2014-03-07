@@ -94,6 +94,8 @@ if(WIN32)
   endif()
 endif()
 
+add_definitions("-std=c++11")
+
 # find Git: used to get the revision number
 find_package(Git)
 

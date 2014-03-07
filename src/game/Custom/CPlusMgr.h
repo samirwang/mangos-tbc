@@ -19,12 +19,22 @@
 #ifndef _CPLUSMGR_H
 #define _CPLUSMGR_H
 
+#include "Common.h"
+#include "Policies/Singleton.h"
+#include "Log.h"
+
 class Player;
 class Creature;
 class GameObject;
 class Quest;
 class GameObject;
 class Item;
+class CreatureAI;
+class SpellCastTargets;
+
+class CreatureScript;
+class GameObjectScript;
+class ItemScript;
 
 void AddScripts();
 
@@ -52,7 +62,7 @@ public:
 
     T1* GetScript(std::string name)
     {
-        auto& itr = m_ScriptObjects.find(name);
+        auto itr = m_ScriptObjects.find(name);
         if (itr != m_ScriptObjects.end())
             return itr->second;
 
@@ -61,7 +71,7 @@ public:
 
     T1* GetScript(uint32 entry)
     {
-        auto& itr = m_ScriptIDs.find(entry);
+        auto itr = m_ScriptIDs.find(entry);
         if (itr != m_ScriptIDs.end())
             return itr->second;
 
@@ -95,16 +105,12 @@ private:
     std::multimap<uint32, T1*> m_ScriptIDs;
 };
 
-class CreatureScript;
-class GameObjectScript;
-class ItemScript;
-
 class CPlusMgr
 {
     friend class Script;
 
 public:
-    ~CPlusMgr();
+    virtual ~CPlusMgr();
     void LoadScripts();
 
     /* Creature Script */
@@ -154,6 +160,7 @@ class CreatureScript
 {
 public:
     CreatureScript(std::string name) { sCPlusMgr.AddScript(name, this); }
+    virtual ~CreatureScript() {};
 
     virtual CreatureAI* GetCreatureAI(Creature* pCreature) { return nullptr; }
 
@@ -169,6 +176,7 @@ class GameObjectScript
 {
 public:
     GameObjectScript(std::string name) { sCPlusMgr.AddScript(name, this); }
+    virtual ~GameObjectScript() {};
 
     virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject) { return false; }
     virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code) { return false; }
@@ -184,6 +192,7 @@ class ItemScript
 {
 public:
     ItemScript(std::string name) { sCPlusMgr.AddScript(name, this); }
+    virtual ~ItemScript() {};
 
     virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code) { return false; }
 

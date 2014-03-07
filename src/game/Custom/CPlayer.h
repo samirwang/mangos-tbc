@@ -85,7 +85,7 @@ public:
     void LearnGreenSpells();
 
     void CreatePet(uint32 entry, bool classcheck = true);
-    void EnchantItem(uint32 spellid, uint8 slot, const char* sendername = "Enchanting");
+    void EnchantItem(uint32 spellid, uint8 slot, std::string sendername = "Enchanting");
 
     void AddGossipMenuItem(Icon::Icon icon, std::string message, uint32 sender, uint32 action)
     {

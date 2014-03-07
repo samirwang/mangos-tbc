@@ -102,9 +102,6 @@ public:
     typedef std::vector<TalentTemplate*> TalentContainer;
     typedef std::vector<EnchantTemplate*> EnchantContainer;
 
-    // Flip all the bits to get highest possible value!
-    static const uint32 maxuint32 = ~0;
-
     // Bitwise functions simplified!
     template <class T1, class T2>
     bool HasFlag(T1& var, T2 flag)
@@ -165,7 +162,7 @@ public:
 
     uint32 GetFakePlayerBytes(uint8 race, uint8 gender)
     {
-        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.cend())
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
             return m_FakePlayerBytesContainer[race].PlayerBytes[gender];
 
         return 0;
@@ -173,7 +170,7 @@ public:
 
     uint32 GetFakePlayerBytes2(uint8 race, uint8 gender)
     {
-        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.cend())
+        if (m_FakePlayerBytesContainer.find(race) != m_FakePlayerBytesContainer.end())
             return m_FakePlayerBytesContainer[race].PlayerBytes2[gender];
 
         return 0;

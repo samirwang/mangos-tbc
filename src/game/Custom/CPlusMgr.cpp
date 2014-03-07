@@ -19,6 +19,10 @@
 #include "CPlusMgr.h"
 #include "Log.h"
 #include "GossipDef.h"
+#include "CreatureAI.h"
+#include "Player.h"
+#include "GameObject.h"
+#include "Spell.h"
 
 CPlusMgr::~CPlusMgr()
 {

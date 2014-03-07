@@ -312,13 +312,13 @@ public:
             case 403: bgtype = BATTLEGROUND_EY; break;
             case 404: bgtype = BATTLEGROUND_AV; break;
             }
-
+            
             WorldPacket data;
             data.SetOpcode(CMSG_BATTLEMASTER_JOIN);
             data << ObjectGuid(pCreature->GetObjectGuid());
             data << uint32(bgtype);
             data << uint32(0);
-            data << uint8(pPlayer->GetGroup());
+            data << uint8(pPlayer->GetGroup() ? 1 : 0);
             pPlayer->GetSession()->HandleBattlemasterJoinOpcode(data);
         }
         else if (action >= 405 && action <= 410)
@@ -345,7 +345,7 @@ public:
             data.SetOpcode(CMSG_BATTLEMASTER_JOIN_ARENA);
             data << ObjectGuid(pCreature->GetObjectGuid());
             data << uint8(arenaslot);
-            data << uint8(pPlayer->GetGroup());
+            data << uint8(pPlayer->GetGroup() ? 1 : 0);
             data << uint8(rated);
             pPlayer->GetSession()->HandleBattlemasterJoinArena(data);
         }
