@@ -471,6 +471,10 @@ void Log::outErrorDb(const char* err, ...)
     if (!err)
         return;
 
+    std::string check = err;
+    if (check.find("empty") != std::string::npos)
+        return;
+
     if (m_colored)
         SetColor(false, m_colors[LogError]);
 
