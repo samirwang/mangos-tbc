@@ -355,6 +355,8 @@ public:
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send widemessage", CHAT_WIDE, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send bothmessage", CHAT_BOTH, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Show all icons", GOSSIP_SENDER_MAIN, 1340);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Transmog Mainhand", GOSSIP_SENDER_MAIN, 1341);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Detransmog Mainhand", GOSSIP_SENDER_MAIN, 1342);
         }
         else if (action == 1339)
         {
@@ -376,6 +378,16 @@ public:
             pCPlayer->AddGossipMenuItem(Icon::CHAT_DOTS,"Icon::CHAT_DOTS", GOSSIP_SENDER_MAIN, 0);
             pCPlayer->AddGossipMenuItem(Icon::TABARD,   "Icon::TABARD   ", GOSSIP_SENDER_MAIN, 0);
             pCPlayer->AddGossipMenuItem(Icon::SWORDS,   "Icon::SWORDS   ", GOSSIP_SENDER_MAIN, 0);
+        }
+        else if (action == 1341)
+        {
+            if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+                pItem->SetTransmog(27463);
+        }
+        else if (action == 1342)
+        {
+            if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+                pItem->SetTransmog(0);
         }
 
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())

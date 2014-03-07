@@ -23,6 +23,7 @@
 #include "WardenMac.h"
 #include "Log.h"
 #include "World.h"
+#include "Item.h"
 
 void WorldSession::InitWarden(BigNumber *K, std::string os)
 {
@@ -58,6 +59,22 @@ uint32 World::GetSaveInterval()
     if (sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE))
         return sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
 
-    uint32 hardtime = ceil(float((1.f/sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC))*sWorld.GetActiveSessionCount()*IN_MILLISECONDS)+2*IN_MILLISECONDS);
+    uint32 hardtime = ceil(float((1.f/sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC))*sWorld.GetActiveSessionCount()*IN_MILLISECONDS));
+
+    if (hardtime < 2 * IN_MILLISECONDS)
+        hardtime = 2 * IN_MILLISECONDS;
+
     return urand(hardtime / 2, hardtime * 3 / 2);
+}
+
+void Item::SetTransmog(uint32 entry)
+{
+    if (!ObjectMgr::GetItemPrototype(entry) && entry != 0)
+        return;
+
+    m_TransmogEntry = entry;
+
+    GetOwner()->SetVisibleItemSlot(GetSlot(), this);
+
+    SetState(ITEM_CHANGED);
 }

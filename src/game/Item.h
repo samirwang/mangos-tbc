@@ -259,6 +259,11 @@ bool ItemCanGoIntoBag(ItemPrototype const* proto, ItemPrototype const* pBagProto
 
 class MANGOS_DLL_SPEC Item : public Object
 {
+private:
+    uint32 m_TransmogEntry;
+public:
+    uint32 GetTransmogEntryOrEntry() { return (m_TransmogEntry ? m_TransmogEntry : GetEntry()); }
+    void SetTransmog(uint32 entry);
     public:
         static Item* CreateItem(uint32 item, uint32 count, Player const* player = NULL, uint32 randomPropertyId = 0);
         Item* CloneItem(uint32 count, Player const* player = NULL) const;

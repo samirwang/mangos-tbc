@@ -241,6 +241,8 @@ Item::Item() :
     m_container = NULL;
     mb_in_trade = false;
     m_lootState = ITEM_LOOT_NONE;
+
+    m_TransmogEntry = 0;
 }
 
 bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
@@ -311,13 +313,13 @@ void Item::SaveToDB()
             static SqlStatementID updInstance ;
             static SqlStatementID updGifts ;
 
-            SqlStatement stmt = CharacterDatabase.CreateStatement(updInstance, "UPDATE item_instance SET data = ?, owner_guid = ? WHERE guid = ?");
+            SqlStatement stmt = CharacterDatabase.CreateStatement(updInstance, "UPDATE item_instance SET data = ?, owner_guid = ?, transmog = ? WHERE guid = ?");
 
             std::ostringstream ss;
             for (uint16 i = 0; i < m_valuesCount; ++i)
                 ss << GetUInt32Value(i) << " ";
 
-            stmt.PExecute(ss.str().c_str(), GetOwnerGuid().GetCounter(), guid);
+            stmt.PExecute(ss.str().c_str(), GetOwnerGuid().GetCounter(), m_TransmogEntry, guid);
 
             if (HasFlag(ITEM_FIELD_FLAGS, ITEM_DYNFLAG_WRAPPED))
             {
@@ -427,6 +429,8 @@ bool Item::LoadFromDB(uint32 guidLow, Field* fields, ObjectGuid ownerGuid)
         return false;
     }
 
+    m_TransmogEntry = fields[1].GetUInt32();
+
     bool need_save = false;                                 // need explicit save data at load fixes
 
     // overwrite possible wrong/corrupted guid
@@ -500,7 +504,7 @@ bool Item::LoadFromDB(uint32 guidLow, Field* fields, ObjectGuid ownerGuid)
     {
         static SqlStatementID updItem ;
 
-        SqlStatement stmt = CharacterDatabase.CreateStatement(updItem, "UPDATE item_instance SET data = ?, owner_guid = ? WHERE guid = ?");
+        SqlStatement stmt = CharacterDatabase.CreateStatement(updItem, "UPDATE item_instance SET data = ?, owner_guid = ?, transmog = ? WHERE guid = ?");
 
         std::ostringstream ss;
         for (uint16 i = 0; i < m_valuesCount; ++i)
@@ -508,6 +512,7 @@ bool Item::LoadFromDB(uint32 guidLow, Field* fields, ObjectGuid ownerGuid)
 
         stmt.addString(ss);
         stmt.addUInt32(GetOwnerGuid().GetCounter());
+        stmt.addUInt32(m_TransmogEntry);
         stmt.addUInt32(guidLow);
         stmt.Execute();
     }
