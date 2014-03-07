@@ -27,13 +27,17 @@
 #include "CFBG.h"
 #include "PlayerGossip.h"
 #include "CPlayer.h"
-#include "Transmog.h"
 
 CPlayer::CPlayer(Player* pPlayer)
 {
     m_player = pPlayer;
 
     m_wChatOn = false;
+}
+
+CPlayer::~CPlayer()
+{
+    delete m_player;
 }
 
 void CPlayer::CUpdate(uint32 diff)

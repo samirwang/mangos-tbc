@@ -68,7 +68,6 @@
 #include "WardenDataStorage.h"
 #include "Custom.h"
 #include "CPlusMgr.h"
-#include "Transmog.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -1291,10 +1290,6 @@ void World::SetInitialWorldSettings()
     sLog.outString("Initializing enchant templates...");
     sCustom.LoadEnchantContainer();
 
-    sLog.outString("Loading saved transmogrifications...");
-    sTransmog.LoadTransmogs();
-    sWorld.m_timers[WUPDATE_TRANSMOG].SetInterval(1 * IN_MILLISECONDS);
-
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");
     m_gameTime = time(NULL);
@@ -1439,15 +1434,6 @@ void World::Update(uint32 diff)
     /// Handle daily quests reset time
     if (m_gameTime > m_NextDailyQuestReset)
         ResetDailyQuests();
-
-    if (m_timers[WUPDATE_TRANSMOG].Passed())
-    {
-        m_timers[WUPDATE_TRANSMOG].Reset();
-
-        m_timers[WUPDATE_TRANSMOG].SetInterval(GetSaveInterval());
-
-        sTransmog.SaveTransmogs();
-    }
 
     /// <ul><li> Handle auctions when the timer has passed
     if (m_timers[WUPDATE_AUCTIONS].Passed())

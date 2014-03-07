@@ -69,7 +69,6 @@
 #include "Settings.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
-#include "Transmog.h"
 
 #include <cmath>
 
@@ -564,9 +563,6 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
 Player::~Player()
 {
     delete m_AntiCheat;
-    delete m_CFBG;
-    delete m_Settings;
-    delete m_CPlayer;
 
     CleanupsBeforeDelete();
 
@@ -10650,7 +10646,7 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
         SetGuidValue(PLAYER_VISIBLE_ITEM_1_CREATOR + (slot * MAX_VISIBLE_ITEM_OFFSET), pItem->GetGuidValue(ITEM_FIELD_CREATOR));
 
         int VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
-        SetUInt32Value(VisibleBase + 0, sTransmog.GetTransmog(pItem->GetObjectGuid(), pItem->GetEntry()));
+        SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
 
         for (int i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; ++i)
             SetUInt32Value(VisibleBase + 1 + i, pItem->GetEnchantmentId(EnchantmentSlot(i)));
@@ -15229,6 +15225,8 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
     }
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
+
+    GetCFBG()->SetFakeValues();
 
     return true;
 }

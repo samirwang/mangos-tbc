@@ -46,8 +46,6 @@ set(SRC_GRP_CUSTOM
     Custom/CFBG.h
     Custom/CPlayer.cpp
     Custom/CPlayer.h
-    Custom/CPlusMgr.cpp
-    Custom/CPlusMgr.h
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp
@@ -55,8 +53,10 @@ set(SRC_GRP_CUSTOM
     Custom/PlayerGossip.h
     Custom/Settings.cpp
     Custom/Settings.h
-    Custom/Transmog.cpp
-    Custom/Transmog.h
+    Custom/sc_creature.cpp
+    Custom/sc_creature.h
+    Custom/sc_grid_searchers.cpp
+    Custom/sc_grid_searchers.h
 )
 
 set(SRC_GRP_WARDEN

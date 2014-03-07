@@ -59,7 +59,7 @@ class CPlayer
 {
 public:
     CPlayer(Player* pPlayer);
-    ~CPlayer() {};
+    ~CPlayer();
 
     typedef std::vector<uint32> DelayedSpellLearn;
 
