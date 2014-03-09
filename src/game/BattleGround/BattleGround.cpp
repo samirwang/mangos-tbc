@@ -937,7 +937,7 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
 
     if (plr)
     {
-        plr->GetCFBG()->CLeaveBattleGround(this);
+        plr->GetCFBG()->LeaveBattleGround(this);
 
         // should remove spirit of redemption
         if (plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
@@ -1093,7 +1093,7 @@ void BattleGround::StartBattleGround()
 
 void BattleGround::AddPlayer(Player* plr)
 {
-    plr->GetCFBG()->CJoinBattleGround(this);
+    plr->GetCFBG()->JoinBattleGround(this);
 
     // remove afk from player
     if (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK))

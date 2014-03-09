@@ -48,8 +48,8 @@ public:
     void SetRecache() { m_Recache = true; }
     void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
 
-    void CJoinBattleGround(BattleGround* bg);
-    void CLeaveBattleGround(BattleGround* bg);
+    void JoinBattleGround(BattleGround* bg);
+    void LeaveBattleGround(BattleGround* bg);
 
     void FakeDisplayID();
 
