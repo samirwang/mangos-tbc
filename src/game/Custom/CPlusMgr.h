@@ -31,7 +31,6 @@ class GameObject;
 class Item;
 class CreatureAI;
 class SpellCastTargets;
-
 class CreatureScript;
 class GameObjectScript;
 class ItemScript;
@@ -44,11 +43,20 @@ class ScriptObjects
 public:
     void DeleteScripts()
     {
+        std::vector<T1*> scriptpointers;
+
         for (auto& itr : m_ScriptObjects)
-            delete itr.second;
+            scriptpointers.push_back(itr.second);
 
         for (auto& itr : m_ScriptIDs)
-            delete itr.second;
+            scriptpointers.push_back(itr.second);
+
+        // Stackoverflow code, erase duplicates!
+        std::sort(scriptpointers.begin(), scriptpointers.end());
+        scriptpointers.erase(std::unique(scriptpointers.begin(), scriptpointers.end()), scriptpointers.end());
+
+        for (auto& itr : scriptpointers)
+            delete itr;
     }
 
     void AddScript(std::string name, T1* script)
@@ -156,6 +164,9 @@ private:
 
 #define sCPlusMgr MaNGOS::Singleton<CPlusMgr>::Instance()
 
+template <typename T>
+void UNUSED(T &&) {}
+
 class CreatureScript
 {
 public:
@@ -164,12 +175,45 @@ public:
 
     virtual CreatureAI* GetCreatureAI(Creature* pCreature) { return nullptr; }
 
-    virtual bool OnGossipHello(Player* pPlayer, Creature* pCreature) { return false; }
-    virtual bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnGossipHello(Player* pPlayer, Creature* pCreature)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pCreature);
+        return false;
+    }
 
-    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
-    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
-    virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature) { return 0; }
+    virtual bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pCreature);
+        UNUSED(sender);
+        UNUSED(action);
+        UNUSED(code);
+        return false;
+    }
+
+    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pCreature);
+        UNUSED(pQuest);
+        return false;
+    }
+
+    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pCreature);
+        UNUSED(pQuest);
+        return false;
+    }
+
+    virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pCreature);
+        return 0;
+    }
 };
 
 class GameObjectScript
@@ -178,14 +222,52 @@ public:
     GameObjectScript(std::string name) { sCPlusMgr.AddScript(name, this); }
     virtual ~GameObjectScript() {};
 
-    virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject) { return false; }
-    virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        return false;
+    }
 
-    virtual bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
-    virtual bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
-    virtual uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject) { return 0; }
+    virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        UNUSED(sender);
+        UNUSED(action);
+        UNUSED(code);
+        return false;
+    }
 
-    virtual bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject) { return false; }
+    virtual bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        UNUSED(pQuest);
+        return false;
+    }
+
+    virtual bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        UNUSED(pQuest);
+        return false;
+    }
+
+    virtual uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        return 0;
+    }
+
+    virtual bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pGameObject);
+        return false;
+    }
 };
 
 class ItemScript
@@ -194,10 +276,31 @@ public:
     ItemScript(std::string name) { sCPlusMgr.AddScript(name, this); }
     virtual ~ItemScript() {};
 
-    virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pItem);
+        UNUSED(sender);
+        UNUSED(action);
+        UNUSED(code);
+        return false;
+    }
 
-    virtual bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest) { return false; }
-    virtual bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets) { return false; }
+    virtual bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pItem);
+        UNUSED(pQuest);
+        return false;
+    }
+
+    virtual bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
+    {
+        UNUSED(pPlayer);
+        UNUSED(pItem);
+        UNUSED(targets);
+        return false;
+    }
 };
 
 #endif
