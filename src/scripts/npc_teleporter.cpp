@@ -266,15 +266,15 @@ public:
 
             if (Group* grp = pPlayer->GetGroup())
             {
-                for (uint8 i = 0; i < 3; ++i)
+                for (auto i = 0; i < 3; ++i)
                 {
                     if (ArenaTeam* at = sObjectMgr.GetArenaTeamById(pPlayer->GetArenaTeamId(i)))
                     {
                         bool showrated = true;
 
-                        for (Group::MemberSlotList::const_iterator itr = grp->GetMemberSlots().begin(); itr != grp->GetMemberSlots().end(); ++itr)
+                        for (auto itr : grp->GetMemberSlots())
                         {
-                            if (Player* member = sObjectMgr.GetPlayer(itr->guid))
+                            if (Player* member = sObjectMgr.GetPlayer(itr.guid))
                             {
                                 if (sObjectMgr.GetArenaTeamById(member->GetArenaTeamId(i)) != at)
                                     showrated = false;
