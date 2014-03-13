@@ -74,20 +74,20 @@ void CPlayer::LoadCountryData()
 {
     std::ostringstream ss;
 
-    ss << "SELECT"
-        << " c.iso_code_2, c.iso_code_3, c.country"
-        << " FROM"
-        << " ip2nationcountries c,"
-        << " ip2nation i"
-        << " WHERE"
-        << " i.ip < INET_ATON('" << m_player->GetSession()->GetRemoteAddress() << "')"
-        << " AND"
-        << " c.code = i.country"
-        << " ORDER BY"
-        << " i.ip DESC"
-        << " LIMIT 1";
+    ss << " SELECT"
+       << " c.iso_code_2, c.iso_code_3, c.country"
+       << " FROM"
+       << " ip2nationcountries c,"
+       << " ip2nation i"
+       << " WHERE"
+       << " i.ip < INET_ATON('" << m_player->GetSession()->GetRemoteAddress() << "')"
+       << " AND"
+       << " c.code = i.country"
+       << " ORDER BY"
+       << " i.ip DESC"
+       << " LIMIT 1";
 
-    if (QueryResult* result = LoginDatabase.PQuery(ss.str().c_str()))
+    if (QueryResult* result = LoginDatabase.PQuery("%s", ss.str().c_str()))
     {
         Field* fields = result->Fetch();
 
