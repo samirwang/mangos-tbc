@@ -58,10 +58,10 @@ Team Player::GetTeam() const
 
 uint32 World::GetSaveInterval()
 {
-    if (sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE))
-        return sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
-
-    uint32 hardtime = ceil(float((1.f/sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC))*sWorld.GetActiveSessionCount()*IN_MILLISECONDS));
+    uint32 hardtime = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
+    
+    if (!sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE))
+        hardtime = ceil((float)(1.f / sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC) * sWorld.GetActiveSessionCount()*IN_MILLISECONDS));
 
     if (hardtime < 2 * IN_MILLISECONDS)
         hardtime = 2 * IN_MILLISECONDS;
