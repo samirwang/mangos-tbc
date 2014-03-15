@@ -195,7 +195,7 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     if (!pMap)
         return;
 
-    float heightrange = 1.f;
+    float heightrange = 2.f;
     const float firstrange = 0.5f;
     const uint8 ranges = 2;
     const uint8 points = 8;
