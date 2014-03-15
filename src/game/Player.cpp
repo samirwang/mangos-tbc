@@ -1594,6 +1594,14 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         return false;
     }
 
+    MapEntry const* mapEntry = sMapStore.LookupEntry(mapid);
+    // client without expansion support
+    if (GetSession()->Expansion() < mapEntry->Expansion())
+    {
+        GetCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
+        return false;
+    }
+
     GetAntiCheat()->SkipAntiCheat();
 
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);  // Validity checked in IsValidMapCoord
