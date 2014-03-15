@@ -52,7 +52,7 @@ class PlayerGossipScript
 {
 public:
     PlayerGossipScript(uint32 sender) { sPlayerGossip.RegisterScript(sender, this); }
-    ~PlayerGossipScript() {}
+    virtual ~PlayerGossipScript() {}
 
     virtual bool GossipHello(Player* pPlayer, uint32 sender) { return true; };
     virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return true; };
