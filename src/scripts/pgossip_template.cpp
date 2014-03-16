@@ -25,7 +25,7 @@ class pgossip_templatesystem : public PlayerScript
 public:
     pgossip_templatesystem() : PlayerScript("playerscript_templates") {}
 
-    bool OnGossipHello(Player* pPlayer) override
+    bool GossipHello(Player* pPlayer) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -92,7 +92,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) override
+    bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 

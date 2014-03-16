@@ -98,12 +98,12 @@ class npc_spirit_guide : public CreatureScript
 public:
     npc_spirit_guide() : CreatureScript("npc_spirit_guide") {}
 
-    CreatureAI* GetCreatureAI(Creature* pCreature)
+    CreatureAI* GetCreatureAI(Creature* pCreature) override
     {
         return new npc_spirit_guideAI(pCreature);
     }
 
-    bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
+    bool GossipHello(Player* pPlayer, Creature* pCreature) override
     {
         pPlayer->CastSpell(pPlayer, SPELL_WAITING_TO_RESURRECT, true);
         return true;

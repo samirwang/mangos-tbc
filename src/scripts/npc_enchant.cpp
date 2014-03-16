@@ -6,7 +6,7 @@ class npc_enchant : public CreatureScript
 public:
     npc_enchant() : CreatureScript("npc_enchant") {}
 
-    bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
+    bool GossipHello(Player* pPlayer, Creature* pCreature) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -69,7 +69,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action, std::string code) override
+    bool GossipSelect(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -82,7 +82,7 @@ public:
             return true;
         }
         else if (action == 0)
-            OnGossipHello(pPlayer, pCreature);
+            GossipHello(pPlayer, pCreature);
         else if (action == 1)
         {
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "34 Attackpower 16 Hit          ", sender, 35452);
@@ -249,7 +249,7 @@ public:
         else
         {
             pCPlayer->EnchantItem(action, sender, cName);
-            OnGossipHello(pPlayer, pCreature);
+            GossipHello(pPlayer, pCreature);
         }
 
         if (pPlayer->PlayerTalkClass->GetGossipMenu().MenuItemCount() > 0)

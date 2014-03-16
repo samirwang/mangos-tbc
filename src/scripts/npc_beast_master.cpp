@@ -24,7 +24,7 @@ class npc_beast_master : public CreatureScript
 public:
     npc_beast_master() : CreatureScript("npc_beast_master") {}
 
-    bool OnGossipHello(Player *pPlayer, Creature *pCreature)
+    bool GossipHello(Player *pPlayer, Creature *pCreature) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -58,7 +58,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player *pPlayer, Creature *pCreature, uint32 /*sender*/, uint32 action)
+    bool GossipSelect(Player *pPlayer, Creature *pCreature, uint32 /*sender*/, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -73,7 +73,7 @@ public:
             return true;
         }
         else if (action == 0)
-            OnGossipHello(pPlayer, pCreature);
+            GossipHello(pPlayer, pCreature);
         else if (action == 1) // Bat 16173
         {
             pCPlayer->CreatePet(16173);

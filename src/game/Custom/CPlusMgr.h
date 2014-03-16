@@ -192,10 +192,10 @@ protected:
 
 public:
     virtual CreatureAI* GetCreatureAI(Creature* pCreature) { return nullptr; }
-    virtual bool OnGossipHello(Player* pPlayer, Creature* pCreature) { return false; }
-    virtual bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) { return false; }
-    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
-    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
+    virtual bool GossipHello(Player* pPlayer, Creature* pCreature) { return false; }
+    virtual bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool QuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
+    virtual bool QuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
     virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature) { return 0; }
 };
 
@@ -205,11 +205,11 @@ protected:
     GameObjectScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
 
 public:
-    virtual bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject) { return false; }
-    virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject) { return false; }
-    virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code) { return false; }
-    virtual bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
-    virtual bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
+    virtual bool GameObjectUse(Player* pPlayer, GameObject* pGameObject) { return false; }
+    virtual bool GossipHello(Player* pPlayer, GameObject* pGameObject) { return false; }
+    virtual bool GossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool QuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
+    virtual bool QuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
     virtual uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject) { return 0; }
 };
 
@@ -219,9 +219,9 @@ protected:
     ItemScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
 
 public:
-    virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code) { return false; }
-    virtual bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest) { return false; }
-    virtual bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets) { return false; }
+    virtual bool GossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool QuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest) { return false; }
+    virtual bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets) { return false; }
 };
 
 class PlayerScript : public ScriptObject
@@ -232,8 +232,8 @@ protected:
 public:
     ObjectGuid GetHearthStoneOrPlayerGuid(Player* pPlayer);
 
-    virtual bool OnGossipHello(Player* pPlayer) { return false; }
-    virtual bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool GossipHello(Player* pPlayer) { return false; }
+    virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return false; }
 };
 
 #endif

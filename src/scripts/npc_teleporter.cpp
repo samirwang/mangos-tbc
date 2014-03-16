@@ -27,7 +27,7 @@ class NPC_Teleporter : public CreatureScript
 public:
     NPC_Teleporter() : CreatureScript("npc_teleporter") {}
 
-    bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
+    bool GossipHello(Player* pPlayer, Creature* pCreature) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -65,7 +65,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) override
+    bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -79,7 +79,7 @@ public:
         }
 
         if (action == 0)
-            OnGossipHello(pPlayer, pCreature);
+            GossipHello(pPlayer, pCreature);
         else if (sender == GOSSIP_SENDER_MULTIVENDOR)
             pCPlayer->SendMultiVendorInventory(action, pCreature->GetObjectGuid());
         else if (action == 1) // Teleport To: Shopping Mall

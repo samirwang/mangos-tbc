@@ -75,7 +75,7 @@ class npc_training_dummy : public CreatureScript
 public:
     npc_training_dummy() : CreatureScript("npc_training_dummy") {}
 
-    CreatureAI* GetCreatureAI(Creature* pCreature)
+    CreatureAI* GetCreatureAI(Creature* pCreature) override
     {
         return new npc_training_dummyAI(pCreature);
     }

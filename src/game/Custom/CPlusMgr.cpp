@@ -35,7 +35,7 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer, Creature* pCreature)
     pPlayer->PlayerTalkClass->ClearMenus();
 
     if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-        return script->OnGossipHello(pPlayer, pCreature);
+        return script->GossipHello(pPlayer, pCreature);
 
     return false;
 }
@@ -45,7 +45,7 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sende
     pPlayer->PlayerTalkClass->ClearMenus();
 
     if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-        return script->OnGossipSelect(pPlayer, pCreature, sender, action, code);
+        return script->GossipSelect(pPlayer, pCreature, sender, action, code);
 
     return false;
 }
@@ -53,7 +53,7 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sende
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-        return script->OnQuestAccept(pPlayer, pCreature, pQuest);
+        return script->QuestAccept(pPlayer, pCreature, pQuest);
 
     return false;
 }
@@ -61,7 +61,7 @@ bool CPlusMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* 
 bool CPlusMgr::OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-        return script->OnQuestRewarded(pPlayer, pCreature, pQuest);
+        return script->QuestRewarded(pPlayer, pCreature, pQuest);
 
     return false;
 }
@@ -79,7 +79,7 @@ uint32 CPlusMgr::GetDialogStatus(Player* pPlayer, Creature* pCreature)
 bool CPlusMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
 {
     if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-        return script->OnGameObjectUse(pPlayer, pGameObject);
+        return script->GameObjectUse(pPlayer, pGameObject);
 
     return false;
 }
@@ -87,7 +87,7 @@ bool CPlusMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
 bool CPlusMgr::OnGossipHello(Player* pPlayer, GameObject* pGameObject)
 {
     if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-        return script->OnGossipHello(pPlayer, pGameObject);
+        return script->GossipHello(pPlayer, pGameObject);
 
     return false;
 }
@@ -95,7 +95,7 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer, GameObject* pGameObject)
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code)
 {
     if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-        return script->OnGossipSelect(pPlayer, pGameObject, sender, action, code);
+        return script->GossipSelect(pPlayer, pGameObject, sender, action, code);
 
     return false;
 }
@@ -103,7 +103,7 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 s
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
 {
     if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-        return script->OnQuestAccept(pPlayer, pGameObject, pQuest);
+        return script->QuestAccept(pPlayer, pGameObject, pQuest);
 
     return false;
 }
@@ -111,7 +111,7 @@ bool CPlusMgr::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest con
 bool CPlusMgr::OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
 {
     if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-        return script->OnQuestRewarded(pPlayer, pGameObject, pQuest);
+        return script->QuestRewarded(pPlayer, pGameObject, pQuest);
 
     return false;
 }
@@ -134,12 +134,12 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint3
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
             pPlayer->GetCPlayer()->SetScriptID(0);
-            return script->OnGossipSelect(pPlayer, sender, action, code);
+            return script->GossipSelect(pPlayer, sender, action, code);
         }
     }
     // ItemScript
     if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
-        return script->OnGossipSelect(pPlayer, pItem, sender, action, code);
+        return script->GossipSelect(pPlayer, pItem, sender, action, code);
 
     return false;
 }
@@ -147,7 +147,7 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint3
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
     if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
-        return script->OnQuestAccept(pPlayer, pItem, pQuest);
+        return script->QuestAccept(pPlayer, pItem, pQuest);
 
     return false;
 }
@@ -155,7 +155,7 @@ bool CPlusMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 bool CPlusMgr::OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
     if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
-        return script->OnItemUse(pPlayer, pItem, targets);
+        return script->ItemUse(pPlayer, pItem, targets);
 
     return false;
 }
@@ -179,7 +179,7 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer)
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
             pPlayer->GetCPlayer()->SetScriptID(0);
-            return script->OnGossipHello(pPlayer);
+            return script->GossipHello(pPlayer);
         }
     }
 
@@ -200,7 +200,7 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
             pPlayer->GetCPlayer()->SetScriptID(0);
-            return script->OnGossipSelect(pPlayer, sender, action, code);
+            return script->GossipSelect(pPlayer, sender, action, code);
         }
     }
 
