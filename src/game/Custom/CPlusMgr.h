@@ -183,7 +183,8 @@ private:
 
 #define sCPlusMgr MaNGOS::Singleton<CPlusMgr>::Instance()
 
-
+template <typename T>
+void UNUSED(T &&) {}
 
 class CreatureScript : public ScriptObject
 {
