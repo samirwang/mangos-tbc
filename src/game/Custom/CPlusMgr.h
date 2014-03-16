@@ -165,6 +165,7 @@ public:
     /* PlayerScript */
 
     bool OnGossipHello(Player* pPlayer);
+    bool OnGossipHello(Player* pPlayer, uint32 scriptid);
     bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code);
 
 public:

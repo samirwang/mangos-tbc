@@ -186,6 +186,13 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer)
     return false;
 }
 
+bool CPlusMgr::OnGossipHello(Player* pPlayer, uint32 scriptid)
+{
+    pPlayer->GetCPlayer()->SetScriptID(scriptid);
+
+    return OnGossipHello(pPlayer);
+}
+
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code)
 {
     if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())

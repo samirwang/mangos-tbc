@@ -121,10 +121,7 @@ void CPlayer::OnLogin()
         m_player->GetCFBG()->SetFakeOnNextTick();
 
     if (!m_player->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
-    {
-        SetScriptID(1);
-        sCPlusMgr.OnGossipHello(m_player);
-    }
+        sCPlusMgr.OnGossipHello(m_player, 1);
 
     if (m_player->GetTotalPlayedTime() < 1)
     {
