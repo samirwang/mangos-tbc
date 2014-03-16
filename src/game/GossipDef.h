@@ -26,6 +26,10 @@
 
 class WorldSession;
 
+
+#define MAX_GOSSIP_ITEMS 15
+#define MAX_QUEST_ITEMS 16
+
 #define GOSSIP_MAX_MENU_ITEMS 64                            // client supported items unknown, but provided number must be enough
 #define DEFAULT_GOSSIP_MESSAGE              0xffffff
 

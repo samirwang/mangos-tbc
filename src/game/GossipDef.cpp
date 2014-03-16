@@ -162,6 +162,19 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
 
     for (uint32 iI = 0; iI < mGossipMenu.MenuItemCount(); ++iI)
     {
+        if (iI >= MAX_GOSSIP_ITEMS)
+        {
+            std::ostringstream ss;
+            ss << "Tried to send more gossipitems then client can handle " << objectGuid.GetTypeName() << " " << objectGuid.GetCounter();
+
+            sLog.outError("%s", ss.str().c_str());
+
+            ss << " please report this to server staff!";
+            GetMenuSession()->GetPlayer()->GetCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+            
+            continue;
+        }
+
         GossipMenuItem const& gItem = mGossipMenu.GetItem(iI);
         data << uint32(iI);
         data << uint8(gItem.m_gIcon);
@@ -175,6 +188,19 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
 
     for (uint32 iI = 0; iI < mQuestMenu.MenuItemCount(); ++iI)
     {
+        if (iI >= MAX_QUEST_ITEMS)
+        {
+            std::ostringstream ss;
+            ss << "Tried to send more questitems then client can handle " << objectGuid.GetTypeName() << " " << objectGuid.GetCounter();
+
+            sLog.outError("%s", ss.str().c_str());
+
+            ss << " please report this to server staff!";
+            GetMenuSession()->GetPlayer()->GetCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+
+            continue;
+        }
+
         QuestMenuItem const& qItem = mQuestMenu.GetItem(iI);
         uint32 questID = qItem.m_qId;
         Quest const* pQuest = sObjectMgr.GetQuestTemplate(questID);
