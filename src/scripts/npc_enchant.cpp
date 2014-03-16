@@ -6,7 +6,7 @@ class npc_enchant : public CreatureScript
 public:
     npc_enchant() : CreatureScript("npc_enchant") {}
 
-    bool OnGossipHello(Player *pPlayer, Creature *pCreature)
+    bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
@@ -63,10 +63,13 @@ public:
 
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
             pPlayer->PlayerTalkClass->SendGossipMenu("Don't you feel enchanted a day like this?", pCreature->GetObjectGuid());
+        else
+            pPlayer->PlayerTalkClass->SendGossipMenu("I've got nothing for you!", pCreature->GetObjectGuid());
+
         return true;
     }
 
-    bool OnGossipSelect(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
+    bool OnGossipSelect(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 

@@ -382,7 +382,6 @@
     <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp" />
-    <ClCompile Include="..\..\src\game\Custom\PlayerGossip.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Settings.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenDataStorage.cpp" />
@@ -559,7 +558,6 @@
     <ClInclude Include="..\..\src\game\Custom\CPlayer.h" />
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
-    <ClInclude Include="..\..\src\game\Custom\PlayerGossip.h" />
     <ClInclude Include="..\..\src\game\Custom\Settings.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h" />

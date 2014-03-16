@@ -116,6 +116,9 @@ public:
 
     void LoadCountryData();
 
+    void SetScriptID(uint32 id) { m_ScriptID = id; }
+    uint32 GetScriptID() { return m_ScriptID; }
+
 private:
     Player* m_player;
 
@@ -127,6 +130,8 @@ private:
     ObjectGuid m_LastGossipGuid;
 
     MultiVendor m_MultiVendor;
+
+    uint32 m_ScriptID;
 };
 
 #endif

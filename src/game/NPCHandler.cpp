@@ -34,7 +34,6 @@
 #include "Guild.h"
 #include "GuildMgr.h"
 #include "Chat.h"
-#include "PlayerGossip.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
 
@@ -396,13 +395,10 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (pItem->GetEntry() == HEARTHSTONE)
-            sPlayerGossip.GossipSelect(_player, sender, action, code);
-        else
-            sCPlusMgr.OnGossipSelect(_player, pItem, sender, action, code);
+        sCPlusMgr.OnGossipSelect(_player, pItem, sender, action, code);
     }
     else if (guid.IsPlayer())
-        sPlayerGossip.GossipSelect(_player, sender, action, code);
+        sCPlusMgr.OnGossipSelect(_player, sender, action, code);
 }
 
 void WorldSession::HandleSpiritHealerActivateOpcode(WorldPacket& recv_data)

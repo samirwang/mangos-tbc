@@ -55,9 +55,6 @@
     <Filter Include="Custom\Settings">
       <UniqueIdentifier>{de3c4b03-375d-4eb3-a341-8c0337c666af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Custom\PlayerGossip">
-      <UniqueIdentifier>{cb758abe-6b38-4434-8208-87826e6e9ffb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Custom\CPlayer">
       <UniqueIdentifier>{edfb4ec7-cdb9-4398-9801-7031705ba9ae}</UniqueIdentifier>
     </Filter>
@@ -583,9 +580,6 @@
     <ClCompile Include="..\..\src\game\Custom\Settings.cpp">
       <Filter>Custom\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\PlayerGossip.cpp">
-      <Filter>Custom\PlayerGossip</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp">
       <Filter>Custom\CPlayer</Filter>
     </ClCompile>
@@ -1098,9 +1092,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Settings.h">
       <Filter>Custom\Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\PlayerGossip.h">
-      <Filter>Custom\PlayerGossip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
       <Filter>Custom\CPlayer</Filter>

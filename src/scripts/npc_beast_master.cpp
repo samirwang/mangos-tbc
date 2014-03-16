@@ -53,7 +53,8 @@ public:
         pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Raptor      ", GOSSIP_SENDER_MAIN, 12); // 20634
         pCPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Next Page          ", GOSSIP_SENDER_MAIN, 13);
 
-        pPlayer->PlayerTalkClass->SendGossipMenu("Those beasts mean nothing to me!", pCreature->GetObjectGuid());
+        if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
+            pPlayer->PlayerTalkClass->SendGossipMenu("Those beasts mean nothing to me!", pCreature->GetObjectGuid());
         return true;
     }
 

@@ -19,288 +19,220 @@
 #ifndef _CPLUSMGR_H
 #define _CPLUSMGR_H
 
-#include "Common.h"
 #include "Policies/Singleton.h"
-#include "Log.h"
 
-class Player;
+#include <typeinfo>
+
 class Creature;
-class GameObject;
-class Quest;
-class GameObject;
-class Item;
 class CreatureAI;
-class SpellCastTargets;
-class CreatureScript;
-class GameObjectScript;
-class ItemScript;
+class Player;
+class GameObject;
 
-void AddScripts();
-
-template<class T1>
-class ScriptObjects
+template<class T>
+class ScriptStorage
 {
 public:
-    void DeleteScripts()
+    ScriptStorage() {};
+    ~ScriptStorage() {};
+
+    void Add(T* script)
     {
-        std::vector<T1*> scriptpointers;
+        T* result = nullptr;
 
-        for (auto& itr : m_ScriptObjects)
-            scriptpointers.push_back(itr.second);
-
-        for (auto& itr : m_ScriptIDs)
-            scriptpointers.push_back(itr.second);
-
-        // Stackoverflow code, erase duplicates!
-        std::sort(scriptpointers.begin(), scriptpointers.end());
-        scriptpointers.erase(std::unique(scriptpointers.begin(), scriptpointers.end()), scriptpointers.end());
-
-        for (auto& itr : scriptpointers)
-            delete itr;
-    }
-
-    void AddScript(std::string name, T1* script)
-    {
-        auto itr = m_ScriptObjects.find(name);
-        if (itr == m_ScriptObjects.end())
-            m_ScriptObjects.insert(std::make_pair(name, script));
-        else
-            sLog.outError("CPlusMgr: Trying to register scriptname %s which was already registered!", name.c_str());
-    }
-
-    T1* GetScript(std::string name)
-    {
-        auto itr = m_ScriptObjects.find(name);
-        if (itr != m_ScriptObjects.end())
-            return itr->second;
-
-        return nullptr;
-    }
-
-    T1* GetScript(uint32 entry)
-    {
-        auto itr = m_ScriptIDs.find(entry);
-        if (itr != m_ScriptIDs.end())
-            return itr->second;
-
-        return nullptr;
-    }
-
-    void LoadScriptNames(std::string tablename, std::string columnname)
-    {
-        if (QueryResult* result = WorldDatabase.PQuery("SELECT %s, ScriptName FROM %s WHERE ScriptName <> ''", columnname.c_str(), tablename.c_str()))
+        for (auto& itr : m_RegisteredScripts)
         {
-            do 
+            if (itr->GetName() == script->GetName())
             {
-                Field* field = result->Fetch();
-
-                uint32 entry = field[0].GetUInt32();
-                std::string name = field[1].GetCppString();
-
-                if (T1* script = GetScript(name))
-                    m_ScriptIDs.insert(std::make_pair(entry, script));
-                else
-                    sLog.outError("CPlusMgr: %s.%s %u has scriptname %s which doesn't belong to any script!", tablename.c_str(), columnname.c_str(), entry, name.c_str());
+                result = itr;
+                break;
             }
-            while (result->NextRow());
+        }
 
-            delete result;
+        if (result)
+            sLog.outString("ScriptStorage: Trying to double register %s!", script->GetName().c_str());
+        else
+        {
+            sLog.outString("ScriptStorage: registering script %s type %s!", script->GetName().c_str(), typeid(T).name());
+            m_RegisteredScripts.push_back(script);
         }
     }
 
+    T* GetScript(uint32 id)
+    {
+        if (m_ScriptMap.find(id) != m_ScriptMap.end())
+            return m_ScriptMap[id];
+        else
+            sLog.outString("Trying to reach script with id %u type %s", id, typeid(T).name());
+
+        return nullptr;
+    }
+
+    void LoadScriptNames(std::string colname, std::string tablename)
+    {
+        char buffer[255];
+        sprintf(buffer, "SELECT %s, ScriptName FROM %s WHERE ScriptName <> ''", colname.c_str(), tablename.c_str());
+
+        sLog.outString(buffer);
+
+        QueryResult* result = WorldDatabase.Query(buffer);
+        if (!result)
+            return;
+
+        do 
+        {
+            Field* fields = result->Fetch();
+            uint32 entry = fields[0].GetUInt32();
+            std::string name = fields[1].GetCppString();
+
+            sLog.outString("Trying to register %s %u to scriptname %s", tablename.c_str(), entry, name.c_str());
+
+            for (auto& itr : m_RegisteredScripts)
+            {
+                if (itr->GetName() == name)
+                {
+                    m_ScriptMap.insert(std::make_pair(entry, itr));
+                    sLog.outString("Success!");
+                    break;
+                }
+            }
+        }
+        while (result->NextRow());
+    }
+
 private:
-    std::map<std::string, T1*> m_ScriptObjects;
-    std::multimap<uint32, T1*> m_ScriptIDs;
+    UNORDERED_MAP<uint32, T*> m_ScriptMap;
+    std::vector<T*> m_RegisteredScripts;
 };
+
+class ScriptObject
+{
+public:
+    ScriptObject(std::string name) : m_name(name) { }
+    virtual ~ScriptObject() {}
+
+    std::string GetName() { return m_name; }
+
+private:
+    std::string m_name;
+};
+
+void AddScripts();
+
+class CreatureScript;
+class GameObjectScript;
+class ItemScript;
+class PlayerScript;
 
 class CPlusMgr
 {
-    friend class Script;
-
 public:
-    virtual ~CPlusMgr();
-    void LoadScripts();
+    CPlusMgr() {};  
+    ~CPlusMgr() {};
 
-    /* Creature Script */
+    void LoadScripts()
+    {
+        AddScripts();
 
+        m_CreatureScripts.LoadScriptNames("entry", "creature_template");
+        m_GameObjectScripts.LoadScriptNames("entry", "gameobject_template");
+        m_ItemScripts.LoadScriptNames("entry", "item_template");
+        m_PlayerScripts.LoadScriptNames("entry", "playerscript_template");
+    }
+
+    /* CreatureScript */
     CreatureAI* GetCreatureAI(Creature* pCreature);
-
     bool OnGossipHello(Player* pPlayer, Creature* pCreature);
     bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code);
+    bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+    bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
+    uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature);
 
-    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
-    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
-    virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature);
+    /* GameObjectScript */
 
-    /* GameObject Script */
-
+    bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject);
     bool OnGossipHello(Player* pPlayer, GameObject* pGameObject);
     bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code);
-
     bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest);
     bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest);
     uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject);
 
-    bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject);
-
-    /* Item Script */
+    /* ItemScript */
 
     bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code);
-
     bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest);
     bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
 
-    /* Script Storages */
+    /* PlayerScript */
 
-    void AddScript(std::string name, CreatureScript* script) { m_CreatureScripts.AddScript(name, script); }
-    void AddScript(std::string name, GameObjectScript* script) { m_GameObjectScripts.AddScript(name, script); }
-    void AddScript(std::string name, ItemScript* script) { m_ItemScripts.AddScript(name, script); }
+    bool OnGossipHello(Player* pPlayer);
+    bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code);
+
+public:
+    void Add(CreatureScript* script) { m_CreatureScripts.Add(script); }
+    void Add(GameObjectScript* script) { m_GameObjectScripts.Add(script); }
+    void Add(ItemScript* script) { m_ItemScripts.Add(script); }
+    void Add(PlayerScript* script) { m_PlayerScripts.Add(script); }
 
 private:
-    ScriptObjects<CreatureScript> m_CreatureScripts;
-    ScriptObjects<GameObjectScript> m_GameObjectScripts;
-    ScriptObjects<ItemScript> m_ItemScripts;
+    ScriptStorage<CreatureScript> m_CreatureScripts;
+    ScriptStorage<GameObjectScript> m_GameObjectScripts;
+    ScriptStorage<ItemScript> m_ItemScripts;
+    ScriptStorage<PlayerScript> m_PlayerScripts;
 };
 
 #define sCPlusMgr MaNGOS::Singleton<CPlusMgr>::Instance()
 
-template <typename T>
-void UNUSED(T &&) {}
 
-class CreatureScript
+
+class CreatureScript : public ScriptObject
 {
-public:
-    CreatureScript(std::string name) { sCPlusMgr.AddScript(name, this); }
-    virtual ~CreatureScript() {};
+protected:
+    CreatureScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
 
+public:
     virtual CreatureAI* GetCreatureAI(Creature* pCreature) { return nullptr; }
-
-    virtual bool OnGossipHello(Player* pPlayer, Creature* pCreature)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pCreature);
-        return false;
-    }
-
-    virtual bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pCreature);
-        UNUSED(sender);
-        UNUSED(action);
-        UNUSED(code);
-        return false;
-    }
-
-    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pCreature);
-        UNUSED(pQuest);
-        return false;
-    }
-
-    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pCreature);
-        UNUSED(pQuest);
-        return false;
-    }
-
-    virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pCreature);
-        return 0;
-    }
+    virtual bool OnGossipHello(Player* pPlayer, Creature* pCreature) { return false; }
+    virtual bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
+    virtual bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest) { return false; }
+    virtual uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature) { return 0; }
 };
 
-class GameObjectScript
+class GameObjectScript : public ScriptObject
 {
+protected:
+    GameObjectScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
+
 public:
-    GameObjectScript(std::string name) { sCPlusMgr.AddScript(name, this); }
-    virtual ~GameObjectScript() {};
-
-    virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        return false;
-    }
-
-    virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        UNUSED(sender);
-        UNUSED(action);
-        UNUSED(code);
-        return false;
-    }
-
-    virtual bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        UNUSED(pQuest);
-        return false;
-    }
-
-    virtual bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        UNUSED(pQuest);
-        return false;
-    }
-
-    virtual uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        return 0;
-    }
-
-    virtual bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pGameObject);
-        return false;
-    }
+    virtual bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject) { return false; }
+    virtual bool OnGossipHello(Player* pPlayer, GameObject* pGameObject) { return false; }
+    virtual bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
+    virtual bool OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest) { return false; }
+    virtual uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject) { return 0; }
 };
 
-class ItemScript
+class ItemScript : public ScriptObject
 {
+protected:
+    ItemScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
+
 public:
-    ItemScript(std::string name) { sCPlusMgr.AddScript(name, this); }
-    virtual ~ItemScript() {};
+    virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code) { return false; }
+    virtual bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest) { return false; }
+    virtual bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets) { return false; }
+};
 
-    virtual bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pItem);
-        UNUSED(sender);
-        UNUSED(action);
-        UNUSED(code);
-        return false;
-    }
+class PlayerScript : public ScriptObject
+{
+protected:
+    PlayerScript(std::string name) : ScriptObject(name) { sCPlusMgr.Add(this); }
 
-    virtual bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pItem);
-        UNUSED(pQuest);
-        return false;
-    }
+public:
+    ObjectGuid GetHearthStoneOrPlayerGuid(Player* pPlayer);
 
-    virtual bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
-    {
-        UNUSED(pPlayer);
-        UNUSED(pItem);
-        UNUSED(targets);
-        return false;
-    }
+    virtual bool OnGossipHello(Player* pPlayer) { return false; }
+    virtual bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) { return false; }
 };
 
 #endif

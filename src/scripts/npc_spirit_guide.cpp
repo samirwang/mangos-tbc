@@ -103,7 +103,7 @@ public:
         return new npc_spirit_guideAI(pCreature);
     }
 
-    bool OnGossipHello(Player* pPlayer, Creature* pCreature)
+    bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
     {
         pPlayer->CastSpell(pPlayer, SPELL_WAITING_TO_RESURRECT, true);
         return true;

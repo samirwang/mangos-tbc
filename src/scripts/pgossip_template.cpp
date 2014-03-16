@@ -17,83 +17,82 @@
 */
 
 #include "Precompiled.h"
-#include "PlayerGossip.h"
 #include "CPlayer.h"
 #include "Settings.h"
 
-class pgossip_templatesystem : public PlayerGossipScript
+class pgossip_templatesystem : public PlayerScript
 {
 public:
-    pgossip_templatesystem() : PlayerGossipScript(GOSSIP_SENDER_FIRSTLOGIN) {}
+    pgossip_templatesystem() : PlayerScript("playerscript_templates") {}
 
-    bool GossipHello(Player* pPlayer, uint32 sender) override
+    bool OnGossipHello(Player* pPlayer) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 
         if (pPlayer->getClass() == CLASS_WARRIOR)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Arms", sender, 1);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Fury", sender, 2);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Protection", sender, 3);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Arms", 0, 1);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Fury", 0, 2);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Protection", 0, 3);
         }
         else if (pPlayer->getClass() == CLASS_PALADIN)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Holy", sender, 4);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Protection", sender, 5);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Retribution", sender, 6);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Holy", 0, 4);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Protection", 0, 5);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Retribution", 0, 6);
         }
         else if (pPlayer->getClass() == CLASS_HUNTER)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Beast Mastery", sender, 7);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Marksmanship", sender, 8);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Survival", sender, 9);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Beast Mastery", 0, 7);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Marksmanship", 0, 8);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Survival", 0, 9);
         }
         else if (pPlayer->getClass() == CLASS_ROGUE)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Assassination", sender, 10);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Combat", sender, 11);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Subtlety", sender, 12);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Assassination", 0, 10);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Combat", 0, 11);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Subtlety", 0, 12);
         }
         else if (pPlayer->getClass() == CLASS_PRIEST)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Discipline", sender, 13);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Holy", sender, 14);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Shadow", sender, 15);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Discipline", 0, 13);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Holy", 0, 14);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Shadow", 0, 15);
         }
         else if (pPlayer->getClass() == CLASS_SHAMAN)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Elemental", sender, 16);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Enhancement", sender, 17);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Restoration", sender, 18);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Elemental", 0, 16);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Enhancement", 0, 17);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Restoration", 0, 18);
         }
         else if (pPlayer->getClass() == CLASS_MAGE)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Arcane", sender, 19);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Fire", sender, 20);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Frost", sender, 21);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Arcane", 0, 19);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Fire", 0, 20);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Frost", 0, 21);
         }
         else if (pPlayer->getClass() == CLASS_WARLOCK)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Affliction", sender, 22);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Demonology", sender, 23);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Destruction", sender, 24);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Affliction", 0, 22);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Demonology", 0, 23);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Destruction", 0, 24);
         }
         else if (pPlayer->getClass() == CLASS_DRUID)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Balance", sender, 25);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Feral", sender, 26);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Restoration", sender, 27);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Balance", 0, 25);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Feral", 0, 26);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "I want to play Restoration", 0, 27);
         }
 
-        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Do not show this again", sender, 30);
+        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Do not show this again", 0, 30);
 
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
-            pPlayer->PlayerTalkClass->SendGossipMenu("Please select your spec!", GetHearthStoneOrPlayerGuid(pPlayer));
+            pPlayer->PlayerTalkClass->SendGossipMenu("Please select your spec!", GetHearthStoneOrPlayerGuid(pPlayer), 1);
 
         return true;
     }
 
-    bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) override
+    bool OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 

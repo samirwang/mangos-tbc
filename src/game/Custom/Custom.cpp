@@ -222,7 +222,7 @@ bool ChatHandler::HandleWChatCommand(char* args)
     return true;
 }
 
-void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 textid)
+void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 scriptid, uint32 textid)
 {
     WorldPacket data(SMSG_NPC_TEXT_UPDATE, 100);            // guess size
     data << textid;                                         // can be < 0
@@ -240,6 +240,8 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
         data << uint32(0);
         data << uint32(0);
     }
+
+    GetMenuSession()->GetPlayer()->GetCPlayer()->SetScriptID(scriptid);
 
     GetMenuSession()->SendPacket(&data);
 

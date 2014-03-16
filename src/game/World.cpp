@@ -1278,9 +1278,6 @@ void World::SetInitialWorldSettings()
     sLog.outString("Loading CreatureEventAI Scripts...");
     sEventAIMgr.LoadCreatureEventAI_Scripts();
 
-    sLog.outString("Loading CPlus Scripts...");
-    sCPlusMgr.LoadScripts();
-
     sLog.outString("Initializing fake playerbytes...");
     sCustom.LoadFakePlayerBytes();
 
@@ -1289,6 +1286,9 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Initializing enchant templates...");
     sCustom.LoadEnchantContainer();
+
+    sLog.outString("Loading CPlus Scripts...");
+    sCPlusMgr.LoadScripts();
 
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");

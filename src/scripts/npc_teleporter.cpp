@@ -60,11 +60,12 @@ public:
         if (pPlayer->isGameMaster())
             pCPlayer->AddGossipMenuItem(Icon::BAG, "GM menu", GOSSIP_SENDER_MAIN, 1337);
 
-        pPlayer->PlayerTalkClass->SendGossipMenu("Your wish, my law!", pCreature->GetObjectGuid());
+        if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
+            pPlayer->PlayerTalkClass->SendGossipMenu("Your wish, my law!", pCreature->GetObjectGuid());
         return true;
     }
 
-    bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code)
+    bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code) override
     {
         CPlayer* pCPlayer = pPlayer->GetCPlayer();
 

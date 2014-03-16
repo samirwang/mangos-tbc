@@ -25,14 +25,16 @@
 #include "DBCStores.h"
 #include "Settings.h"
 #include "CFBG.h"
-#include "PlayerGossip.h"
 #include "CPlayer.h"
+#include "CPlusMgr.h"
 
 CPlayer::CPlayer(Player* pPlayer)
 {
     m_player = pPlayer;
 
     m_wChatOn = false;
+
+    m_ScriptID = 0;
 }
 
 CPlayer::~CPlayer()
@@ -119,7 +121,10 @@ void CPlayer::OnLogin()
         m_player->GetCFBG()->SetFakeOnNextTick();
 
     if (!m_player->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
-        sPlayerGossip.GossipHello(m_player, GOSSIP_SENDER_FIRSTLOGIN);
+    {
+        SetScriptID(1);
+        sCPlusMgr.OnGossipHello(m_player);
+    }
 
     if (m_player->GetTotalPlayedTime() < 1)
     {

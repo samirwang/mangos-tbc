@@ -17,30 +17,15 @@
 */
 
 #include "CPlusMgr.h"
-#include "Log.h"
-#include "GossipDef.h"
-#include "CreatureAI.h"
-#include "Player.h"
-#include "GameObject.h"
-#include "Spell.h"
+#include "CPlayer.h"
+#include "ObjectGuid.h"
 
-CPlusMgr::~CPlusMgr()
-{
-    m_CreatureScripts.DeleteScripts();
-}
-
-void CPlusMgr::LoadScripts()
-{
-    AddScripts();
-
-    m_CreatureScripts.LoadScriptNames("creature_template", "entry");
-}
+/* CreatureScript */
 
 CreatureAI* CPlusMgr::GetCreatureAI(Creature* pCreature)
 {
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (auto AI = script->GetCreatureAI(pCreature))
-        return AI;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->GetCreatureAI(pCreature);
 
     return nullptr;
 }
@@ -49,9 +34,8 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer, Creature* pCreature)
 {
     pPlayer->PlayerTalkClass->ClearMenus();
 
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (script->OnGossipHello(pPlayer, pCreature))
-        return true;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->OnGossipHello(pPlayer, pCreature);
 
     return false;
 }
@@ -60,117 +44,158 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sende
 {
     pPlayer->PlayerTalkClass->ClearMenus();
 
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (script->OnGossipSelect(pPlayer, pCreature, sender, action, code))
-        return true;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->OnGossipSelect(pPlayer, pCreature, sender, action, code);
 
     return false;
 }
 
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (script->OnQuestAccept(pPlayer, pCreature, pQuest))
-        return true;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->OnQuestAccept(pPlayer, pCreature, pQuest);
 
     return false;
 }
 
 bool CPlusMgr::OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (script->OnQuestRewarded(pPlayer, pCreature, pQuest))
-        return true;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->OnQuestRewarded(pPlayer, pCreature, pQuest);
 
     return false;
 }
 
 uint32 CPlusMgr::GetDialogStatus(Player* pPlayer, Creature* pCreature)
 {
-    if (auto script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
-    if (uint32 status = script->GetDialogStatus(pPlayer, pCreature))
-        return status;
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->GetDialogStatus(pPlayer, pCreature);
+
+    return 0;
+}
+
+/* GameObjectScript */
+
+bool CPlusMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
+{
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->OnGameObjectUse(pPlayer, pGameObject);
 
     return false;
 }
 
 bool CPlusMgr::OnGossipHello(Player* pPlayer, GameObject* pGameObject)
 {
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (script->OnGossipHello(pPlayer, pGameObject))
-        return true;
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->OnGossipHello(pPlayer, pGameObject);
 
     return false;
 }
 
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, std::string code)
 {
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (script->OnGossipSelect(pPlayer, pGameObject, sender, action, code))
-        return true;
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->OnGossipSelect(pPlayer, pGameObject, sender, action, code);
 
     return false;
 }
 
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
 {
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (script->OnQuestAccept(pPlayer, pGameObject, pQuest))
-        return true;
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->OnQuestAccept(pPlayer, pGameObject, pQuest);
 
     return false;
 }
 
 bool CPlusMgr::OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
 {
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (script->OnGossipHello(pPlayer, pGameObject))
-        return true;
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->OnQuestRewarded(pPlayer, pGameObject, pQuest);
 
     return false;
 }
 
 uint32 CPlusMgr::GetDialogStatus(Player* pPlayer, GameObject* pGameObject)
 {
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (uint32 status = script->GetDialogStatus(pPlayer, pGameObject))
-        return status;
-
-    return 0;
-}
-
-bool CPlusMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
-{
-    if (auto script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
-    if (script->OnGameObjectUse(pPlayer, pGameObject))
-        return true;
+    if (GameObjectScript* script = m_GameObjectScripts.GetScript(pGameObject->GetEntry()))
+        return script->GetDialogStatus(pPlayer, pGameObject);
 
     return false;
 }
 
+/* ItemScript */
+
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code)
 {
-    if (auto script = m_ItemScripts.GetScript(pItem->GetEntry()))
-    if (script->OnGossipSelect(pPlayer, pItem, sender, action, code))
-        return true;
+    // PlayerScript
+    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    {
+        if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
+        {
+            pPlayer->GetCPlayer()->SetScriptID(0);
+            return script->OnGossipSelect(pPlayer, sender, action, code);
+        }
+    }
+    // ItemScript
+    if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
+        return script->OnGossipSelect(pPlayer, pItem, sender, action, code);
 
     return false;
 }
 
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    if (auto script = m_ItemScripts.GetScript(pItem->GetEntry()))
-    if (script->OnQuestAccept(pPlayer, pItem, pQuest))
-        return true;
+    if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
+        return script->OnQuestAccept(pPlayer, pItem, pQuest);
 
     return false;
 }
 
 bool CPlusMgr::OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 {
-    if (auto script = m_ItemScripts.GetScript(pItem->GetEntry()))
-    if (script->OnItemUse(pPlayer, pItem, targets))
-        return true;
+    if (ItemScript* script = m_ItemScripts.GetScript(pItem->GetEntry()))
+        return script->OnItemUse(pPlayer, pItem, targets);
+
+    return false;
+}
+
+/* PlayerScript */
+
+ObjectGuid PlayerScript::GetHearthStoneOrPlayerGuid(Player* pPlayer)
+{
+    for (uint8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+    if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+    if (pItem->GetEntry() == 6948)
+        return pItem->GetObjectGuid();
+
+    return pPlayer->GetObjectGuid();
+}
+
+bool CPlusMgr::OnGossipHello(Player* pPlayer)
+{
+    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    {
+        if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
+        {
+            pPlayer->GetCPlayer()->SetScriptID(0);
+            return script->OnGossipHello(pPlayer);
+        }
+    }
+
+    return false;
+}
+
+bool CPlusMgr::OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code)
+{
+    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    {
+        if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
+        {
+            pPlayer->GetCPlayer()->SetScriptID(0);
+            return script->OnGossipSelect(pPlayer, sender, action, code);
+        }
+    }
 
     return false;
 }
