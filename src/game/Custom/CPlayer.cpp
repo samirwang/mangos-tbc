@@ -35,6 +35,7 @@ CPlayer::CPlayer(Player* pPlayer)
     m_wChatOn = false;
 
     m_ScriptID = 0;
+    m_SelectedGObject = 0;
 }
 
 CPlayer::~CPlayer()

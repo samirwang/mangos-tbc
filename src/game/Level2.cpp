@@ -53,6 +53,7 @@
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 #include "MoveMap.h"                                        // for mmap manager
 #include "PathFinder.h"                                     // for mmap commands
+#include "CPlayer.h"
 
 static uint32 ReputationRankStrIndex[MAX_REPUTATION_RANK] =
 {
@@ -860,6 +861,8 @@ bool ChatHandler::HandleGameObjectTargetCommand(char* args)
         return false;
     }
 
+    m_session->GetPlayer()->GetCPlayer()->SelectGObject(lowguid);
+
     GameObjectInfo const* goI = ObjectMgr::GetGameObjectInfo(id);
 
     if (!goI)
@@ -899,7 +902,10 @@ bool ChatHandler::HandleGameObjectDeleteCommand(char* args)
     // number or [name] Shift-click form |color|Hgameobject:go_guid|h[name]|h|r
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
-        return false;
+    {
+        lowguid = m_session->GetPlayer()->GetCPlayer()->GetSelectedGObject();
+        m_session->GetPlayer()->GetCPlayer()->SelectGObject(0);
+    }
 
     if (!lowguid)
         return false;
@@ -945,7 +951,7 @@ bool ChatHandler::HandleGameObjectTurnCommand(char* args)
     // number or [name] Shift-click form |color|Hgameobject:go_id|h[name]|h|r
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
-        return false;
+        lowguid = m_session->GetPlayer()->GetCPlayer()->GetSelectedGObject();
 
     if (!lowguid)
         return false;
@@ -989,7 +995,7 @@ bool ChatHandler::HandleGameObjectMoveCommand(char* args)
     // number or [name] Shift-click form |color|Hgameobject:go_guid|h[name]|h|r
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
-        return false;
+        lowguid = m_session->GetPlayer()->GetCPlayer()->GetSelectedGObject();
 
     if (!lowguid)
         return false;

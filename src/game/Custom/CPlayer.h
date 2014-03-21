@@ -119,6 +119,9 @@ public:
     void SetScriptID(uint32 id) { m_ScriptID = id; }
     uint32 GetScriptID() { return m_ScriptID; }
 
+    void SelectGObject(uint32 guidlow) { m_SelectedGObject = guidlow; }
+    uint32 GetSelectedGObject() { return m_SelectedGObject; }
+
 private:
     Player* m_player;
 
@@ -132,6 +135,8 @@ private:
     MultiVendor m_MultiVendor;
 
     uint32 m_ScriptID;
+
+    uint32 m_SelectedGObject;
 };
 
 #endif
