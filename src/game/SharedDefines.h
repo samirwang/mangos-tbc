@@ -42,6 +42,7 @@ enum Races
     RACE_TAUREN             = 6,
     RACE_GNOME              = 7,
     RACE_TROLL              = 8,
+    RACE_GOBLIN             = 9,
     RACE_BLOODELF           = 10,
     RACE_DRAENEI            = 11,
 };
