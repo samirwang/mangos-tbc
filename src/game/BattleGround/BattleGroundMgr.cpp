@@ -164,7 +164,7 @@ GroupQueueInfo* BattleGroundQueue::AddGroup(Player* leader, Group* grp, BattleGr
     if (!isRated && !isPremade)
         index += BG_TEAMS_COUNT;                            // BG_QUEUE_PREMADE_* -> BG_QUEUE_NORMAL_*
 
-    if (ginfo->GroupTeam == HORDE && (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) || index <= BG_QUEUE_PREMADE_HORDE))
+    if (ginfo->GroupTeam == HORDE && (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) || arenaType != ARENA_TYPE_NONE))
         ++index;                                            // BG_QUEUE_*_ALLIANCE -> BG_QUEUE_*_HORDE
 
     DEBUG_LOG("Adding Group to BattleGroundQueue bgTypeId : %u, bracket_id : %u, index : %u", BgTypeId, bracketId, index);
