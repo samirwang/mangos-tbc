@@ -187,7 +187,9 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     if (dist > maxdist && !Skipping())
     {
+#ifdef LILLECARL_DEBUG
         m_HighDiffs.push_back(std::make_pair(dist, maxdist));
+#endif
 
         ++m_DetectStreak;
 
