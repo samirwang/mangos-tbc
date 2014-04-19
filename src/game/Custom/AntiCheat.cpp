@@ -21,12 +21,14 @@
 #include "World.h"
 #include "Mail.h"
 #include "MapManager.h"
+#include "Player.h"
+#include "CPlayer.h"
 
 AntiCheat::AntiCheat(Player* pPlayer)
 {
     m_player = pPlayer;
 
-    m_SkipAntiCheat = true;
+    m_SkipAntiCheat = 5;
     m_GmFly = false;
 
     m_SpeedCheat = new AntiCheat_speed(pPlayer);
@@ -41,6 +43,25 @@ AntiCheat::~AntiCheat()
     delete m_ClimbCheat;
 }
 
+AntiCheat_module::AntiCheat_module(Player* pPlayer)
+{
+    m_player = pPlayer;
+
+    m_CurOpcode = MSG_NULL_ACTION;
+    m_OldOpcode = MSG_NULL_ACTION;
+
+    m_CurServerTime = WorldTimer::getMSTime();
+    m_OldServerTime = WorldTimer::getMSTime();
+
+    m_CTimeDiff = 0;
+    m_STimeDiff = 0;
+
+    m_PrevPacketTime = 0;
+    m_DetectionDelay = 0;
+
+    m_MoveDist = 0;
+    m_DeltaZ = 0;
+}
 
 bool AntiCheat_module::IsFlying()
 {
@@ -62,13 +83,19 @@ bool AntiCheat_module::IsRooted()
     return m_CurMoveInfo.HasMovementFlag(MOVEFLAG_ROOT);
 }
 
+bool AntiCheat_module::Skipping()
+{
+    return m_player->GetAntiCheat()->SkippingAntiCheat();
+}
+
 void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     m_SpeedCheat->DetectHack(MoveInfo, Opcode);
     m_HeightCheat->DetectHack(MoveInfo, Opcode);
     m_ClimbCheat->DetectHack(MoveInfo, Opcode);
 
-    m_SkipAntiCheat = false;
+    if (m_SkipAntiCheat)
+        --m_SkipAntiCheat;
 }
 
 void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
@@ -77,16 +104,19 @@ void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     m_CurOpcode = Opcode;
     m_CurServerTime = WorldTimer::getMSTime();
 
-    m_CTimeDiff = WorldTimer::getMSTimeDiff(m_OldServerTime, m_CurServerTime);
-    m_STimeDiff = WorldTimer::getMSTimeDiff(m_OldMoveInfo.GetTime(), m_CurMoveInfo.GetTime());
-    m_CSTimeDiff = m_CTimeDiff - m_STimeDiff;
+    m_STimeDiff = WorldTimer::getMSTimeDiff(m_OldServerTime, m_CurServerTime);
+    if (m_STimeDiff < 1)
+        m_STimeDiff = 1;
+    m_CTimeDiff = WorldTimer::getMSTimeDiff(m_OldMoveInfo.GetTime(), m_CurMoveInfo.GetTime());
+    if (m_CTimeDiff < 1)
+        m_CTimeDiff = 1;
 
     m_DetectionDelay += WorldTimer::getMSTimeDiff(m_PrevPacketTime, m_CurServerTime);
     m_PrevPacketTime = m_CurServerTime;
 
     float dx = m_OldMoveInfo.GetPos()->x - m_CurMoveInfo.GetPos()->x;
     float dy = m_OldMoveInfo.GetPos()->y - m_CurMoveInfo.GetPos()->y;
-    m_MoveDist = sqrt((dx * dx) + (dy * dy)); // Traveled distance
+    m_MoveDist = sqrt((pow(dx, 2)) + pow(dy, 2)); // Traveled distance
 
    m_DeltaZ = abs(m_OldMoveInfo.GetPos()->z - m_CurMoveInfo.GetPos()->z);
 }
@@ -155,8 +185,10 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
             maxdist *= 3;
     }
 
-    if (dist > maxdist)
+    if (dist > maxdist && !Skipping())
     {
+        m_HighDiffs.push_back(std::make_pair(dist, maxdist));
+
         ++m_DetectStreak;
 
         if (m_DetectStreak >= 2)
@@ -171,6 +203,18 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     }
     else
         m_DetectStreak = 0;
+
+#ifdef LILLECARL_DEBUG
+    m_player->GetCPlayer()->BoxChat << "Server TimeDiff: " << m_STimeDiff << " Client TimeDiff: " << m_CTimeDiff << std::endl;
+    m_player->GetCPlayer()->BoxChat << "Distance Traveled: " << dist << " Distance Allowed: " << maxdist << (dist > maxdist ? " CHEAT" : "") << std::endl;
+
+    float MaxDiff = 1.f;
+    for (auto& itr : m_HighDiffs)
+    if (itr.first / itr.second > MaxDiff)
+        MaxDiff = itr.first / itr.second;
+
+    m_player->GetCPlayer()->BoxChat << "Highest fail percentage: " << (MaxDiff - 1.f)*100.f << "%" << std::endl;
+#endif
 
     SetOldValues();
 }
@@ -224,7 +268,7 @@ void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     if (abs(cz - z) < heightrange)
         notcheat = true;
 
-    if (!notcheat)
+    if (!notcheat && !Skipping())
     {
         std::ostringstream ss;
         ss << std::endl;
@@ -280,7 +324,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     for (auto i = 0; i < 2; ++i)
         angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
 
-    if (angle[0] > 1.9f && angle[1] > 1.9f)
+    if (angle[0] > 1.9f && angle[1] > 1.9f && !Skipping())
     {
         std::ostringstream ss;
         ss << std::endl;

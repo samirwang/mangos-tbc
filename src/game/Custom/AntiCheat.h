@@ -19,31 +19,12 @@
 #ifndef _ANTICHEAT_H
 #define _ANTICHEAT_H
 
-#include "Player.h"
+class Player;
 
 class AntiCheat_module // Must only be used as parent
 {
 public:
-    explicit AntiCheat_module(Player* pPlayer)
-    {
-        m_player = pPlayer;
-
-        m_CurOpcode = MSG_NULL_ACTION;
-        m_OldOpcode = MSG_NULL_ACTION;
-
-        m_CurServerTime = WorldTimer::getMSTime();
-        m_OldServerTime = WorldTimer::getMSTime();
-
-        m_CTimeDiff = 0;
-        m_STimeDiff = 0;
-        m_CSTimeDiff = 0;
-
-        m_PrevPacketTime = 0;
-        m_DetectionDelay = 0;
-
-        m_MoveDist = 0;
-        m_DeltaZ = 0;
-    }
+    explicit AntiCheat_module(Player* pPlayer);
 
     virtual ~AntiCheat_module() { }
 
@@ -55,6 +36,8 @@ public:
     bool IsFalling();
     bool IsSwimming();
     bool IsRooted();
+
+    bool Skipping();
 
 protected:
     Player* m_player;
@@ -70,7 +53,6 @@ protected:
 
     uint32 m_CTimeDiff;
     uint32 m_STimeDiff;
-    int32 m_CSTimeDiff;
 
     uint32 m_PrevPacketTime;
     uint32 m_DetectionDelay;
@@ -90,6 +72,10 @@ public:
 private:
     float m_OldMoveSpeed;
     uint32 m_DetectStreak;
+
+#ifdef LILLECARL_DEBUG
+    std::vector<std::pair<float, float>> m_HighDiffs;
+#endif
 };
 
 class AntiCheat_height : public AntiCheat_module
@@ -120,7 +106,7 @@ public:
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
 
     void SetGMFly(bool value) { m_GmFly = value; }
-    void SkipAntiCheat(bool value = true) { m_SkipAntiCheat = value; }
+    void SkipAntiCheat() { ++m_SkipAntiCheat; }
 
     bool SkippingAntiCheat() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
@@ -131,7 +117,7 @@ private:
     AntiCheat_climb* m_ClimbCheat;
 
     Player* m_player;
-    bool m_SkipAntiCheat;
+    uint32 m_SkipAntiCheat;
     bool m_GmFly;
 };
 

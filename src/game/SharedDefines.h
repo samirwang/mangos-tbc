@@ -22,6 +22,8 @@
 #include "Platform/Define.h"
 #include <cassert>
 
+#define LILLECARL_DEBUG
+
 enum Gender
 {
     GENDER_MALE                        = 0,
