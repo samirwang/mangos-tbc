@@ -447,6 +447,11 @@ public:
 
     uint32 GetSaveInterval();
     const SessionMap GetSessionMap() { return m_sessions; }
+
+    uint32 GetWorldDiff() { return m_WorldDiff; }
+
+private:
+    uint32 m_WorldDiff;
     
     // !Custom
     public:

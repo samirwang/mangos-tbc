@@ -31,6 +31,9 @@ AntiCheat::AntiCheat(Player* pPlayer)
     m_SkipAntiCheat = 5;
     m_GmFly = false;
 
+    m_FirstMoveInfo = true;
+    m_MoveDeltaT = 0;
+
     m_SpeedCheat = new AntiCheat_speed(pPlayer);
     m_HeightCheat = new AntiCheat_height(pPlayer);
     m_ClimbCheat = new AntiCheat_climb(pPlayer);
@@ -90,6 +93,12 @@ bool AntiCheat_module::Skipping()
 
 void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
+    if (m_FirstMoveInfo)
+    {
+        m_FirstMoveInfo = false;
+        m_MoveDeltaT = MoveInfo.GetTime() - WorldTimer::getMSTime();
+    }
+
     m_SpeedCheat->DetectHack(MoveInfo, Opcode);
     m_HeightCheat->DetectHack(MoveInfo, Opcode);
     m_ClimbCheat->DetectHack(MoveInfo, Opcode);
@@ -107,6 +116,7 @@ void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     m_STimeDiff = WorldTimer::getMSTimeDiff(m_OldServerTime, m_CurServerTime);
     if (m_STimeDiff < 1)
         m_STimeDiff = 1;
+
     m_CTimeDiff = WorldTimer::getMSTimeDiff(m_OldMoveInfo.GetTime(), m_CurMoveInfo.GetTime());
     if (m_CTimeDiff < 1)
         m_CTimeDiff = 1;
@@ -147,9 +157,6 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat_module::DetectHack(MoveInfo, Opcode);
 
-    if (!(m_DetectionDelay >= 500))
-        return;
-
     bool back = m_CurMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD) &&
         m_OldMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD);
 
@@ -169,7 +176,7 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     m_OldMoveSpeed = speed;
 
-    float speedmod = m_CTimeDiff / 1000.f;
+    float speedmod = float(std::max(std::max(m_STimeDiff, m_CTimeDiff), uint32(1))) / 1000.f;
 
     float maxdist = highspeed * speedmod;
 
@@ -185,38 +192,27 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
             maxdist *= 3;
     }
 
-    if (dist > maxdist && !Skipping())
+    if (!Skipping())
     {
-#ifdef LILLECARL_DEBUG
-        m_HighDiffs.push_back(std::make_pair(dist, maxdist));
-#endif
-
-        ++m_DetectStreak;
-
-        if (m_DetectStreak >= 2)
+        if (dist > maxdist)
         {
             std::ostringstream ss;
-            ss << std::endl;
             ss << "TimeDiff: " << m_STimeDiff << " Distance Traveled: " << dist << " Distance Allowed: " << maxdist << std::endl;
-            ss << "DetectStreak: " << m_DetectStreak;
 
             ReportPlayer("speedhacking", ss.str());
         }
+
+        uint32 AcceptedDiffs = (sWorld.GetWorldDiff() + m_player->GetSession()->GetLatency()) * 3;
+        uint32 ClientServerDiff = m_CurMoveInfo.GetTime() - (m_CurServerTime + m_player->GetAntiCheat()->GetMoveDeltaT());
+
+        if (ClientServerDiff > AcceptedDiffs)
+        {
+            std::ostringstream ss;
+            ss << "Allowed Timediff: " << AcceptedDiffs << " Real Timediff: " << ClientServerDiff << std::endl;
+            ReportPlayer("speedhacking", ss.str());
+        }
     }
-    else
-        m_DetectStreak = 0;
 
-#ifdef LILLECARL_DEBUG
-    m_player->GetCPlayer()->BoxChat << "Server TimeDiff: " << m_STimeDiff << " Client TimeDiff: " << m_CTimeDiff << std::endl;
-    m_player->GetCPlayer()->BoxChat << "Distance Traveled: " << dist << " Distance Allowed: " << maxdist << (dist > maxdist ? " CHEAT" : "") << std::endl;
-
-    float MaxDiff = 1.f;
-    for (auto& itr : m_HighDiffs)
-    if (itr.first / itr.second > MaxDiff)
-        MaxDiff = itr.first / itr.second;
-
-    m_player->GetCPlayer()->BoxChat << "Highest fail percentage: " << (MaxDiff - 1.f)*100.f << "%" << std::endl;
-#endif
 
     SetOldValues();
 }

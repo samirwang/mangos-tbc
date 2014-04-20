@@ -91,6 +91,8 @@ uint32 World::m_relocation_ai_notify_delay    = 1000u;
 /// World constructor
 World::World()
 {
+    m_WorldDiff = 0;
+
     m_playerLimit = 0;
     m_allowMovement = true;
     m_ShutdownMask = 0;
@@ -1416,6 +1418,8 @@ void World::DetectDBCLang()
 /// Update the World !
 void World::Update(uint32 diff)
 {
+    m_WorldDiff = diff;
+
     ///- Update the different timers
     for (int i = 0; i < WUPDATE_COUNT; ++i)
     {

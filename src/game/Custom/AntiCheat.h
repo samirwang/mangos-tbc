@@ -20,6 +20,7 @@
 #define _ANTICHEAT_H
 
 class Player;
+class AntiCheat;
 
 class AntiCheat_module // Must only be used as parent
 {
@@ -71,11 +72,6 @@ public:
 
 private:
     float m_OldMoveSpeed;
-    uint32 m_DetectStreak;
-
-#ifdef LILLECARL_DEBUG
-    std::vector<std::pair<float, float>> m_HighDiffs;
-#endif
 };
 
 class AntiCheat_height : public AntiCheat_module
@@ -111,6 +107,8 @@ public:
     bool SkippingAntiCheat() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
 
+    uint32 GetMoveDeltaT() { return m_MoveDeltaT; }
+
 private:
     AntiCheat_speed* m_SpeedCheat;
     AntiCheat_height* m_HeightCheat;
@@ -119,6 +117,8 @@ private:
     Player* m_player;
     uint32 m_SkipAntiCheat;
     bool m_GmFly;
+    bool m_FirstMoveInfo;
+    int64 m_MoveDeltaT;
 };
 
 #endif
