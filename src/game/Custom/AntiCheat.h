@@ -68,6 +68,10 @@ public:
 
     void IncClientBasedServerTime(uint32 diff) { if (!m_FirstMoveInfo) m_ClientBasedServerTime += diff; }
 
+    uint32 GetLastServerTime() { return m_ServerTime[NEW]; }
+    uint32 GetClientBasedServerTime() { return m_ClientBasedServerTime; }
+    bool HadFirstMovementSent() { return !m_FirstMoveInfo; }
+
 private:
     Player* m_player;
 
