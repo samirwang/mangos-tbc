@@ -104,19 +104,19 @@ public:
 
     // Bitwise functions simplified!
     template <class T1, class T2>
-    bool HasFlag(T1& var, T2 flag)
+    bool HasFlag(T1 var, T2 flag)
     {
         return (var & flag) != 0;
     }
 
     template <class T1, class T2>
-    void SetFlag(T1& var, T2 flag)
+    void SetFlag(T1 var, T2 flag)
     {
         var |= flag;
     }
 
     template <class T1, class T2>
-    void DelFlag(T1& var, T2 flag)
+    void DelFlag(T1 var, T2 flag)
     {
         var &= ~flag;
     }

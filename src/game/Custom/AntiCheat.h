@@ -27,6 +27,25 @@ enum NewOld
     OLD,
 };
 
+enum Detector
+{
+    COM = 0,
+    SPEED,
+};
+
+namespace Cheats
+{
+    enum DetectBitmasks
+    {
+        SPEED = 1,
+        TIME = 2,
+        JUMP = 4,
+        FLY = 8,
+    };
+
+    const uint32 ALL_DETECTORS = SPEED | TIME | JUMP | FLY;
+}
+
 class AntiCheat
 {
 public:
@@ -68,21 +87,22 @@ public:
 
     void IncClientBasedServerTime(uint32 diff) { if (!m_FirstMoveInfo) m_ClientBasedServerTime += diff; }
 
-    uint32 GetLastServerTime() { return m_ServerTime[NEW]; }
+    uint32 GetLastServerTime() { return m_ServerTime[COM][NEW]; }
     uint32 GetClientBasedServerTime() { return m_ClientBasedServerTime; }
     bool HadFirstMovementSent() { return !m_FirstMoveInfo; }
 
 private:
     Player* m_player;
 
-    MovementInfo m_MoveInfo[2];
-    Opcodes m_Opcode[2];
-    uint32 m_ServerTime[2];
+    MovementInfo m_MoveInfo[2][2];
+    Opcodes m_Opcode[2][2];
+    uint32 m_ServerTime[2][2];
 
     uint32 m_SkipAntiCheat;
     bool m_GmFly;
     bool m_FirstMoveInfo;
 
+    uint32 m_LastSpeedCheck;
     uint32 m_ClientBasedServerTime;
 };
 

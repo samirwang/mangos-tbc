@@ -1646,3 +1646,29 @@ SOAP.Port = 7878
 CharDelete.Method = 0
 CharDelete.MinLevel = 0
 CharDelete.KeepDays = 30
+
+###################################################################################################################
+#    AntiCheat.Enabled
+#        Enabled anticheat modules
+#        Default: 15  - All cheat detectors enabled
+#                 1   - Speedcheat detector enabled
+#                 2   - Movetimecheat detector enabled
+#                 4   - Jumpcheat detector enabled
+#                 8   - Flycheat detector enabled
+#
+#    AntiCheat.SpeedCheckInterval
+#        How often in milliseconds to check for speedcheat
+#        lower gives less slightly higher failrate
+#        Default: 500 - Wait 500 server milliseconds between checks
+#                 0   - Check every packet
+#
+#    AntiCheat.SpeedCheckTolerance
+#        How many % overtravel is allowed
+#        Default: 1   - 1% overtravel allowed
+#                 0   - Will fail a lot
+#
+###################################################################################################################
+
+AntiCheat.Enabled = 15
+AntiCheat.SpeedCheckInterval = 500
+AntiCheat.SpeedCheckTolerance = 1

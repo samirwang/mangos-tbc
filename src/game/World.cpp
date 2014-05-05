@@ -68,6 +68,7 @@
 #include "WardenDataStorage.h"
 #include "Custom.h"
 #include "CPlusMgr.h"
+#include "AntiCheat.h"
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -888,6 +889,11 @@ void World::LoadConfigSettings(bool reload)
 
     // Saving
     setConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC, "PlayerSave.PerSecond", 2);
+    
+    // Anticheat
+    setConfig(CONFIG_UINT32_ANTICHEAT_ENABLED, "AntiCheat.Enabled", Cheats::ALL_DETECTORS);
+    setConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL, "AntiCheat.SpeedCheckInterval", 500);
+    setConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE, "AntiCheat.SpeedCheckTolerance", 1);
 }
 
 /// Initialize the World
