@@ -28,308 +28,135 @@ AntiCheat::AntiCheat(Player* pPlayer)
 {
     m_player = pPlayer;
 
-    m_SkipAntiCheat = 5;
+    m_SkipAntiCheat = 1;
     m_GmFly = false;
 
     m_FirstMoveInfo = true;
     m_MoveDeltaT = 0;
-
-    m_SpeedCheat = new AntiCheat_speed(pPlayer);
-    m_HeightCheat = new AntiCheat_height(pPlayer);
-    m_ClimbCheat = new AntiCheat_climb(pPlayer);
-}
-
-AntiCheat::~AntiCheat()
-{
-    delete m_SpeedCheat;
-    delete m_HeightCheat;
-    delete m_ClimbCheat;
-}
-
-AntiCheat_module::AntiCheat_module(Player* pPlayer)
-{
-    m_player = pPlayer;
-
-    m_CurOpcode = MSG_NULL_ACTION;
-    m_OldOpcode = MSG_NULL_ACTION;
-
-    m_CurServerTime = WorldTimer::getMSTime();
-    m_OldServerTime = WorldTimer::getMSTime();
-
-    m_CTimeDiff = 0;
-    m_STimeDiff = 0;
-
-    m_PrevPacketTime = 0;
-    m_DetectionDelay = 0;
-
-    m_MoveDist = 0;
-    m_DeltaZ = 0;
-}
-
-bool AntiCheat_module::IsFlying()
-{
-    return m_player->HasAuraType(SPELL_AURA_FLY) || m_player->GetAntiCheat()->IsGMFly();
-}
-
-bool AntiCheat_module::IsFalling()
-{
-    return m_CurMoveInfo.HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL));
-}
-
-bool AntiCheat_module::IsSwimming()
-{
-    return m_CurMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING);
-}
-
-bool AntiCheat_module::IsRooted()
-{
-    return m_CurMoveInfo.HasMovementFlag(MOVEFLAG_ROOT);
-}
-
-bool AntiCheat_module::Skipping()
-{
-    return m_player->GetAntiCheat()->SkippingAntiCheat();
 }
 
 void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
+    m_MoveInfo[NEW] = MoveInfo;
+    m_Opcode[NEW] = Opcode;
+
     if (m_FirstMoveInfo)
     {
         m_FirstMoveInfo = false;
         m_MoveDeltaT = MoveInfo.GetTime() - WorldTimer::getMSTime();
     }
 
-    m_SpeedCheat->DetectHack(MoveInfo, Opcode);
-    m_HeightCheat->DetectHack(MoveInfo, Opcode);
-    m_ClimbCheat->DetectHack(MoveInfo, Opcode);
-
-    if (m_SkipAntiCheat)
+    if (!m_SkipAntiCheat)
+    {
+        DetectSpeed();
+    }
+    else
         --m_SkipAntiCheat;
+
+    m_MoveInfo[OLD] = m_MoveInfo[NEW];
+    m_Opcode[OLD] = m_Opcode[NEW];
 }
 
-void AntiCheat_module::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+void AntiCheat::DetectSpeed()
 {
-    m_CurMoveInfo = MoveInfo;
-    m_CurOpcode = Opcode;
-    m_CurServerTime = WorldTimer::getMSTime();
-
-    m_STimeDiff = WorldTimer::getMSTimeDiff(m_OldServerTime, m_CurServerTime);
-    if (m_STimeDiff < 1)
-        m_STimeDiff = 1;
-
-    m_CTimeDiff = WorldTimer::getMSTimeDiff(m_OldMoveInfo.GetTime(), m_CurMoveInfo.GetTime());
-    if (m_CTimeDiff < 1)
-        m_CTimeDiff = 1;
-
-    m_DetectionDelay += WorldTimer::getMSTimeDiff(m_PrevPacketTime, m_CurServerTime);
-    m_PrevPacketTime = m_CurServerTime;
-
-    float dx = m_OldMoveInfo.GetPos()->x - m_CurMoveInfo.GetPos()->x;
-    float dy = m_OldMoveInfo.GetPos()->y - m_CurMoveInfo.GetPos()->y;
-    m_MoveDist = sqrt((pow(dx, 2)) + pow(dy, 2)); // Traveled distance
-
-   m_DeltaZ = abs(m_OldMoveInfo.GetPos()->z - m_CurMoveInfo.GetPos()->z);
-}
-
-void AntiCheat_module::SetOldValues()
-{
-    m_OldMoveInfo = m_CurMoveInfo;
-    m_OldOpcode = m_CurOpcode;
-    m_OldServerTime = m_CurServerTime;
-
-    m_DetectionDelay = 0;
-}
-
-void AntiCheat_module::ReportPlayer(std::string hack, std::string misc)
-{
-    if (m_player->isGameMaster() || m_player->GetAntiCheat()->SkippingAntiCheat())
-        return;
-
-    CharacterDatabase.PExecute("INSERT INTO cheaters (guid, account, type, time) VALUES (%u, %u, '%s', %u)", m_player->GetGUIDLow(), m_player->GetSession()->GetAccountId(), hack.c_str(), uint32(sWorld.GetGameTime()));
-
     std::ostringstream ss;
-    ss << "Player " << m_player->GetName() << " was caught " << hack << " " << misc;
+    ss << "SpeedRate: " << GetSpeedRate() << " Distance: " << GetDistance(IsFlying()) << std::endl;
 
-    sCustom.SendGMMessage(ss.str());
+    // Rounded to closest 100ish downwards.
+    float RoundedTraveledDistance = floor(GetDistance(IsFlying()) * 100.f) / 100.f;
+    // Rounded to closest 100ish upwards
+    float RoundedAllowedDistance = ceil(GetSpeedRate() * 100.f) / 100.f;
+
+    bool TooFast = RoundedTraveledDistance > RoundedAllowedDistance;
+
+    if (TooFast)
+        ss << "Cheat" << std::endl;
+
+    m_player->GetCPlayer()->BoxChat << ss.str();
 }
 
-void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+float AntiCheat::GetSpeed()
 {
-    AntiCheat_module::DetectHack(MoveInfo, Opcode);
-
-    bool back = m_CurMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD) &&
-        m_OldMoveInfo.HasMovementFlag(MOVEFLAG_BACKWARD);
+    bool back = m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_BACKWARD);
 
     float speed = 0;
 
-    if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_WALK_MODE))
+    if (m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_WALK_MODE))
         speed = m_player->GetSpeed(MOVE_WALK);
-    else if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_SWIMMING))
+    else if (m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_SWIMMING))
         speed = m_player->GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
-    else if (m_CurMoveInfo.HasMovementFlag(MOVEFLAG_FLYING))
+    else if (m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_FLYING))
         speed = m_player->GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
     else
         speed = m_player->GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
 
-
-    float highspeed = std::max(m_OldMoveSpeed, speed);
-
-    m_OldMoveSpeed = speed;
-
-    float speedmod = float(std::max(std::max(m_STimeDiff, m_CTimeDiff), uint32(1))) / 1000.f;
-
-    float maxdist = highspeed * speedmod;
-
-    float dist = floor(m_MoveDist * 10.f) / 10.f;
-    maxdist = ceil(maxdist * 10.f) / 10.f;
-
-    if (IsFalling())
-    {
-        float angle = MapManager::NormalizeOrientation(tan(m_DeltaZ / dist));
-
-        // Sliding the ground which can be really fast.
-        if (angle > 1.9f)
-            maxdist *= 3;
-    }
-
-    if (!Skipping())
-    {
-        if (dist > maxdist)
-        {
-            std::ostringstream ss;
-            ss << "TimeDiff: " << m_STimeDiff << " Distance Traveled: " << dist << " Distance Allowed: " << maxdist << std::endl;
-
-            ReportPlayer("speedhacking", ss.str());
-        }
-
-        uint32 AcceptedDiffs = (sWorld.GetWorldDiff() + m_player->GetSession()->GetLatency()) * 3;
-        uint32 ClientServerDiff = m_CurMoveInfo.GetTime() - (m_CurServerTime + m_player->GetAntiCheat()->GetMoveDeltaT());
-
-        if (ClientServerDiff > AcceptedDiffs)
-        {
-            std::ostringstream ss;
-            ss << "Allowed Timediff: " << AcceptedDiffs << " Real Timediff: " << ClientServerDiff << std::endl;
-            ReportPlayer("speedhacking", ss.str());
-        }
-    }
-
-
-    SetOldValues();
+    return speed;
 }
 
-void AntiCheat_height::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+float AntiCheat::GetSpeedRate()
 {
-    AntiCheat_module::DetectHack(MoveInfo, Opcode);
-
-    if (!((!IsFlying() && !IsRooted() && !IsSwimming() && !IsFalling() && m_DetectionDelay > 500) || (IsFalling() && m_CurOpcode == MSG_MOVE_JUMP)))
-        return;
-
-    if (!m_player->getDeathState() == ALIVE)
-        return;
-    
-    float x = m_CurMoveInfo.GetPos()->x;
-    float y = m_CurMoveInfo.GetPos()->y;
-    float z = m_CurMoveInfo.GetPos()->z;
-    float o = m_CurMoveInfo.GetPos()->o;
-
-    Map* pMap = m_player->GetMap();
-
-    if (!pMap)
-        return;
-
-    float heightrange = 2.f;
-    const float firstrange = 0.5f;
-    const uint8 ranges = 2;
-    const uint8 points = 8;
-
-    bool notcheat = false;
-
-    for (auto i = 1; i <= ranges; ++i)
-    {
-        for (auto j = 1; j <= points; ++j)
-        {
-            float angle = MapManager::NormalizeOrientation((M_PI_F / points) * j);
-            float radius = float(firstrange * i);
-
-            float cx = ((cos(angle)*radius) + x);
-            float cy = ((sin(angle)*radius) + y);
-            float cz = pMap->GetHeight(cx, cy, z);
-
-            if (abs(cz - z) < heightrange)
-                notcheat = true;
-        }
-    }
-
-    float cz = pMap->GetHeight(x, y, z);
-
-    if (!notcheat)
-    if (abs(cz - z) < heightrange)
-        notcheat = true;
-
-    if (!notcheat && !Skipping())
-    {
-        std::ostringstream ss;
-        ss << std::endl;
-        ss << "Distance to ground: " << abs(cz - z) << " " << (z > cz ? "above" : "under");
-
-        ReportPlayer((m_CurOpcode == MSG_MOVE_JUMP ? "jumphacking" : (z > cz ? "flyhacking" : "planehacking")), ss.str());
-    }
-
-    SetOldValues();
+    return GetSpeed() * (GetClientDiff() / 1000.f);
 }
 
-void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+float AntiCheat::GetClientDiff()
 {
-    AntiCheat_module::DetectHack(MoveInfo, Opcode);
+    return m_MoveInfo[NEW].GetTime() - m_MoveInfo[OLD].GetTime();
+}
 
-    if (IsFlying() || IsFalling() || IsSwimming())
-        return;
+float AntiCheat::GetServerDiff()
+{
+    return m_ServerTime[NEW] - m_ServerTime[OLD];
+}
 
-    float dist[2];
-    float deltaZ[2];
-    float floor_z[2];
-    float angle[2];
+float AntiCheat::GetDistance(bool threeD)
+{
+    return (threeD ? GetDistance3D() : GetDistance2D());
+}
 
-    dist[0] = m_MoveDist;
+float AntiCheat::GetDistance2D()
+{
+    return sqrt(
+        pow(m_MoveInfo[OLD].GetPos()->x - m_MoveInfo[NEW].GetPos()->x, 2) +
+        pow(m_MoveInfo[OLD].GetPos()->y - m_MoveInfo[NEW].GetPos()->y, 2)
+        );
+}
 
-    float Size = m_player->GetObjectBoundingRadius();
-    dist[1] = Size * 2;
+float AntiCheat::GetDistance3D()
+{
+    return sqrt(
+        pow(m_MoveInfo[OLD].GetPos()->x - m_MoveInfo[NEW].GetPos()->x, 2) +
+        pow(m_MoveInfo[OLD].GetPos()->y - m_MoveInfo[NEW].GetPos()->y, 2) +
+        pow(m_MoveInfo[OLD].GetPos()->z - m_MoveInfo[NEW].GetPos()->z, 2)
+        );
+}
 
+float AntiCheat::GetDistanceZ()
+{
+    return m_MoveInfo[NEW].GetPos()->z - m_MoveInfo[OLD].GetPos()->z;
+}
 
-    float x = m_CurMoveInfo.GetPos()->x;
-    float y = m_CurMoveInfo.GetPos()->y;
-    float z = m_CurMoveInfo.GetPos()->z;
-    float o = m_CurMoveInfo.GetPos()->o;
+float AntiCheat::GetMoveAngle()
+{
+    return MapManager::NormalizeOrientation(tan(GetDistanceZ() / GetDistance2D()));
+}
 
-    Map* pMap = m_player->GetMap();
+bool AntiCheat::IsFlying()
+{
+    //return m_player->HasAuraType(SPELL_AURA_FLY) || m_player->GetAntiCheat()->IsGMFly();
+    return m_MoveInfo[NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FLYING | MOVEFLAG_FLYING2));
+}
 
-    if (!pMap)
-        return;
+bool AntiCheat::IsFalling()
+{
+    return m_MoveInfo[NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL));
+}
 
-    // Forward
-    float fx = x + cosf(o) * 1;
-    float fy = y + sinf(o) * 1;
-    floor_z[0] = pMap->GetHeight(fx, fy, z);
+bool AntiCheat::IsSwimming()
+{
+    return m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_SWIMMING);
+}
 
-    // Backward
-    float bx = x + cosf(o)*-1;
-    float by = y + sinf(o)*-1;
-    floor_z[1] = pMap->GetHeight(bx, by, z);
-
-    deltaZ[0] = m_DeltaZ;
-    deltaZ[1] = fabs(floor_z[0] - floor_z[1]);
-
-    for (auto i = 0; i < 2; ++i)
-        angle[i] = MapManager::NormalizeOrientation(tan(deltaZ[i] / dist[i]));
-
-    if (angle[0] > 1.9f && angle[1] > 1.9f && !Skipping())
-    {
-        std::ostringstream ss;
-        ss << std::endl;
-        ss << "Distance: " << m_MoveDist;
-
-        ReportPlayer("climbhacking", ss.str());
-    }
-
-    SetOldValues();
+bool AntiCheat::IsRooted()
+{
+    return m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_ROOT);
 }

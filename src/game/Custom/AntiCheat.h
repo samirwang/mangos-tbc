@@ -20,101 +20,52 @@
 #define _ANTICHEAT_H
 
 class Player;
-class AntiCheat;
 
-class AntiCheat_module // Must only be used as parent
+enum NewOld
 {
-public:
-    explicit AntiCheat_module(Player* pPlayer);
-
-    virtual ~AntiCheat_module() { }
-
-    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
-    void SetOldValues();
-    void ReportPlayer(std::string hack, std::string misc = "");
-
-    bool IsFlying();
-    bool IsFalling();
-    bool IsSwimming();
-    bool IsRooted();
-
-    bool Skipping();
-
-protected:
-    Player* m_player;
-
-    MovementInfo m_CurMoveInfo;
-    MovementInfo m_OldMoveInfo;
-
-    Opcodes m_CurOpcode;
-    Opcodes m_OldOpcode;
-
-    uint32 m_CurServerTime;
-    uint32 m_OldServerTime;
-
-    uint32 m_CTimeDiff;
-    uint32 m_STimeDiff;
-
-    uint32 m_PrevPacketTime;
-    uint32 m_DetectionDelay;
-
-    float m_MoveDist;
-    float m_DeltaZ;
-};
-
-class AntiCheat_speed : public AntiCheat_module
-{
-public:
-    explicit AntiCheat_speed(Player* pPlayer) : AntiCheat_module(pPlayer) { }
-    ~AntiCheat_speed() { }
-
-    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
-
-private:
-    float m_OldMoveSpeed;
-};
-
-class AntiCheat_height : public AntiCheat_module
-{
-public:
-    explicit AntiCheat_height(Player* pPlayer) : AntiCheat_module(pPlayer) { }
-    ~AntiCheat_height() { }
-
-    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
-};
-
-class AntiCheat_climb : public AntiCheat_module
-{
-public:
-    explicit AntiCheat_climb(Player* pPlayer) : AntiCheat_module(pPlayer) { }
-
-    ~AntiCheat_climb() { }
-
-    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode) override;
+    NEW = 0,
+    OLD = 1,
 };
 
 class AntiCheat
 {
 public:
     explicit AntiCheat(Player* pPlayer);
-    ~AntiCheat();
+    ~AntiCheat() { };
 
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
+    void DetectSpeed();
+
+    float GetSpeed();
+    float GetSpeedRate();
+    float GetClientDiff();
+    float GetServerDiff();
+    float GetDistance(bool threeD);
+    float GetDistance2D();
+    float GetDistance3D();
+    float GetDistanceZ();
+    float GetMoveAngle();
+
+    bool IsFlying();
+    bool IsFalling();
+    bool IsSwimming();
+    bool IsRooted();
 
     void SetGMFly(bool value) { m_GmFly = value; }
     void SkipAntiCheat() { ++m_SkipAntiCheat; }
 
-    bool SkippingAntiCheat() { return m_SkipAntiCheat; }
+    bool Skipping() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
 
     uint32 GetMoveDeltaT() { return m_MoveDeltaT; }
 
 private:
-    AntiCheat_speed* m_SpeedCheat;
-    AntiCheat_height* m_HeightCheat;
-    AntiCheat_climb* m_ClimbCheat;
-
     Player* m_player;
+
+    MovementInfo m_MoveInfo[2];
+    Opcodes m_Opcode[2];
+    uint32 m_ServerTime[2];
+
     uint32 m_SkipAntiCheat;
     bool m_GmFly;
     bool m_FirstMoveInfo;
