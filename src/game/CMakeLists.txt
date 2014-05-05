@@ -51,8 +51,6 @@ set(SRC_GRP_CUSTOM
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp
-    Custom/PlayerGossip.cpp
-    Custom/PlayerGossip.h
     Custom/Settings.cpp
     Custom/Settings.h
 )
