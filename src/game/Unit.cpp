@@ -52,6 +52,7 @@
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
 #include "CPlayer.h"
+#include "AntiCheat.h"
 
 #include <math.h>
 #include <stdarg.h>
@@ -7505,6 +7506,9 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
     }
 
     SetSpeedRate(mtype, speed * ratio, forced);
+
+    if (GetTypeId() == TYPEID_PLAYER)
+        ((Player*)this)->GetAntiCheat()->SkipAntiCheat();
 }
 
 float Unit::GetSpeed(UnitMoveType mtype) const

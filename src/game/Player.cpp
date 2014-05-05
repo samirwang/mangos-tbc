@@ -1586,7 +1586,7 @@ ChatTagFlags Player::GetChatTag() const
     return tag;
 }
 
-bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options /*=0*/, AreaTrigger const* at /*=NULL*/)
+bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options /*=0*/, AreaTrigger const* at /*=NULL*/, bool cheat)
 {
     if (!MapManager::IsValidMapCoord(mapid, x, y, z, orientation))
     {
@@ -1601,8 +1601,9 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         GetCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
         return false;
     }
-
-    GetAntiCheat()->SkipAntiCheat();
+    
+    if (!cheat)
+        GetAntiCheat()->SkipAntiCheat();
 
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);  // Validity checked in IsValidMapCoord
 

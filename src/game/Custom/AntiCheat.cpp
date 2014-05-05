@@ -28,51 +28,129 @@ AntiCheat::AntiCheat(Player* pPlayer)
 {
     m_player = pPlayer;
 
-    m_SkipAntiCheat = 1;
+    m_SkipAntiCheat = 5;
     m_GmFly = false;
 
     m_FirstMoveInfo = true;
-    m_MoveDeltaT = 0;
+    m_ClientBasedServerTime = 0;
 }
 
 void AntiCheat::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     m_MoveInfo[NEW] = MoveInfo;
     m_Opcode[NEW] = Opcode;
+    m_ServerTime[NEW] = WorldTimer::getMSTime();
 
     if (m_FirstMoveInfo)
     {
         m_FirstMoveInfo = false;
-        m_MoveDeltaT = MoveInfo.GetTime() - WorldTimer::getMSTime();
+        m_ClientBasedServerTime = MoveInfo.GetTime();
     }
 
     if (!m_SkipAntiCheat)
     {
         DetectSpeed();
+        DetectTime();
+        DetectJump();
+        DetectFly();
     }
     else
         --m_SkipAntiCheat;
 
     m_MoveInfo[OLD] = m_MoveInfo[NEW];
     m_Opcode[OLD] = m_Opcode[NEW];
+    m_ServerTime[OLD] = WorldTimer::getMSTime();
 }
 
 void AntiCheat::DetectSpeed()
 {
     std::ostringstream ss;
-    ss << "SpeedRate: " << GetSpeedRate() << " Distance: " << GetDistance(IsFlying()) << std::endl;
+    float Traveled = GetDistance(IsFlying());
+    float Allowed = GetSpeedRate() * 1.01;
 
-    // Rounded to closest 100ish downwards.
-    float RoundedTraveledDistance = floor(GetDistance(IsFlying()) * 100.f) / 100.f;
-    // Rounded to closest 100ish upwards
-    float RoundedAllowedDistance = ceil(GetSpeedRate() * 100.f) / 100.f;
+    bool TooFast = Traveled > Allowed;
 
-    bool TooFast = RoundedTraveledDistance > RoundedAllowedDistance;
+    ss << "Diff: " << Traveled - Allowed << " Traveled: " << Traveled << " Allowed: " << Allowed;
 
     if (TooFast)
-        ss << "Cheat" << std::endl;
+    {
+        ReportCheat("Speed", ss.str());
 
-    m_player->GetCPlayer()->BoxChat << ss.str();
+        m_MoveInfo[NEW] = m_MoveInfo[OLD];
+        const Position* pos = m_MoveInfo[OLD].GetPos();
+
+        m_player->TeleportTo(m_player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
+    }
+}
+
+void AntiCheat::DetectTime()
+{
+    std::ostringstream ss;
+
+    ss << "Client time: " << m_MoveInfo[NEW].GetTime() << " Client based server time: " << m_ClientBasedServerTime;
+
+    if (abs(int32(m_MoveInfo[NEW].GetTime() - m_ClientBasedServerTime)) > 5000)
+        ReportCheat("Time", ss.str());
+}
+
+void AntiCheat::DetectJump()
+{
+    if (m_Opcode[NEW] != MSG_MOVE_JUMP)
+        return;
+
+    std::ostringstream ss;
+
+    bool Detected = false;
+
+    if (m_Opcode[OLD] == m_Opcode[NEW])
+    {
+        Detected = true;
+        ss << "Opcode";
+    }
+    else
+    {
+        const Position* pos = m_MoveInfo[OLD].GetPos();
+        float groundZ = pos->z;
+        if (Map* pMap = m_player->GetMap())
+            groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
+
+        if (pos->z - groundZ > 1)
+        {
+            Detected = true;
+            ss << "Height";
+        }
+    }
+
+    if (Detected)
+    {
+        ReportCheat("Jump", ss.str());
+
+        const Position* pos = m_MoveInfo[OLD].GetPos();
+        float newz = pos->z;
+
+        if (Map* pMap = m_player->GetMap())
+            newz = pMap->GetHeight(pos->x, pos->y, pos->z);
+
+        m_player->TeleportTo(m_player->GetMapId(), pos->x, pos->y, newz, pos->o, 0, 0, true);
+        m_Opcode[NEW] = MSG_NULL_ACTION;
+    }
+}
+
+void AntiCheat::DetectFly()
+{
+    if (IsFlying() && !CanFly())
+    {
+        ReportCheat("Fly", "");
+        SendFly(false);
+    }
+}
+
+void AntiCheat::ReportCheat(std::string cheat, std::string info)
+{
+    std::ostringstream ss;
+    ss << "Name: " << m_player->GetName() << "Cheat: " << cheat << " Info: " << info << std::endl;
+
+    sCustom.SendGMMessage(ss.str());
 }
 
 float AntiCheat::GetSpeed()
@@ -142,7 +220,6 @@ float AntiCheat::GetMoveAngle()
 
 bool AntiCheat::IsFlying()
 {
-    //return m_player->HasAuraType(SPELL_AURA_FLY) || m_player->GetAntiCheat()->IsGMFly();
     return m_MoveInfo[NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FLYING | MOVEFLAG_FLYING2));
 }
 
@@ -159,4 +236,18 @@ bool AntiCheat::IsSwimming()
 bool AntiCheat::IsRooted()
 {
     return m_MoveInfo[NEW].HasMovementFlag(MOVEFLAG_ROOT);
+}
+
+bool AntiCheat::CanFly()
+{
+    return m_player->HasAuraType(SPELL_AURA_FLY) || m_player->GetAntiCheat()->IsGMFly();
+}
+
+void AntiCheat::SendFly(bool value)
+{
+    WorldPacket data;
+    data.SetOpcode(value ? SMSG_MOVE_SET_CAN_FLY : SMSG_MOVE_UNSET_CAN_FLY);
+    data << m_player->GetPackGUID();
+    data << uint32(0);                                      // unknown
+    m_player->SendMessageToSet(&data, true);
 }

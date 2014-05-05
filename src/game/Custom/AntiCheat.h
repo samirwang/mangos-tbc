@@ -24,7 +24,7 @@ class Player;
 enum NewOld
 {
     NEW = 0,
-    OLD = 1,
+    OLD,
 };
 
 class AntiCheat
@@ -35,6 +35,11 @@ public:
 
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
     void DetectSpeed();
+    void DetectTime();
+    void DetectJump();
+    void DetectFly();
+
+    void ReportCheat(std::string cheat, std::string info);
 
     float GetSpeed();
     float GetSpeedRate();
@@ -51,13 +56,17 @@ public:
     bool IsSwimming();
     bool IsRooted();
 
+    bool CanFly();
+
     void SetGMFly(bool value) { m_GmFly = value; }
     void SkipAntiCheat() { ++m_SkipAntiCheat; }
 
     bool Skipping() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
 
-    uint32 GetMoveDeltaT() { return m_MoveDeltaT; }
+    void SendFly(bool value);
+
+    void IncClientBasedServerTime(uint32 diff) { if (!m_FirstMoveInfo) m_ClientBasedServerTime += diff; }
 
 private:
     Player* m_player;
@@ -69,7 +78,8 @@ private:
     uint32 m_SkipAntiCheat;
     bool m_GmFly;
     bool m_FirstMoveInfo;
-    int64 m_MoveDeltaT;
+
+    uint32 m_ClientBasedServerTime;
 };
 
 #endif

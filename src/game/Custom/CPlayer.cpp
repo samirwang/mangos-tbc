@@ -27,6 +27,7 @@
 #include "CFBG.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
+#include "AntiCheat.h"
 
 CPlayer::CPlayer(Player* pPlayer)
 {
@@ -50,6 +51,8 @@ void CPlayer::CUpdate(uint32 diff)
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
+
+    m_player->GetAntiCheat()->IncClientBasedServerTime(diff);
 }
 
 void CPlayer::Sometimes()
