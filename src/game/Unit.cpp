@@ -429,6 +429,7 @@ bool Unit::haveOffhandWeapon() const
 
 void Unit::SendHeartBeat()
 {
+    m_movementInfo.UpdateTime(WorldTimer::getMSTime());
     WorldPacket data(MSG_MOVE_HEARTBEAT, 64);
     data << GetPackGUID();
     data << m_movementInfo;
@@ -7572,6 +7573,8 @@ void Unit::SetSpeedRate(UnitMoveType mtype, float rate, bool forced)
         }
         else
         {
+            m_movementInfo.UpdateTime(WorldTimer::getMSTime());
+
             Opcodes opcode = Opcodes(SetSpeed2Opc_table[mtype][0]);
             WorldPacket data(opcode, 64);
             data << GetPackGUID();
