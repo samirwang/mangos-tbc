@@ -180,7 +180,7 @@ void AntiCheat::DetectFly()
 void AntiCheat::ReportCheat(std::string cheat, std::string info)
 {
     std::ostringstream ss;
-    ss << "Name: " << m_player->GetName() << "Cheat: " << cheat << " Info: " << info << std::endl;
+    ss << "Name: " << m_player->GetName() << " Cheat: " << cheat << " Info: " << info << std::endl;
 
     sCustom.SendGMMessage(ss.str());
 }
