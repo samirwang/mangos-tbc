@@ -53,12 +53,6 @@ void CPlayer::CUpdate(uint32 diff)
     SendSavedChat(CHAT_BOTH, BothChat);
 
     m_player->GetAntiCheat()->IncClientBasedServerTime(diff);
-
-    if (WorldTimer::getMSTimeDiff(m_player->GetAntiCheat()->GetLastServerTime(), WorldTimer::getMSTime()) > 1000 && m_player->GetAntiCheat()->HadFirstMovementSent())
-    {
-        m_player->m_movementInfo.UpdateTime(m_player->GetAntiCheat()->GetClientBasedServerTime());
-        m_player->GetAntiCheat()->DetectHacks(m_player->m_movementInfo, MSG_NULL_ACTION);
-    }
 }
 
 void CPlayer::Sometimes()

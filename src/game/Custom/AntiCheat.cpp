@@ -78,11 +78,9 @@ void AntiCheat::DetectSpeed()
     if (WorldTimer::getMSTimeDiff(m_LastSpeedCheck, WorldTimer::getMSTime()) < sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL))
         return;
 
-    m_LastSpeedCheck = WorldTimer::getMSTime();
-
     std::ostringstream ss;
     float Traveled = GetDistance(IsFlying());
-    float Allowed = GetSpeedRate() * 1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100);
+    float Allowed = GetSpeedRate() * 1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100.f);
 
     bool TooFast = Traveled > Allowed;
 
@@ -113,6 +111,8 @@ void AntiCheat::DetectSpeed()
     m_MoveInfo[SPEED][OLD] = m_MoveInfo[SPEED][NEW];
     m_Opcode[SPEED][OLD] = m_Opcode[SPEED][NEW];
     m_ServerTime[SPEED][OLD] = WorldTimer::getMSTime();
+
+    m_LastSpeedCheck = WorldTimer::getMSTime();
 }
 
 void AntiCheat::DetectTime()
@@ -180,25 +180,33 @@ void AntiCheat::DetectFly()
 void AntiCheat::ReportCheat(std::string cheat, std::string info)
 {
     std::ostringstream ss;
-    ss << "Name: " << m_player->GetName() << " Cheat: " << cheat << " Info: " << info << std::endl;
+    ss << "Name: " << m_player->GetName() << " Cheat: " << cheat << " Info: " << (info.empty() ? "No info available" : info) << std::endl;
 
     sCustom.SendGMMessage(ss.str());
 }
 
 float AntiCheat::GetSpeed()
 {
-    bool back = m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_BACKWARD);
-
     float speed = 0;
 
-    if (m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_WALK_MODE))
-        speed = m_player->GetSpeed(MOVE_WALK);
-    else if (m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_SWIMMING))
-        speed = m_player->GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
-    else if (m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_FLYING))
-        speed = m_player->GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
-    else
-        speed = m_player->GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
+    for (uint8 i = 0; i < 2; ++i)
+    {
+        float thisspeed = 0;
+
+        bool back = m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_BACKWARD);
+
+        if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_WALK_MODE))
+            thisspeed = m_player->GetSpeed(MOVE_WALK);
+        else if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_SWIMMING))
+            thisspeed = m_player->GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
+        else if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_FLYING))
+            thisspeed = m_player->GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
+        else
+            thisspeed = m_player->GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
+
+        if (thisspeed > speed)
+            speed = thisspeed;
+    }
 
     return speed;
 }
