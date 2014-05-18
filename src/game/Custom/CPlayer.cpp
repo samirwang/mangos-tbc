@@ -937,3 +937,31 @@ void CPlayer::ApplyEnchantTemplate(uint8 spec)
     if (itr->ClassId == m_player->getClass() && itr->SpecId == spec)
         EnchantItem(itr->SpellId, itr->SlotId, "");
 }
+
+uint32 CPlayer::GetAVGILevel(bool levelasmin)
+{
+    uint32 TotLevel = 0;
+    uint8 ItemCount = 0;
+
+    for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
+    {
+        // Ignore these, because either they do not matter to the calculation
+        // or they're allowed to be swapped during the game.
+        if (i == EQUIPMENT_SLOT_MAINHAND || i == EQUIPMENT_SLOT_OFFHAND ||
+            i == EQUIPMENT_SLOT_RANGED || i == EQUIPMENT_SLOT_TABARD ||
+            i == EQUIPMENT_SLOT_BODY)
+            continue;
+
+        ++ItemCount;
+
+        if (Item* pItem = m_player->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+            TotLevel += pItem->GetProto()->ItemLevel;
+    }
+
+    uint32 avg = TotLevel / ItemCount;
+
+    if (!levelasmin)
+        return avg;
+
+    return (avg > m_player->getLevel() ? avg : m_player->getLevel());
+}

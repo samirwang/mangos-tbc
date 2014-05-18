@@ -9574,6 +9574,21 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool
             if (eslot == NULL_SLOT)
                 return EQUIP_ERR_ITEM_CANT_BE_EQUIPPED;
 
+            // Disallow change in BG
+            if (InBattleGroundQueue() || InBattleGround())
+            {
+                if (eslot >= EQUIPMENT_SLOT_START && eslot < EQUIPMENT_SLOT_END)
+                {
+                    if (eslot != EQUIPMENT_SLOT_MAINHAND && eslot != EQUIPMENT_SLOT_OFFHAND &&
+                        eslot != EQUIPMENT_SLOT_RANGED && eslot != EQUIPMENT_SLOT_TABARD &&
+                        eslot != EQUIPMENT_SLOT_BODY)
+                    {
+                        m_CPlayer->BothChat << "You can't equip items while in battleground or battleground queue";
+                        return EQUIP_ERR_ITEM_CANT_BE_EQUIPPED;
+                    }
+                }
+            }
+
             InventoryResult msg = CanUseItem(pItem , direct_action);
             if (msg != EQUIP_ERR_OK)
                 return msg;

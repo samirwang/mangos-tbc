@@ -24,6 +24,7 @@
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
 #include "BattleGround/BattleGroundMgr.h"
+#include "CPlayer.h"
 
 CFBG::CFBG(Player* pPlayer)
 {
@@ -291,21 +292,49 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
     uint32 addedally = 0;
     uint32 addedhorde = 0;
+    uint32 ilevelally = 0;
+    uint32 ilevelhorde = 0;
+
+    std::multimap<uint32, GroupQueueInfo*> ItemLevelSorting;
 
     for (auto& itr : m_QueuedGroups[bracket_id][BG_QUEUE_NORMAL_ALLIANCE])
     {
-        GroupQueueInfo* ginfo = itr;
+        uint32 GroupIlevel = 0;
+
+        for (auto& jtr : itr->Players)
+        if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
+            GroupIlevel += pPlayer->GetCPlayer()->GetAVGILevel(true);
+
+        ItemLevelSorting.insert(std::make_pair(GroupIlevel, itr));
+    }
+
+    for (auto itr = ItemLevelSorting.crbegin(); itr != ItemLevelSorting.crend(); ++itr)
+    {
+        GroupQueueInfo* ginfo = itr->second;
+
         if (!ginfo->IsInvitedToBGInstanceGUID)
         {
-            bool makeally = addedally < addedhorde;
+            ginfo->GroupTeam = TEAM_NONE;
 
-            if (addedally == addedhorde)
-                makeally = urand(0, 1);
+            if (ilevelally == ilevelhorde && addedally == addedhorde)
+                urand(0, 1) ? ginfo->GroupTeam = ALLIANCE : ginfo->GroupTeam = HORDE;
+            else if (ilevelally == ilevelhorde && addedally != addedhorde)
+                addedally < addedhorde ? ginfo->GroupTeam = ALLIANCE : ginfo->GroupTeam = HORDE;
 
-            ginfo->GroupTeam = makeally ? ALLIANCE : HORDE;
+            if (ginfo->GroupTeam == TEAM_NONE)
+                ilevelally < ilevelhorde ? ginfo->GroupTeam = ALLIANCE : ginfo->GroupTeam = HORDE;
 
-            if (m_SelectionPools[makeally ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(itr, maxPlayers))
-                makeally ? addedally += ginfo->Players.size() : addedhorde += ginfo->Players.size();
+            uint32 GroupIlevel = 0;
+
+            for (auto& jtr : ginfo->Players)
+            if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
+                GroupIlevel += pPlayer->GetCPlayer()->GetAVGILevel(true);
+
+            if (m_SelectionPools[ginfo->GroupTeam == ALLIANCE ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(ginfo, maxPlayers))
+            {
+                ginfo->GroupTeam == ALLIANCE ? ilevelally += GroupIlevel : ilevelhorde += GroupIlevel;
+                ginfo->GroupTeam == ALLIANCE ? addedally += GroupIlevel : addedhorde += GroupIlevel;
+            }
             else
                 break;
 

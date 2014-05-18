@@ -122,6 +122,8 @@ public:
     void SelectGObject(uint32 guidlow) { m_SelectedGObject = guidlow; }
     uint32 GetSelectedGObject() { return m_SelectedGObject; }
 
+    uint32 GetAVGILevel(bool levelasmin = false);
+
 private:
     Player* m_player;
 
