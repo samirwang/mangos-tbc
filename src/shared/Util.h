@@ -25,6 +25,36 @@
 #include <string>
 #include <vector>
 
+template <typename T1>
+void UNUSED(T1 &&) {}
+
+template <typename T1, typename T2>
+void UNUSED(T1 &&, T2 &&) {}
+
+template <typename T1, typename T2, typename T3>
+void UNUSED(T1 &&, T2 &&, T3 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&, T6 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&, T6 &&, T7 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&, T6 &&, T7 &&, T8 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&, T6 &&, T7 &&, T8 &&, T9 &&) {}
+
+template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10>
+void UNUSED(T1 &&, T2 &&, T3 &&, T4 &&, T5 &&, T6 &&, T7 &&, T8 &&, T9 &&, T10 &&) {}
+
 typedef std::vector<std::string> Tokens;
 
 Tokens StrSplit(const std::string& src, const std::string& sep);
