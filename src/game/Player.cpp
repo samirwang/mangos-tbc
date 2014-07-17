@@ -63,7 +63,6 @@
 #include "DBCStores.h"
 #include "SQLStorages.h"
 #include "Custom.h"
-#include "CPlayer.h"
 #include "CPlusMgr.h"
 #include "NewPlayer.h"
 
@@ -384,8 +383,6 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
-    m_CCPlayer = new CCPlayer(this);
-
     m_transport = 0;
 
     m_speakTime = 0;
@@ -1139,7 +1136,7 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     if (!IsInWorld())
         return;
 
-    GetCCPlayer()->CUpdate(update_diff);
+    ToCPlayer()->CUpdate(update_diff);
 
     // Undelivered mail
     if (m_nextMailDelivereTime && m_nextMailDelivereTime <= time(NULL))
@@ -1590,7 +1587,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     // client without expansion support
     if (GetSession()->Expansion() < mapEntry->Expansion())
     {
-        GetCCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
+        ToCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
         return false;
     }
     
@@ -9575,7 +9572,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool
                         eslot != EQUIPMENT_SLOT_RANGED && eslot != EQUIPMENT_SLOT_TABARD &&
                         eslot != EQUIPMENT_SLOT_BODY)
                     {
-                        m_CCPlayer->BothChat << "You can't equip items while in battleground or battleground queue";
+                        ((CPlayer*)this)->BothChat << "You can't equip items while in battleground or battleground queue";
                         return EQUIP_ERR_ITEM_CANT_BE_EQUIPPED;
                     }
                 }
@@ -17708,7 +17705,7 @@ void Player::TakeExtendedCost(uint32 extendedCostId, uint32 count)
 bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     if (vendorGuid == GetObjectGuid())
-        return GetCCPlayer()->BuyItemFromMultiVendor(item, count, bag, slot);
+        return ToCPlayer()->BuyItemFromMultiVendor(item, count, bag, slot);
 
     // cheating attempt
     if (count < 1) count = 1;
@@ -20314,7 +20311,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
     DETAIL_LOG("TalentID: %u Rank: %u Spell: %u\n", talentId, talentRank, spellid);
 
     // Possibly learn new spells after talent learn
-    GetCCPlayer()->FillGreenSpellList();
+    ToCPlayer()->FillGreenSpellList();
 }
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)

@@ -900,27 +900,18 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
-class CCPlayer;
 class CPlayer;
 
 class MANGOS_DLL_SPEC Player : public Unit
 {
-    public:
-        CCPlayer* GetCCPlayer() { return m_CCPlayer; }
-        CPlayer* ToCPlayer() { return reinterpret_cast<CPlayer*>(this); }
-
-    private:
-        CPlayer* m_AntiCheat;
-        CCPlayer* m_CCPlayer;
-
-        // --------------------------------------
-
         friend class WorldSession;
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
         explicit Player(WorldSession* session);
         ~Player();
+
+        CPlayer* ToCPlayer() { return reinterpret_cast<CPlayer*>(this); }
 
         void CleanupsBeforeDelete() override;
 

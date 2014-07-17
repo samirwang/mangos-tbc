@@ -22,7 +22,6 @@
 #include "Mail.h"
 #include "MapManager.h"
 #include "Player.h"
-#include "CPlayer.h"
 
 void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {

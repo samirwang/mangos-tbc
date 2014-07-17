@@ -23,7 +23,6 @@
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
 #include "BattleGround/BattleGroundMgr.h"
-#include "CPlayer.h"
 #include "NewPlayer.h"
 
 bool CPlayer::NativeTeam() const
@@ -262,7 +261,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
         for (auto& jtr : itr->Players)
         if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
-            GroupIlevel += pPlayer->GetCCPlayer()->GetAVGILevel(true);
+            GroupIlevel += pPlayer->ToCPlayer()->GetAVGILevel(true);
 
         ItemLevelSorting.insert(std::make_pair(GroupIlevel, itr));
     }
@@ -287,7 +286,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
             for (auto& jtr : ginfo->Players)
             if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
-                GroupIlevel += pPlayer->GetCCPlayer()->GetAVGILevel(true);
+                GroupIlevel += pPlayer->ToCPlayer()->GetAVGILevel(true);
 
             if (m_SelectionPools[ginfo->GroupTeam == ALLIANCE ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(ginfo, maxPlayers))
             {

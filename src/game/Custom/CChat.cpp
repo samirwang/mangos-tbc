@@ -20,7 +20,7 @@
 #include "WorldSession.h"
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
-#include "CPlayer.h"
+#include "NewPlayer.h"
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {
@@ -47,108 +47,107 @@ bool ChatHandler::HandleBGStopCommand(char*)
 
 bool ChatHandler::HandleLookupIDCommand(char* args)
 {
-    Player* pPlayer = m_session->GetPlayer();
-    CCPlayer* pCCPlayer = pPlayer->GetCCPlayer();
+    CPlayer* pPlayer = m_session->GetPlayer()->ToCPlayer();
 
     char* areaargs = args;
     uint32 areaid = 0;
     if (ExtractUint32KeyFromLink(&areaargs, "Harea", areaid))
-        pCCPlayer->BoxChat << "areaid: " << areaid << std::endl;
+        pPlayer->BoxChat << "areaid: " << areaid << std::endl;
 
     char* areatriggerargs = args;
     uint32 areatriggerid = 0;
     if (ExtractUint32KeyFromLink(&areatriggerargs, "Hareatrigger", areatriggerid))
-        pCCPlayer->BoxChat << "areatriggerid: " << areatriggerid << std::endl;
+        pPlayer->BoxChat << "areatriggerid: " << areatriggerid << std::endl;
 
     char* areatrigger_targetargs = args;
     uint32 areatrigger_targetid = 0;
     if (ExtractUint32KeyFromLink(&areatrigger_targetargs, "Hareatrigger_target", areatrigger_targetid))
-        pCCPlayer->BoxChat << "areatrigger_targetid: " << areatrigger_targetid << std::endl;
+        pPlayer->BoxChat << "areatrigger_targetid: " << areatrigger_targetid << std::endl;
 
     char* creatureargs = args;
     uint32 creatureid = 0;
     if (ExtractUint32KeyFromLink(&creatureargs, "Hcreature", creatureid))
-        pCCPlayer->BoxChat << "creatureid: " << creatureid << std::endl;
+        pPlayer->BoxChat << "creatureid: " << creatureid << std::endl;
 
     char* creature_entryargs = args;
     uint32 creature_entryid = 0;
     if (ExtractUint32KeyFromLink(&creature_entryargs, "Hcreature_entry", creature_entryid))
-        pCCPlayer->BoxChat << "creature_entryid: " << creature_entryid << std::endl;
+        pPlayer->BoxChat << "creature_entryid: " << creature_entryid << std::endl;
 
     char* enchantargs = args;
     uint32 enchantid = 0;
     if (ExtractUint32KeyFromLink(&enchantargs, "Henchant", enchantid))
-        pCCPlayer->BoxChat << "enchantid: " << enchantid << std::endl;
+        pPlayer->BoxChat << "enchantid: " << enchantid << std::endl;
 
     char* gameeventargs = args;
     uint32 gameeventid = 0;
     if (ExtractUint32KeyFromLink(&gameeventargs, "Hgameevent", gameeventid))
-        pCCPlayer->BoxChat << "gameeventid: " << gameeventid << std::endl;
+        pPlayer->BoxChat << "gameeventid: " << gameeventid << std::endl;
 
     char* gameobjectargs = args;
     uint32 gameobjectid = 0;
     if (ExtractUint32KeyFromLink(&gameobjectargs, "Hgameobject", gameobjectid))
-        pCCPlayer->BoxChat << "gameobjectid: " << gameobjectid << std::endl;
+        pPlayer->BoxChat << "gameobjectid: " << gameobjectid << std::endl;
 
     char* gameobject_entryargs = args;
     uint32 gameobject_entryid = 0;
     if (ExtractUint32KeyFromLink(&gameobject_entryargs, "Hgameobject_entry", gameobject_entryid))
-        pCCPlayer->BoxChat << "gameobject_entryid: " << gameobject_entryid << std::endl;
+        pPlayer->BoxChat << "gameobject_entryid: " << gameobject_entryid << std::endl;
 
     char* itemargs = args;
     uint32 itemid = 0;
     if (ExtractUint32KeyFromLink(&itemargs, "Hitem", itemid))
-        pCCPlayer->BoxChat << "itemid: " << itemid << std::endl;
+        pPlayer->BoxChat << "itemid: " << itemid << std::endl;
 
     char* itemsetargs = args;
     uint32 itemsetid = 0;
     if (ExtractUint32KeyFromLink(&itemsetargs, "Hitemset", itemsetid))
-        pCCPlayer->BoxChat << "itemsetid: " << itemsetid << std::endl;
+        pPlayer->BoxChat << "itemsetid: " << itemsetid << std::endl;
 
     char* playerargs = args;
     uint32 playerid = 0;
     if (ExtractUint32KeyFromLink(&playerargs, "Hplayer", playerid))
-        pCCPlayer->BoxChat << "playerid: " << playerid << std::endl;
+        pPlayer->BoxChat << "playerid: " << playerid << std::endl;
 
     char* poolargs = args;
     uint32 poolid = 0;
     if (ExtractUint32KeyFromLink(&poolargs, "Hpool", poolid))
-        pCCPlayer->BoxChat << "poolid: " << poolid << std::endl;
+        pPlayer->BoxChat << "poolid: " << poolid << std::endl;
 
     char* questargs = args;
     uint32 questid = 0;
     if (ExtractUint32KeyFromLink(&questargs, "Hquest", questid))
-        pCCPlayer->BoxChat << "questid: " << questid << std::endl;
+        pPlayer->BoxChat << "questid: " << questid << std::endl;
 
     char* skillargs = args;
     uint32 skillid = 0;
     if (ExtractUint32KeyFromLink(&skillargs, "Hskill", skillid))
-        pCCPlayer->BoxChat << "skillid: " << skillid << std::endl;
+        pPlayer->BoxChat << "skillid: " << skillid << std::endl;
 
     char* spellargs = args;
     uint32 spellid = 0;
     if (ExtractUint32KeyFromLink(&spellargs, "Hspell", spellid))
-        pCCPlayer->BoxChat << "spellid: " << spellid << std::endl;
+        pPlayer->BoxChat << "spellid: " << spellid << std::endl;
 
     char* talentargs = args;
     uint32 talentid = 0;
     if (ExtractUint32KeyFromLink(&talentargs, "Htalent", talentid))
-        pCCPlayer->BoxChat << "talentid: " << talentid << std::endl;
+        pPlayer->BoxChat << "talentid: " << talentid << std::endl;
 
     char* taxinodeargs = args;
     uint32 taxinodeid = 0;
     if (ExtractUint32KeyFromLink(&taxinodeargs, "Htaxinode", taxinodeid))
-        pCCPlayer->BoxChat << "taxinodeid: " << taxinodeid << std::endl;
+        pPlayer->BoxChat << "taxinodeid: " << taxinodeid << std::endl;
 
     char* teleargs = args;
     uint32 teleid = 0;
     if (ExtractUint32KeyFromLink(&teleargs, "Htele", teleid))
-        pCCPlayer->BoxChat << "teleid: " << teleid << std::endl;
+        pPlayer->BoxChat << "teleid: " << teleid << std::endl;
 
     char* titleargs = args;
     uint32 titleid = 0;
     if (ExtractUint32KeyFromLink(&titleargs, "Htitle", titleid))
-        pCCPlayer->BoxChat << "titleid: " << titleid << std::endl;
+        pPlayer->BoxChat << "titleid: " << titleid << std::endl;
 
     return true;
 }

@@ -21,7 +21,7 @@
 
 void CPlayer::LoadSettings()
 {
-    QueryResult* result = CharacterDatabase.PQuery("SELECT DataTypeId, FloatSetting, IntSetting, UintSetting, StringSetting, SettingNumber FROM player_settings WHERE guid = %u", m_player->GetGUIDLow());
+    QueryResult* result = CharacterDatabase.PQuery("SELECT DataTypeId, FloatSetting, IntSetting, UintSetting, StringSetting, SettingNumber FROM player_settings WHERE guid = %u", GetGUIDLow());
     if (result)
     {
         do
@@ -46,7 +46,7 @@ void CPlayer::LoadSettings()
                 m_StringContainer.insert(std::make_pair(Settings::StringSettings(SettingNumber), fields[rDataTypeId].GetCppString()));
                 break;
             default:
-                sLog.outError("Invalid DataTypeId %u for player %u", uint32(rDataTypeId), m_player->GetGUIDLow());
+                sLog.outError("Invalid DataTypeId %u for player %u", uint32(rDataTypeId), GetGUIDLow());
                 break;
             }
         }
@@ -59,19 +59,19 @@ void CPlayer::LoadSettings()
 void CPlayer::SaveSettings()
 {
     CharacterDatabase.BeginTransaction();
-    CharacterDatabase.PExecute("DELETE FROM player_settings WHERE guid = %u", m_player->GetGUIDLow());
+    CharacterDatabase.PExecute("DELETE FROM player_settings WHERE guid = %u", GetGUIDLow());
 
     for (auto& itr : m_FloatContainer)
-        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, FloatSetting) VALUES (%u, %u, %u, %f)", m_player->GetGUIDLow(), itr.first, Settings::SETTING_FLOAT, itr.second);
+        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, FloatSetting) VALUES (%u, %u, %u, %f)", GetGUIDLow(), itr.first, Settings::SETTING_FLOAT, itr.second);
 
     for (auto& itr : m_IntContainer)
-        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, IntSetting) VALUES (%u, %u, %u, %i)", m_player->GetGUIDLow(), itr.first, Settings::SETTING_INT, itr.second);
+        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, IntSetting) VALUES (%u, %u, %u, %i)", GetGUIDLow(), itr.first, Settings::SETTING_INT, itr.second);
 
     for (auto& itr : m_UintContainer)
-        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, UintSetting) VALUES (%u, %u, %u, %u)", m_player->GetGUIDLow(), itr.first, Settings::SETTING_UINT, itr.second);
+        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, UintSetting) VALUES (%u, %u, %u, %u)", GetGUIDLow(), itr.first, Settings::SETTING_UINT, itr.second);
 
     for (auto& itr : m_StringContainer)
-        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, '%s')", m_player->GetGUIDLow(), itr.first, Settings::SETTING_STRING, itr.second.c_str());
+        CharacterDatabase.PExecute("INSERT INTO player_settings (guid, SettingNumber, DataTypeID, StringSetting) VALUES (%u, %u, %u, '%s')", GetGUIDLow(), itr.first, Settings::SETTING_STRING, itr.second.c_str());
 
     CharacterDatabase.CommitTransaction();
 }

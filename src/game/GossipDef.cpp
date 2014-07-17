@@ -23,7 +23,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "Formulas.h"
-#include "CPlayer.h"
+#include "NewPlayer.h"
 
 GossipMenu::GossipMenu(WorldSession* session) : m_session(session)
 {
@@ -152,7 +152,7 @@ bool PlayerMenu::GossipOptionCoded(unsigned int Selection)
 
 void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
 {
-    GetMenuSession()->GetPlayer()->GetCCPlayer()->SetLastGossipGuid(objectGuid);
+    GetMenuSession()->GetPlayer()->ToCPlayer()->SetLastGossipGuid(objectGuid);
 
     WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));           // guess size
     data << ObjectGuid(objectGuid);
@@ -170,7 +170,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
             sLog.outError("%s", ss.str().c_str());
 
             ss << " please report this to server staff!";
-            GetMenuSession()->GetPlayer()->GetCCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+            GetMenuSession()->GetPlayer()->ToCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
             
             continue;
         }
@@ -196,7 +196,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
             sLog.outError("%s", ss.str().c_str());
 
             ss << " please report this to server staff!";
-            GetMenuSession()->GetPlayer()->GetCCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+            GetMenuSession()->GetPlayer()->ToCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
 
             continue;
         }

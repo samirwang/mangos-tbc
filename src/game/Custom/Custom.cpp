@@ -24,7 +24,7 @@
 #include "Log.h"
 #include "SocialMgr.h"
 #include "GossipDef.h"
-#include "CPlayer.h"
+#include "NewPlayer.h"
 
 Custom::~Custom()
 {
@@ -40,8 +40,8 @@ void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
     for (auto& itr : sWorld.GetSessionMap())
     if (itr.second)
     if (Player* pPlayer = itr.second->GetPlayer())
-    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->GetCCPlayer()->WChatOn())
-        pPlayer->GetCCPlayer()->BoxChat << msg << std::endl;
+    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->ToCPlayer()->WChatOn())
+        pPlayer->ToCPlayer()->BoxChat << msg << std::endl;
 }
 
 void Custom::SendGMMessage(std::string msg)
@@ -50,7 +50,7 @@ void Custom::SendGMMessage(std::string msg)
     if (itr.second)
     if (Player* pPlayer = itr.second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
-        pPlayer->GetCCPlayer()->BothChat << msg << std::endl;
+        pPlayer->ToCPlayer()->BothChat << msg << std::endl;
 }
 
 Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
@@ -203,8 +203,8 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
 
 bool ChatHandler::HandleWToggleCommand(char* /*args*/)
 {
-    m_session->GetPlayer()->GetCCPlayer()->ToggleWChat();
-    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->GetCCPlayer()->WChatOn() ? "en" : "dis");
+    m_session->GetPlayer()->ToCPlayer()->ToggleWChat();
+    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->ToCPlayer()->WChatOn() ? "en" : "dis");
 
     return true;
 }
@@ -214,8 +214,8 @@ bool ChatHandler::HandleWChatCommand(char* args)
     if (!*args)
         return false;
 
-    if (m_session->GetPlayer()->GetCCPlayer()->WChatOn())
-        m_session->GetPlayer()->GetCCPlayer()->SendWorldChatMsg(args);
+    if (m_session->GetPlayer()->ToCPlayer()->WChatOn())
+        m_session->GetPlayer()->ToCPlayer()->SendWorldChatMsg(args);
     else
         PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
 
@@ -241,7 +241,7 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
         data << uint32(0);
     }
 
-    GetMenuSession()->GetPlayer()->GetCCPlayer()->SetScriptID(scriptid);
+    GetMenuSession()->GetPlayer()->ToCPlayer()->SetScriptID(scriptid);
 
     GetMenuSession()->SendPacket(&data);
 

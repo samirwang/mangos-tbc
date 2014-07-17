@@ -35,7 +35,6 @@
 #include "Util.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "CPlayer.h"
 #include "NewPlayer.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
@@ -310,13 +309,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (msg.empty())
                 break;
 
-            if (GetPlayer()->GetCCPlayer()->WChatOn())
-            {
-                GetPlayer()->GetCCPlayer()->SendWorldChatMsg(msg);
-                break;
-            }
-
-            if (GetPlayer()->GetGuildId())
+            if (GetPlayer()->ToCPlayer()->WChatOn())
+                GetPlayer()->ToCPlayer()->SendWorldChatMsg(msg);
+            else if (GetPlayer()->GetGuildId())
                 if (Guild* guild = sGuildMgr.GetGuildById(GetPlayer()->GetGuildId()))
                     guild->BroadcastToOfficers(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
 

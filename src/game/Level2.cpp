@@ -49,11 +49,11 @@
 #include <map>
 #include <typeinfo>
 #include "Formulas.h"
+#include "NewPlayer.h"
 
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 #include "MoveMap.h"                                        // for mmap manager
 #include "PathFinder.h"                                     // for mmap commands
-#include "CPlayer.h"
 
 static uint32 ReputationRankStrIndex[MAX_REPUTATION_RANK] =
 {
@@ -861,7 +861,7 @@ bool ChatHandler::HandleGameObjectTargetCommand(char* args)
         return false;
     }
 
-    m_session->GetPlayer()->GetCCPlayer()->SelectGObject(lowguid);
+    m_session->GetPlayer()->ToCPlayer()->SelectGObject(lowguid);
 
     GameObjectInfo const* goI = ObjectMgr::GetGameObjectInfo(id);
 
@@ -903,8 +903,8 @@ bool ChatHandler::HandleGameObjectDeleteCommand(char* args)
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
     {
-        lowguid = m_session->GetPlayer()->GetCCPlayer()->GetSelectedGObject();
-        m_session->GetPlayer()->GetCCPlayer()->SelectGObject(0);
+        lowguid = m_session->GetPlayer()->ToCPlayer()->GetSelectedGObject();
+        m_session->GetPlayer()->ToCPlayer()->SelectGObject(0);
     }
 
     if (!lowguid)
@@ -951,7 +951,7 @@ bool ChatHandler::HandleGameObjectTurnCommand(char* args)
     // number or [name] Shift-click form |color|Hgameobject:go_id|h[name]|h|r
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
-        lowguid = m_session->GetPlayer()->GetCCPlayer()->GetSelectedGObject();
+        lowguid = m_session->GetPlayer()->ToCPlayer()->GetSelectedGObject();
 
     if (!lowguid)
         return false;
@@ -995,7 +995,7 @@ bool ChatHandler::HandleGameObjectMoveCommand(char* args)
     // number or [name] Shift-click form |color|Hgameobject:go_guid|h[name]|h|r
     uint32 lowguid;
     if (!ExtractUint32KeyFromLink(&args, "Hgameobject", lowguid))
-        lowguid = m_session->GetPlayer()->GetCCPlayer()->GetSelectedGObject();
+        lowguid = m_session->GetPlayer()->ToCPlayer()->GetSelectedGObject();
 
     if (!lowguid)
         return false;

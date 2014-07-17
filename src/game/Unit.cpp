@@ -51,7 +51,6 @@
 #include "movement/MoveSplineInit.h"
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
-#include "CPlayer.h"
 #include "NewPlayer.h"
 
 #include <math.h>
@@ -8367,7 +8366,7 @@ void Unit::SetLevel(uint32 lvl)
         ((Player*)this)->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_LEVEL);
 
     if (GetTypeId() == TYPEID_PLAYER) // Learn new spells for level
-        ((Player*)this)->GetCCPlayer()->FillGreenSpellList();
+        ((Player*)this)->ToCPlayer()->FillGreenSpellList();
 }
 
 void Unit::SetHealth(uint32 val)

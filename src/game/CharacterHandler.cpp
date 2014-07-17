@@ -39,7 +39,6 @@
 #include "ArenaTeam.h"
 #include "Language.h"
 #include "SpellMgr.h"
-#include "CPlayer.h"
 #include "NewPlayer.h"
 
 // config option SkipCinematics supported values
@@ -717,7 +716,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     if (!pCurrChar->IsStandState() && !pCurrChar->hasUnitState(UNIT_STAT_STUNNED))
         pCurrChar->SetStandState(UNIT_STAND_STATE_STAND);
 
-    pCurrChar->GetCCPlayer()->OnLogin();
+    pCurrChar->ToCPlayer()->OnLogin();
 
     m_playerLoading = false;
     delete holder;
