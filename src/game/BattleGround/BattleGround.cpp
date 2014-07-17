@@ -35,7 +35,7 @@
 #include "GridNotifiersImpl.h"
 #include "Chat.h"
 #include "Custom.h"
-#include "CFBG.h"
+#include "NewPlayer.h"
 
 namespace MaNGOS
 {
@@ -937,7 +937,7 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
 
     if (plr)
     {
-        plr->GetCFBG()->LeaveBattleGround(this);
+        plr->ToCPlayer()->LeaveBattleGround(this);
 
         // should remove spirit of redemption
         if (plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
@@ -1093,7 +1093,7 @@ void BattleGround::StartBattleGround()
 
 void BattleGround::AddPlayer(Player* plr)
 {
-    plr->GetCFBG()->JoinBattleGround(this);
+    plr->ToCPlayer()->JoinBattleGround(this);
 
     // remove afk from player
     if (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK))

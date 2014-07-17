@@ -28,7 +28,6 @@
 #include "WorldPacket.h"
 #include "MapManager.h"
 #include "DBCStores.h"                                   // TODO REMOVE this when graveyard handling for pvp is updated
-#include "CFBG.h"
 
 BattleGroundAB::BattleGroundAB()
 {
@@ -115,7 +114,7 @@ void BattleGroundAB::Update(uint32 diff)
                 m_ReputationScoreTics[team] += BG_AB_TickPoints[points];
                 if (m_ReputationScoreTics[team] >= m_ReputationTics)
                 {
-                    CFBG::RewardReputationToXBGTeam(this, 509, 510, 10, team == BG_TEAM_ALLIANCE ? ALLIANCE : HORDE);
+                    RewardReputationToXBGTeam(509, 510, 10, team == BG_TEAM_ALLIANCE ? ALLIANCE : HORDE);
                     m_ReputationScoreTics[team] -= m_ReputationTics;
                 }
                 if (m_honorScoreTicks[team] >= m_honorTicks)

@@ -16,10 +16,10 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _ANTICHEAT_H
-#define _ANTICHEAT_H
+#ifndef _NEWPLAYER_H
+#define _NEWPLAYER_H
 
-class Player;
+#include "Player.h"
 
 enum NewOld
 {
@@ -46,12 +46,19 @@ namespace Cheats
     const uint32 ALL_DETECTORS = SPEED | TIME | JUMP | FLY;
 }
 
-class AntiCheat
+class CPlayer : public Player
 {
 public:
-    explicit AntiCheat(Player* pPlayer);
-    ~AntiCheat() { };
+    explicit CPlayer(WorldSession* session);
 
+    ~CPlayer() {}
+
+    Player* ToPlayer() { return static_cast<Player*>(this); }
+
+    /************************************************************************/
+    /**********************************ANTICHEAT*****************************/
+    /************************************************************************/
+public:
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
     void DetectSpeed();
     void DetectTime();
@@ -60,7 +67,7 @@ public:
 
     void ReportCheat(std::string cheat, std::string info);
 
-    float GetSpeed();
+    float GetCurSpeed();
     float GetSpeedRate();
     float GetClientDiff();
     float GetServerDiff();
@@ -92,8 +99,6 @@ public:
     bool HadFirstMovementSent() { return !m_FirstMoveInfo; }
 
 private:
-    Player* m_player;
-
     MovementInfo m_MoveInfo[2][2];
     Opcodes m_Opcode[2][2];
     uint32 m_ServerTime[2][2];
@@ -104,6 +109,55 @@ private:
 
     uint32 m_LastSpeedCheck;
     uint32 m_ClientBasedServerTime;
+
+    /************************************************************************/
+    /*************************************CFBG*******************************/
+    /************************************************************************/
+public:
+    typedef std::vector<ObjectGuid> FakedPlayers;
+
+    bool NativeTeam() const;
+    uint8 getFRace() const { return m_fRace; }
+    uint8 getORace() const { return m_oRace; }
+    uint32 getOFaction() const { return m_oFaction; }
+    uint32 getFFaction() const { return m_fFaction; }
+    uint32 getOPlayerBytes() const { return m_oPlayerBytes; }
+    uint32 getFPlayerBytes() const { return m_fPlayerBytes; }
+    uint32 getOPlayerBytes2() const { return m_oPlayerBytes2; }
+    uint32 getFPlayerBytes2() const { return m_fPlayerBytes2; }
+
+    void SetFakeValues();
+    void RecachePlayersFromList();
+    void RecachePlayersFromBG();
+    WorldPacket BuildNameQuery();
+    bool GetRecache() { return m_Recache; }
+    void SetRecache() { m_Recache = true; }
+    void SetFakedPlayers(FakedPlayers guidlist) { m_FakedPlayers = guidlist; }
+
+    void JoinBattleGround(BattleGround* bg);
+    void LeaveBattleGround(BattleGround* bg);
+
+    void FakeDisplayID();
+
+    void SetFakeOnNextTick(bool value = true) { m_FakeOnNextTick = value; }
+    bool GetFakeOnNextTick() { return m_FakeOnNextTick; }
+
+    bool SendBattleGroundChat(ChatMsg msgtype, std::string message);
+
+private:
+    uint8 m_fRace;
+    uint8 m_oRace;
+    uint32 m_fFaction;
+    uint32 m_oFaction;
+    uint32 m_oPlayerBytes;
+    uint32 m_oPlayerBytes2;
+    uint32 m_fPlayerBytes;
+    uint32 m_fPlayerBytes2;
+
+    FakedPlayers m_FakedPlayers;
+
+    bool m_Recache;
+    bool m_FakeOnNextTick;
 };
 
 #endif

@@ -27,7 +27,6 @@
 #include "WorldPacket.h"
 #include "Language.h"
 #include "MapManager.h"
-#include "CFBG.h"
 
 BattleGroundWS::BattleGroundWS()
 {
@@ -187,7 +186,7 @@ void BattleGroundWS::EventPlayerCapturedFlag(Player* source)
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_HORDE);
         //RewardReputationToTeam(889, m_ReputationCapture, HORDE);
     }
-    CFBG::RewardReputationToXBGTeam(this, 890, 889, m_ReputationCapture, source->GetTeam());
+    RewardReputationToXBGTeam(890, 889, m_ReputationCapture, source->GetTeam());
     // for flag capture is reward 2 honorable kills
     RewardHonorToTeam(GetBonusHonorFromKill(2), source->GetTeam());
 

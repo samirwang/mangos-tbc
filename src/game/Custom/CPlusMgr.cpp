@@ -129,11 +129,11 @@ uint32 CPlusMgr::GetDialogStatus(Player* pPlayer, GameObject* pGameObject)
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, std::string code)
 {
     // PlayerScript
-    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    if (uint32 scriptid = pPlayer->GetCCPlayer()->GetScriptID())
     {
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
-            pPlayer->GetCPlayer()->SetScriptID(0);
+            pPlayer->GetCCPlayer()->SetScriptID(0);
             return script->GossipSelect(pPlayer, sender, action, code);
         }
     }
@@ -174,11 +174,11 @@ ObjectGuid PlayerScript::GetHearthStoneOrPlayerGuid(Player* pPlayer)
 
 bool CPlusMgr::OnGossipHello(Player* pPlayer)
 {
-    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    if (uint32 scriptid = pPlayer->GetCCPlayer()->GetScriptID())
     {
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
-            pPlayer->GetCPlayer()->SetScriptID(0);
+            pPlayer->GetCCPlayer()->SetScriptID(0);
             return script->GossipHello(pPlayer);
         }
     }
@@ -188,18 +188,18 @@ bool CPlusMgr::OnGossipHello(Player* pPlayer)
 
 bool CPlusMgr::OnGossipHello(Player* pPlayer, uint32 scriptid)
 {
-    pPlayer->GetCPlayer()->SetScriptID(scriptid);
+    pPlayer->GetCCPlayer()->SetScriptID(scriptid);
 
     return OnGossipHello(pPlayer);
 }
 
 bool CPlusMgr::OnGossipSelect(Player* pPlayer, uint32 sender, uint32 action, std::string code)
 {
-    if (uint32 scriptid = pPlayer->GetCPlayer()->GetScriptID())
+    if (uint32 scriptid = pPlayer->GetCCPlayer()->GetScriptID())
     {
         if (PlayerScript* script = m_PlayerScripts.GetScript(scriptid))
         {
-            pPlayer->GetCPlayer()->SetScriptID(0);
+            pPlayer->GetCCPlayer()->SetScriptID(0);
             return script->GossipSelect(pPlayer, sender, action, code);
         }
     }

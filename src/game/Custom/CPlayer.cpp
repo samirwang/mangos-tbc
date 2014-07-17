@@ -24,12 +24,11 @@
 #include "ObjectMgr.h"
 #include "DBCStores.h"
 #include "Settings.h"
-#include "CFBG.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
-#include "AntiCheat.h"
+#include "NewPlayer.h"
 
-CPlayer::CPlayer(Player* pPlayer)
+CCPlayer::CCPlayer(Player* pPlayer)
 {
     m_player = pPlayer;
 
@@ -39,12 +38,12 @@ CPlayer::CPlayer(Player* pPlayer)
     m_SelectedGObject = 0;
 }
 
-CPlayer::~CPlayer()
+CCPlayer::~CCPlayer()
 {
     delete m_player;
 }
 
-void CPlayer::CUpdate(uint32 diff)
+void CCPlayer::CUpdate(uint32 diff)
 {
     LearnGreenSpells();
 
@@ -52,31 +51,31 @@ void CPlayer::CUpdate(uint32 diff)
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
 
-    m_player->GetAntiCheat()->IncClientBasedServerTime(diff);
+    m_player->ToCPlayer()->IncClientBasedServerTime(diff);
 }
 
-void CPlayer::Sometimes()
+void CCPlayer::Sometimes()
 {
-    if (m_player->GetCFBG()->GetRecache())
+    if (m_player->ToCPlayer()->GetRecache())
     {
-        m_player->GetCFBG()->RecachePlayersFromList();
-        m_player->GetCFBG()->RecachePlayersFromBG();
+        m_player->ToCPlayer()->RecachePlayersFromList();
+        m_player->ToCPlayer()->RecachePlayersFromBG();
     }
 
-    if (m_player->GetCFBG()->GetFakeOnNextTick())
+    if (m_player->ToCPlayer()->GetFakeOnNextTick())
     {
-        m_player->GetCFBG()->SetFakeOnNextTick(false);
+        m_player->ToCPlayer()->SetFakeOnNextTick(false);
 
-        m_player->SetByteValue(UNIT_FIELD_BYTES_0, 0, m_player->GetCFBG()->getFRace());
-        m_player->setFaction(m_player->GetCFBG()->getFFaction());
-        m_player->GetCFBG()->FakeDisplayID();
+        m_player->SetByteValue(UNIT_FIELD_BYTES_0, 0, m_player->ToCPlayer()->getFRace());
+        m_player->setFaction(m_player->ToCPlayer()->getFFaction());
+        m_player->ToCPlayer()->FakeDisplayID();
 
-        m_player->SetUInt32Value(PLAYER_BYTES, m_player->GetCFBG()->getFPlayerBytes());
-        m_player->SetUInt32Value(PLAYER_BYTES_2, m_player->GetCFBG()->getFPlayerBytes2());
+        m_player->SetUInt32Value(PLAYER_BYTES, m_player->ToCPlayer()->getFPlayerBytes());
+        m_player->SetUInt32Value(PLAYER_BYTES_2, m_player->ToCPlayer()->getFPlayerBytes2());
     }
 }
 
-void CPlayer::LoadCountryData()
+void CCPlayer::LoadCountryData()
 {
     std::ostringstream ss;
 
@@ -112,17 +111,17 @@ void CPlayer::LoadCountryData()
     }
 }
 
-void CPlayer::OnLogin()
+void CCPlayer::OnLogin()
 {
     m_player->GetSettings()->LoadSettings();
-    m_player->GetCFBG()->SetFakeValues();
+    //m_player->ToCPlayer()->SetFakeValues();
 
     LoadCountryData();
 
     SetWChat(m_player->GetSettings()->GetSetting(SETTING_UINT_WCHAT));
 
-    if (!m_player->GetCFBG()->NativeTeam())
-        m_player->GetCFBG()->SetFakeOnNextTick();
+    if (!m_player->ToCPlayer()->NativeTeam())
+        m_player->ToCPlayer()->SetFakeOnNextTick();
 
     if (!m_player->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
         sCPlusMgr.OnGossipHello(m_player, 1);
@@ -136,12 +135,12 @@ void CPlayer::OnLogin()
     }
 }
 
-void CPlayer::OnFirstLogin()
+void CCPlayer::OnFirstLogin()
 {
     FillGreenSpellList();
 }
 
-void CPlayer::AddItemSet(uint32 setid)
+void CCPlayer::AddItemSet(uint32 setid)
 {
     std::vector<uint32> Items;
 
@@ -168,7 +167,7 @@ void CPlayer::AddItemSet(uint32 setid)
     }
 }
 
-std::string CPlayer::GetNameLink(bool applycolors)
+std::string CCPlayer::GetNameLink(bool applycolors)
 {
     std::string name = m_player->GetName();
     std::string teamcolor = m_player->GetOTeam() == ALLIANCE ? MSG_COLOR_DARKBLUE : MSG_COLOR_RED;
@@ -187,15 +186,15 @@ std::string CPlayer::GetNameLink(bool applycolors)
     return ss.str();
 }
 
-void CPlayer::SendWorldChatMsg(std::string msg)
+void CCPlayer::SendWorldChatMsg(std::string msg)
 {
     std::ostringstream ss;
-    ss << m_player->GetCPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
+    ss << m_player->GetCCPlayer()->GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
 
     sCustom.SendWorldChat(m_player->GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
 }
 
-void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
+void CCPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
 {
     if (!ss.str().empty())
     {
@@ -220,7 +219,7 @@ void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
     }
 }
 
-void CPlayer::FillGreenSpellList()
+void CCPlayer::FillGreenSpellList()
 {
     uint32 trainerid = 0;
 
@@ -295,7 +294,7 @@ void CPlayer::FillGreenSpellList()
     }
 }
 
-void CPlayer::LearnGreenSpells()
+void CCPlayer::LearnGreenSpells()
 {
     if (m_DelayedSpellLearn.empty())
         return;
@@ -310,7 +309,7 @@ void CPlayer::LearnGreenSpells()
         FillGreenSpellList();
 }
 
-void CPlayer::CreatePet(uint32 entry, bool classcheck)
+void CCPlayer::CreatePet(uint32 entry, bool classcheck)
 {
     if (classcheck && m_player->getClass() != CLASS_HUNTER)
         return;
@@ -402,7 +401,7 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     delete pCreature;
 }
 
-void CPlayer::EnchantItem(uint32 spellid, uint8 slot, std::string sendername)
+void CCPlayer::EnchantItem(uint32 spellid, uint8 slot, std::string sendername)
 {
     Item* pItem = m_player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
     if (!pItem)
@@ -442,7 +441,7 @@ void CPlayer::EnchantItem(uint32 spellid, uint8 slot, std::string sendername)
         BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!" << std::endl;
 }
 
-void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
+void CCPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
 {
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
 
@@ -534,7 +533,7 @@ void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
 }
 
 // Return true is the bought item has a max count to force refresh of window by caller
-bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot)
+bool CCPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     DEBUG_LOG("WORLD: BuyItemFromMultiVendor");
 
@@ -754,7 +753,7 @@ bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 
     return crItem->maxcount != 0;
 }
 
-bool CPlayer::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
+bool CCPlayer::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
 {
     DEBUG_LOG("WORLD: SellItemToMultiVendor");
 
@@ -867,7 +866,7 @@ bool CPlayer::SellItemToMultiVendor(ObjectGuid itemGuid, uint8 _count)
     return false;
 }
 
-bool CPlayer::BuyBackItemFromMultiVendor(uint32 slot)
+bool CCPlayer::BuyBackItemFromMultiVendor(uint32 slot)
 {
     DEBUG_LOG("WORLD: BuyBackItemFromMultiVendor");
 
@@ -918,7 +917,7 @@ bool CPlayer::BuyBackItemFromMultiVendor(uint32 slot)
     return false;
 }
 
-void CPlayer::LearnTalentTemplate(uint8 spec)
+void CCPlayer::LearnTalentTemplate(uint8 spec)
 {
     m_player->resetTalents(true);
 
@@ -928,14 +927,14 @@ void CPlayer::LearnTalentTemplate(uint8 spec)
 }
 
 
-void CPlayer::ApplyEnchantTemplate(uint8 spec)
+void CCPlayer::ApplyEnchantTemplate(uint8 spec)
 {
     for (auto& itr : sCustom.GetEnchantContainer())
     if (itr->ClassId == m_player->getClass() && itr->SpecId == spec)
         EnchantItem(itr->SpellId, itr->SlotId, "");
 }
 
-uint32 CPlayer::GetAVGILevel(bool levelasmin)
+uint32 CCPlayer::GetAVGILevel(bool levelasmin)
 {
     uint32 TotLevel = 0;
     uint8 ItemCount = 0;

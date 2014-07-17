@@ -16,7 +16,6 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "CFBG.h"
 #include "World.h"
 #include "Custom.h"
 #include "ObjectMgr.h"
@@ -25,39 +24,25 @@
 #include "BattleGround/BattleGround.h"
 #include "BattleGround/BattleGroundMgr.h"
 #include "CPlayer.h"
+#include "NewPlayer.h"
 
-CFBG::CFBG(Player* pPlayer)
+bool CPlayer::NativeTeam() const
 {
-    m_player = pPlayer;
-
-    m_fRace = 0;
-    m_oRace = 0;
-    m_fFaction = 0;
-    m_oFaction = 0;
-    m_oPlayerBytes = 0;
-    m_oPlayerBytes2 = 0;
-    m_fPlayerBytes = 0;
-    m_fPlayerBytes2 = 0;
-    m_FakeOnNextTick = 0;
+    return GetTeam() == GetOTeam();
 }
 
-bool CFBG::NativeTeam() const
+void CPlayer::SetFakeValues()
 {
-    return m_player->GetTeam() == m_player->GetOTeam();
-}
+    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
+    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
 
-void CFBG::SetFakeValues()
-{
-    m_oRace = m_player->GetByteValue(UNIT_FIELD_BYTES_0, 0);
-    m_oFaction = m_player->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
-
-    m_fRace = sCustom.PickFakeRace(m_player->getClass(), m_player->GetOTeam());
+    m_fRace = sCustom.PickFakeRace(getClass(), GetOTeam());
     m_fFaction = Player::getFactionForRace(m_fRace);
 
-    m_oPlayerBytes = m_player->GetUInt32Value(PLAYER_BYTES);
-    m_oPlayerBytes2 = m_player->GetUInt32Value(PLAYER_BYTES_2);
-    m_fPlayerBytes = sCustom.GetFakePlayerBytes(m_fRace, m_player->getGender());
-    m_fPlayerBytes2 = sCustom.GetFakePlayerBytes2(m_fRace, m_player->getGender());
+    m_oPlayerBytes = GetUInt32Value(PLAYER_BYTES);
+    m_oPlayerBytes2 = GetUInt32Value(PLAYER_BYTES_2);
+    m_fPlayerBytes = sCustom.GetFakePlayerBytes(m_fRace, getGender());
+    m_fPlayerBytes2 = sCustom.GetFakePlayerBytes2(m_fRace, getGender());
 
     if (!m_fPlayerBytes)
         m_fPlayerBytes = m_oPlayerBytes;
@@ -67,9 +52,9 @@ void CFBG::SetFakeValues()
 }
 
 
-void CFBG::RecachePlayersFromBG()
+void CPlayer::RecachePlayersFromBG()
 {
-    BattleGround* bg = m_player->GetBattleGround();
+    BattleGround* bg = GetBattleGround();
 
     if (!bg)
         return;
@@ -78,22 +63,22 @@ void CFBG::RecachePlayersFromBG()
     {
         if (Player* player = sObjectMgr.GetPlayer(itr.first))
         {
-            if (!player->GetCFBG()->NativeTeam())
+            if (!player->ToCPlayer()->NativeTeam())
             {
                 // Erase bg players from source player cache
                 WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
                 data << player->GetObjectGuid();
-                m_player->GetSession()->SendPacket(&data);
+                GetSession()->SendPacket(&data);
                 // Send bg player data to source player
-                data = player->GetCFBG()->BuildNameQuery();
-                m_player->GetSession()->SendPacket(&data);
+                data = player->ToCPlayer()->BuildNameQuery();
+                GetSession()->SendPacket(&data);
             }
 
             if (!NativeTeam())
             {
                 // Erase source player from bg players cache
                 WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
-                data << m_player->GetObjectGuid();
+                data << GetObjectGuid();
                 player->GetSession()->SendPacket(&data);
                 // Send new source data to bg players
                 data = BuildNameQuery();
@@ -105,54 +90,54 @@ void CFBG::RecachePlayersFromBG()
             // Couldn't find bgplayer, recache him for source player in case he logs in again.
             WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
             data << itr.first;
-            m_player->GetSession()->SendPacket(&data);
+            GetSession()->SendPacket(&data);
         }
     }
 }
 
-void CFBG::RecachePlayersFromList()
+void CPlayer::RecachePlayersFromList()
 {
     for (auto& itr : m_FakedPlayers)
     {
         WorldPacket data(SMSG_INVALIDATE_PLAYER, 8);
         data << itr;
-        m_player->GetSession()->SendPacket(&data);
+        GetSession()->SendPacket(&data);
 
         if (Player* player = sObjectMgr.GetPlayer(itr))
         {
-            WorldPacket data = player->GetCFBG()->BuildNameQuery();
-            m_player->GetSession()->SendPacket(&data);
+            WorldPacket data = player->ToCPlayer()->BuildNameQuery();
+            GetSession()->SendPacket(&data);
         }
     }
 
     m_FakedPlayers.clear();
 }
 
-WorldPacket CFBG::BuildNameQuery()
+WorldPacket CPlayer::BuildNameQuery()
 {
     WorldPacket data(SMSG_NAME_QUERY_RESPONSE, (8 + 1 + 4 + 4 + 4 + 10));
-    data << m_player->GetObjectGuid();      // player guid
-    data << m_player->GetName();            // player name
+    data << GetObjectGuid();      // player guid
+    data << GetName();            // player name
     data << uint8(0);                       // realm name
-    data << uint32(m_player->getRace());    // player race
-    data << uint32(m_player->getGender());  // player gender
-    data << uint32(m_player->getClass());   // player class
+    data << uint32(getRace());    // player race
+    data << uint32(getGender());  // player gender
+    data << uint32(getClass());   // player class
     data << uint8(0);                       // is not declined
 
     return data;
 }
 
-void CFBG::FakeDisplayID()
+void CPlayer::FakeDisplayID()
 {
     if (NativeTeam())
         return;
 
-    PlayerInfo const* info = sObjectMgr.GetPlayerInfo(m_player->getRace(), m_player->getClass());
+    PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
     if (!info)
     {
         for (auto i = 0; i < MAX_CLASSES; ++i)
         {
-            info = sObjectMgr.GetPlayerInfo(m_player->getRace(), i);
+            info = sObjectMgr.GetPlayerInfo(getRace(), i);
             if (info)
                 break;
         }
@@ -160,66 +145,66 @@ void CFBG::FakeDisplayID()
 
     if (!info)
     {
-        sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", m_player->GetGUIDLow());
+        sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", GetGUIDLow());
         return;
     }
 
     // reset scale before reapply auras
-    m_player->SetObjectScale(DEFAULT_OBJECT_SCALE);
+    SetObjectScale(DEFAULT_OBJECT_SCALE);
 
-    uint8 gender = m_player->getGender();
+    uint8 gender = getGender();
     switch (gender)
     {
     case GENDER_FEMALE:
-        m_player->SetDisplayId(info->displayId_f);
-        m_player->SetNativeDisplayId(info->displayId_f);
+        SetDisplayId(info->displayId_f);
+        SetNativeDisplayId(info->displayId_f);
         break;
     case GENDER_MALE:
-        m_player->SetDisplayId(info->displayId_m);
-        m_player->SetNativeDisplayId(info->displayId_m);
+        SetDisplayId(info->displayId_m);
+        SetNativeDisplayId(info->displayId_m);
         break;
     default:
         sLog.outError("Invalid gender %u for player", gender);
         return;
     }
 
-    m_player->SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
-    m_player->SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
+    SetUInt32Value(PLAYER_BYTES, getFPlayerBytes());
+    SetUInt32Value(PLAYER_BYTES_2, getFPlayerBytes2());
 }
 
-void CFBG::JoinBattleGround(BattleGround* bg)
+void CPlayer::JoinBattleGround(BattleGround* bg)
 {
     if (bg->isArena())
         return;
 
     if (!NativeTeam())
     {
-        m_FakedPlayers.push_back(m_player->GetObjectGuid());
-        m_player->SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
-        m_player->setFaction(getFFaction());
+        m_FakedPlayers.push_back(GetObjectGuid());
+        SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
+        setFaction(getFFaction());
     }
 
     SetRecache();
     FakeDisplayID();
 }
 
-void CFBG::LeaveBattleGround(BattleGround* bg)
+void CPlayer::LeaveBattleGround(BattleGround* bg)
 {
     if (bg->isArena())
         return;
 
-    m_player->SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
-    m_player->setFaction(getOFaction());
-    m_player->InitDisplayIds();
+    SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
+    setFaction(getOFaction());
+    InitDisplayIds();
 
     SetFakedPlayers(m_FakedPlayers);
     SetRecache();
 
-    m_player->SetUInt32Value(PLAYER_BYTES, getOPlayerBytes());
-    m_player->SetUInt32Value(PLAYER_BYTES_2, getOPlayerBytes2());
+    SetUInt32Value(PLAYER_BYTES, getOPlayerBytes());
+    SetUInt32Value(PLAYER_BYTES_2, getOPlayerBytes2());
 }
 
-bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
+bool CPlayer::SendBattleGroundChat(ChatMsg msgtype, std::string message)
 {
     // Select distance to broadcast to.
     float distance = sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_SAY);
@@ -229,7 +214,7 @@ bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
     else if (msgtype == CHAT_MSG_EMOTE)
         sWorld.getConfig(CONFIG_FLOAT_LISTEN_RANGE_TEXTEMOTE);
 
-    BattleGround* pBattleGround = m_player->GetBattleGround();
+    BattleGround* pBattleGround = GetBattleGround();
 
     if (!pBattleGround || pBattleGround->isArena()) // Only fake chat in BG's. CFBG should not interfere with arenas.
         return false;
@@ -238,47 +223,21 @@ bool CFBG::SendBattleGroundChat(ChatMsg msgtype, std::string message)
     {
         if (Player* pPlayer = sObjectMgr.GetPlayer(itr.first))
         {
-            if (m_player->GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
+            if (GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
             {
                 WorldPacket data(SMSG_MESSAGECHAT, 200);
 
 
-                if (m_player->GetTeam() == pPlayer->GetTeam())
-                    ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), LANG_UNIVERSAL, m_player->GetChatTag(), m_player->GetObjectGuid(), m_player->GetName());
+                if (GetTeam() == pPlayer->GetTeam())
+                    ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), LANG_UNIVERSAL, GetChatTag(), GetObjectGuid(), GetName());
                 else if (msgtype != CHAT_MSG_EMOTE)
-                    ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON, m_player->GetChatTag(), m_player->GetObjectGuid(), m_player->GetName());
+                    ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), pPlayer->GetOTeam() == ALLIANCE ? LANG_ORCISH : LANG_COMMON, GetChatTag(), GetObjectGuid(), GetName());
 
                 pPlayer->GetSession()->SendPacket(&data);
             }
         }
     }
     return true;
-}
-
-void CFBG::RewardReputationToXBGTeam(BattleGround* pBG, uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId)
-{
-    FactionEntry const* a_factionEntry = sFactionStore.LookupEntry(faction_ally);
-    FactionEntry const* h_factionEntry = sFactionStore.LookupEntry(faction_horde);
-
-    if (!a_factionEntry || !h_factionEntry)
-        return;
-
-    for (auto& itr : pBG->GetPlayers())
-    {
-        if (itr.second.OfflineRemoveTime)
-            continue;
-
-        Player* plr = sObjectMgr.GetPlayer(itr.first);
-
-        if (!plr)
-        {
-            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr.first.GetString().c_str());
-            continue;
-        }
-
-        if (plr->GetTeam() == teamId) // Check if player is playing in the team that capped and then reward by original team.
-            plr->GetReputationMgr().ModifyReputation(plr->GetOTeam() == ALLIANCE ? a_factionEntry : h_factionEntry, gain);
-    }
 }
 
 bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundBracketId bracket_id, uint32 minPlayers, uint32 maxPlayers)
@@ -303,7 +262,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
         for (auto& jtr : itr->Players)
         if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
-            GroupIlevel += pPlayer->GetCPlayer()->GetAVGILevel(true);
+            GroupIlevel += pPlayer->GetCCPlayer()->GetAVGILevel(true);
 
         ItemLevelSorting.insert(std::make_pair(GroupIlevel, itr));
     }
@@ -328,7 +287,7 @@ bool BattleGroundQueue::CheckMixedMatch(BattleGround* bg_template, BattleGroundB
 
             for (auto& jtr : ginfo->Players)
             if (Player* pPlayer = sObjectMgr.GetPlayer(jtr.first))
-                GroupIlevel += pPlayer->GetCPlayer()->GetAVGILevel(true);
+                GroupIlevel += pPlayer->GetCCPlayer()->GetAVGILevel(true);
 
             if (m_SelectionPools[ginfo->GroupTeam == ALLIANCE ? BG_TEAM_ALLIANCE : BG_TEAM_HORDE].AddGroup(ginfo, maxPlayers))
             {

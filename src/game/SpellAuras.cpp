@@ -46,7 +46,7 @@
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
 #include "MapManager.h"
-#include "AntiCheat.h"
+#include "NewPlayer.h"
 
 #define NULL_AURA_SLOT 0xFF
 
@@ -4213,7 +4213,7 @@ void Aura::HandleAuraModIncreaseFlightSpeed(bool apply, bool Real)
             data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
 
             if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
-                ((Player*)GetTarget())->GetAntiCheat()->SetGMFly(false);
+                ((Player*)GetTarget())->ToCPlayer()->SetGMFly(false);
         }
         data << target->GetPackGUID();
         data << uint32(0);                                  // unknown
@@ -5781,7 +5781,7 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
         data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
 
         if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
-            ((Player*)GetTarget())->GetAntiCheat()->SetGMFly(false);
+            ((Player*)GetTarget())->ToCPlayer()->SetGMFly(false);
     }
     data << GetTarget()->GetPackGUID();
     data << uint32(0);                                      // unk

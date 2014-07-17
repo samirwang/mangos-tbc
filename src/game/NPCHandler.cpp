@@ -343,7 +343,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
 
     recv_data >> guid >> menuId >> gossipListId;
 
-    if (_player->GetCPlayer()->GetLastGossipGuid() != guid)
+    if (_player->GetCCPlayer()->GetLastGossipGuid() != guid)
         return; // Possible hack attempt
 
     if (_player->PlayerTalkClass->GossipOptionCoded(gossipListId))

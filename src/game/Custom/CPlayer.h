@@ -16,8 +16,8 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _CPLAYER_H
-#define _CPLAYER_H
+#ifndef _CCPlayer_H
+#define _CCPlayer_H
 
 #include "Player.h"
 #include "GossipDef.h"
@@ -55,11 +55,11 @@ struct Country
     std::string FULL;
 };
 
-class CPlayer
+class CCPlayer
 {
 public:
-    CPlayer(Player* pPlayer);
-    ~CPlayer();
+    CCPlayer(Player* pPlayer);
+    ~CCPlayer();
 
     typedef std::vector<uint32> DelayedSpellLearn;
 

@@ -52,7 +52,7 @@
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
 #include "CPlayer.h"
-#include "AntiCheat.h"
+#include "NewPlayer.h"
 
 #include <math.h>
 #include <stdarg.h>
@@ -7509,7 +7509,7 @@ void Unit::UpdateSpeed(UnitMoveType mtype, bool forced, float ratio)
     SetSpeedRate(mtype, speed * ratio, forced);
 
     if (GetTypeId() == TYPEID_PLAYER)
-        ((Player*)this)->GetAntiCheat()->SkipAntiCheat();
+        ((Player*)this)->ToCPlayer()->SkipAntiCheat();
 }
 
 float Unit::GetSpeed(UnitMoveType mtype) const
@@ -8367,7 +8367,7 @@ void Unit::SetLevel(uint32 lvl)
         ((Player*)this)->SetGroupUpdateFlag(GROUP_UPDATE_FLAG_LEVEL);
 
     if (GetTypeId() == TYPEID_PLAYER) // Learn new spells for level
-        ((Player*)this)->GetCPlayer()->FillGreenSpellList();
+        ((Player*)this)->GetCCPlayer()->FillGreenSpellList();
 }
 
 void Unit::SetHealth(uint32 val)

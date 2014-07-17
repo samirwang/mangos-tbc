@@ -64,11 +64,9 @@
 #include "SQLStorages.h"
 #include "Custom.h"
 #include "Settings.h"
-#include "AntiCheat.h"
-#include "CFBG.h"
-#include "Settings.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
+#include "NewPlayer.h"
 
 #include <cmath>
 
@@ -387,10 +385,8 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
-    m_AntiCheat = new AntiCheat(this);
-    m_CFBG = new CFBG(this);
     m_Settings = new Settings(this);
-    m_CPlayer = new CPlayer(this);
+    m_CCPlayer = new CCPlayer(this);
 
     m_transport = 0;
 
@@ -562,8 +558,6 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
 
 Player::~Player()
 {
-    delete m_AntiCheat;
-
     CleanupsBeforeDelete();
 
     // it must be unloaded already in PlayerLogout and accessed only for loggined player
@@ -821,7 +815,7 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     }
     // all item positions resolved*/
 
-    GetCFBG()->SetFakeValues();
+    ToCPlayer()->SetFakeValues();
 
     return true;
 }
@@ -1147,7 +1141,7 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     if (!IsInWorld())
         return;
 
-    GetCPlayer()->CUpdate(update_diff);
+    GetCCPlayer()->CUpdate(update_diff);
 
     // Undelivered mail
     if (m_nextMailDelivereTime && m_nextMailDelivereTime <= time(NULL))
@@ -1598,12 +1592,12 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
     // client without expansion support
     if (GetSession()->Expansion() < mapEntry->Expansion())
     {
-        GetCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
+        GetCCPlayer()->BothChat << "You do not have the required expansion to teleport here!";
         return false;
     }
     
     if (!cheat)
-        GetAntiCheat()->SkipAntiCheat();
+        ToCPlayer()->SkipAntiCheat();
 
     MapEntry const* mEntry = sMapStore.LookupEntry(mapid);  // Validity checked in IsValidMapCoord
 
@@ -5873,7 +5867,7 @@ void Player::CheckAreaExploreAndOutdoor()
     else if (sWorld.getConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK) && !isGameMaster())
     {
         RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
-        GetAntiCheat()->SkipAntiCheat();
+        ToCPlayer()->SkipAntiCheat();
     }
 
     if (areaFlag == 0xffff)
@@ -9583,7 +9577,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool
                         eslot != EQUIPMENT_SLOT_RANGED && eslot != EQUIPMENT_SLOT_TABARD &&
                         eslot != EQUIPMENT_SLOT_BODY)
                     {
-                        m_CPlayer->BothChat << "You can't equip items while in battleground or battleground queue";
+                        m_CCPlayer->BothChat << "You can't equip items while in battleground or battleground queue";
                         return EQUIP_ERR_ITEM_CANT_BE_EQUIPPED;
                     }
                 }
@@ -14871,7 +14865,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
 
     _LoadDeclinedNames(holder->GetResult(PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES));
 
-    GetCFBG()->SetFakeValues();
+    ToCPlayer()->SetFakeValues();
 
     return true;
 }
@@ -15921,14 +15915,14 @@ void Player::SaveToDB()
     uberInsert.addUInt32(GetGUIDLow());
     uberInsert.addUInt32(GetSession()->GetAccountId());
     uberInsert.addString(m_name);
-    uberInsert.addUInt8(GetCFBG()->getORace());
+    uberInsert.addUInt8(ToCPlayer()->getORace());
     uberInsert.addUInt8(getClass());
     uberInsert.addUInt8(getGender());
     uberInsert.addUInt32(getLevel());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_XP));
     uberInsert.addUInt32(GetMoney());
-    uberInsert.addUInt32(GetCFBG()->getOPlayerBytes());
-    uberInsert.addUInt32(GetCFBG()->getOPlayerBytes2());
+    uberInsert.addUInt32(ToCPlayer()->getOPlayerBytes());
+    uberInsert.addUInt32(ToCPlayer()->getOPlayerBytes2());
     uberInsert.addUInt32(GetUInt32Value(PLAYER_FLAGS));
 
     if (!IsBeingTeleported())
@@ -17716,7 +17710,7 @@ void Player::TakeExtendedCost(uint32 extendedCostId, uint32 count)
 bool Player::BuyItemFromVendor(ObjectGuid vendorGuid, uint32 item, uint8 count, uint8 bag, uint8 slot)
 {
     if (vendorGuid == GetObjectGuid())
-        return GetCPlayer()->BuyItemFromMultiVendor(item, count, bag, slot);
+        return GetCCPlayer()->BuyItemFromMultiVendor(item, count, bag, slot);
 
     // cheating attempt
     if (count < 1) count = 1;
@@ -20322,7 +20316,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
     DETAIL_LOG("TalentID: %u Rank: %u Spell: %u\n", talentId, talentRank, spellid);
 
     // Possibly learn new spells after talent learn
-    GetCPlayer()->FillGreenSpellList();
+    GetCCPlayer()->FillGreenSpellList();
 }
 
 void Player::UpdateFallInformationIfNeed(MovementInfo const& minfo, uint16 opcode)

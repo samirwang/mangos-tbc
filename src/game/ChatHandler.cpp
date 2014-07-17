@@ -35,8 +35,8 @@
 #include "Util.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "CFBG.h"
 #include "CPlayer.h"
+#include "NewPlayer.h"
 
 bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg, uint32 lang)
 {
@@ -76,7 +76,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
 
     DEBUG_LOG("CHAT: packet received. type %u, lang %u", type, lang);
 
-    if (!GetPlayer()->GetCFBG()->NativeTeam())
+    if (!GetPlayer()->ToCPlayer()->NativeTeam())
     {
         // prevent talking at unknown language (cheating)
         LanguageDesc const* langDesc = GetLanguageDescByID(lang);
@@ -188,7 +188,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                 break;
 
             if (!GetPlayer()->isGameMaster())
-            if (GetPlayer()->GetCFBG()->SendBattleGroundChat(ChatMsg(type), msg))
+            if (GetPlayer()->ToCPlayer()->SendBattleGroundChat(ChatMsg(type), msg))
                     return;
 
             if (type == CHAT_MSG_SAY)
@@ -310,9 +310,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (msg.empty())
                 break;
 
-            if (GetPlayer()->GetCPlayer()->WChatOn())
+            if (GetPlayer()->GetCCPlayer()->WChatOn())
             {
-                GetPlayer()->GetCPlayer()->SendWorldChatMsg(msg);
+                GetPlayer()->GetCCPlayer()->SendWorldChatMsg(msg);
                 break;
             }
 

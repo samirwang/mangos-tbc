@@ -52,7 +52,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
-#include "AntiCheat.h"
+#include "NewPlayer.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {
@@ -6734,7 +6734,7 @@ void Spell::EffectCharge(SpellEffectIndex /*eff_idx*/)
         m_caster->Attack(unitTarget, true);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        ((Player*)m_caster)->GetAntiCheat()->SkipAntiCheat();
+        ((Player*)m_caster)->ToCPlayer()->SkipAntiCheat();
 }
 
 void Spell::EffectCharge2(SpellEffectIndex /*eff_idx*/)
@@ -6760,7 +6760,7 @@ void Spell::EffectCharge2(SpellEffectIndex /*eff_idx*/)
         m_caster->Attack(unitTarget, true);
 
     if (m_caster->GetTypeId() == TYPEID_PLAYER)
-        ((Player*)m_caster)->GetAntiCheat()->SkipAntiCheat();
+        ((Player*)m_caster)->ToCPlayer()->SkipAntiCheat();
 }
 
 void Spell::DoSummonCritter(SpellEffectIndex eff_idx, uint32 forceFaction)

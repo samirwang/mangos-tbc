@@ -152,7 +152,7 @@ bool PlayerMenu::GossipOptionCoded(unsigned int Selection)
 
 void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
 {
-    GetMenuSession()->GetPlayer()->GetCPlayer()->SetLastGossipGuid(objectGuid);
+    GetMenuSession()->GetPlayer()->GetCCPlayer()->SetLastGossipGuid(objectGuid);
 
     WorldPacket data(SMSG_GOSSIP_MESSAGE, (100));           // guess size
     data << ObjectGuid(objectGuid);
@@ -170,7 +170,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
             sLog.outError("%s", ss.str().c_str());
 
             ss << " please report this to server staff!";
-            GetMenuSession()->GetPlayer()->GetCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+            GetMenuSession()->GetPlayer()->GetCCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
             
             continue;
         }
@@ -196,7 +196,7 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
             sLog.outError("%s", ss.str().c_str());
 
             ss << " please report this to server staff!";
-            GetMenuSession()->GetPlayer()->GetCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
+            GetMenuSession()->GetPlayer()->GetCCPlayer()->BothChat << "|cffffffff" << ss.str() << std::endl;
 
             continue;
         }

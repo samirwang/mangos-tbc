@@ -40,8 +40,8 @@ void Custom::SendWorldChat(ObjectGuid guid, std::string msg)
     for (auto& itr : sWorld.GetSessionMap())
     if (itr.second)
     if (Player* pPlayer = itr.second->GetPlayer())
-    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->GetCPlayer()->WChatOn())
-        pPlayer->GetCPlayer()->BoxChat << msg << std::endl;
+    if (pPlayer->IsInWorld() && !pPlayer->GetSocial()->HasIgnore(guid) && pPlayer->GetCCPlayer()->WChatOn())
+        pPlayer->GetCCPlayer()->BoxChat << msg << std::endl;
 }
 
 void Custom::SendGMMessage(std::string msg)
@@ -50,7 +50,7 @@ void Custom::SendGMMessage(std::string msg)
     if (itr.second)
     if (Player* pPlayer = itr.second->GetPlayer())
     if (pPlayer->IsInWorld() && pPlayer->GetSession()->GetSecurity() > SEC_PLAYER)
-        pPlayer->GetCPlayer()->BothChat << msg << std::endl;
+        pPlayer->GetCCPlayer()->BothChat << msg << std::endl;
 }
 
 Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
@@ -203,8 +203,8 @@ uint8 Custom::PickFakeRace(uint8 pclass, Team team)
 
 bool ChatHandler::HandleWToggleCommand(char* /*args*/)
 {
-    m_session->GetPlayer()->GetCPlayer()->ToggleWChat();
-    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->GetCPlayer()->WChatOn() ? "en" : "dis");
+    m_session->GetPlayer()->GetCCPlayer()->ToggleWChat();
+    PSendSysMessage("%s World chat is now %sabled", sCustom.ChatNameWrapper("World Chat").c_str(), m_session->GetPlayer()->GetCCPlayer()->WChatOn() ? "en" : "dis");
 
     return true;
 }
@@ -214,8 +214,8 @@ bool ChatHandler::HandleWChatCommand(char* args)
     if (!*args)
         return false;
 
-    if (m_session->GetPlayer()->GetCPlayer()->WChatOn())
-        m_session->GetPlayer()->GetCPlayer()->SendWorldChatMsg(args);
+    if (m_session->GetPlayer()->GetCCPlayer()->WChatOn())
+        m_session->GetPlayer()->GetCCPlayer()->SendWorldChatMsg(args);
     else
         PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
 
@@ -241,7 +241,7 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
         data << uint32(0);
     }
 
-    GetMenuSession()->GetPlayer()->GetCPlayer()->SetScriptID(scriptid);
+    GetMenuSession()->GetPlayer()->GetCCPlayer()->SetScriptID(scriptid);
 
     GetMenuSession()->SendPacket(&data);
 
@@ -309,5 +309,31 @@ void Custom::LoadEnchantContainer()
         while (result->NextRow());
 
         delete result;
+    }
+}
+
+void BattleGround::RewardReputationToXBGTeam(uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId)
+{
+    FactionEntry const* a_factionEntry = sFactionStore.LookupEntry(faction_ally);
+    FactionEntry const* h_factionEntry = sFactionStore.LookupEntry(faction_horde);
+
+    if (!a_factionEntry || !h_factionEntry)
+        return;
+
+    for (auto& itr : GetPlayers())
+    {
+        if (itr.second.OfflineRemoveTime)
+            continue;
+
+        Player* plr = sObjectMgr.GetPlayer(itr.first);
+
+        if (!plr)
+        {
+            sLog.outError("BattleGround:RewardReputationToTeam: %s not found!", itr.first.GetString().c_str());
+            continue;
+        }
+
+        if (plr->GetTeam() == teamId) // Check if player is playing in the team that capped and then reward by original team.
+            plr->GetReputationMgr().ModifyReputation(plr->GetOTeam() == ALLIANCE ? a_factionEntry : h_factionEntry, gain);
     }
 }

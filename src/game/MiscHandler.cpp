@@ -1278,7 +1278,7 @@ void WorldSession::HandleSetTitleOpcode(WorldPacket& recv_data)
 void WorldSession::HandleTimeSyncResp(WorldPacket& recv_data)
 {
     if (Player* player = GetPlayer())
-        player->GetCPlayer()->Sometimes();
+        player->GetCCPlayer()->Sometimes();
 
     uint32 counter, clientTicks;
     recv_data >> counter >> clientTicks;

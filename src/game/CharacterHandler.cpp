@@ -40,6 +40,7 @@
 #include "Language.h"
 #include "SpellMgr.h"
 #include "CPlayer.h"
+#include "NewPlayer.h"
 
 // config option SkipCinematics supported values
 enum CinematicsSkipMode
@@ -355,7 +356,7 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recv_data)
         }
     }
 
-    Player* pNewChar = new Player(this);
+    CPlayer* pNewChar = new CPlayer(this);
     if (!pNewChar->Create(sObjectMgr.GeneratePlayerLowGuid(), name, race_, class_, gender, skin, face, hairStyle, hairColor, facialHair, outfitId))
     {
         // Player not create (race/class problem?)
@@ -481,7 +482,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 {
     ObjectGuid playerGuid = holder->GetGuid();
 
-    Player* pCurrChar = new Player(this);
+    CPlayer* pCurrChar = new CPlayer(this);
     pCurrChar->GetMotionMaster()->Initialize();
 
     // "GetAccountId()==db stored account id" checked in LoadFromDB (prevent login not own character using cheating tools)
@@ -615,7 +616,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         else if (pCurrChar->GetSession()->Expansion() < mapEntry->Expansion())
             lockStatus = AREA_LOCKSTATUS_INSUFFICIENT_EXPANSION;
     }
-    if (lockStatus != AREA_LOCKSTATUS_OK || !pCurrChar->GetMap()->Add(pCurrChar))
+    if (lockStatus != AREA_LOCKSTATUS_OK || !pCurrChar->GetMap()->Add(pCurrChar->ToPlayer()))
     {
         // normal delayed teleport protection not applied (and this correct) for this case (Player object just created)
         AreaTrigger const* at = sObjectMgr.GetGoBackTrigger(pCurrChar->GetMapId());
@@ -716,7 +717,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     if (!pCurrChar->IsStandState() && !pCurrChar->hasUnitState(UNIT_STAT_STUNNED))
         pCurrChar->SetStandState(UNIT_STAND_STATE_STAND);
 
-    pCurrChar->GetCPlayer()->OnLogin();
+    pCurrChar->GetCCPlayer()->OnLogin();
 
     m_playerLoading = false;
     delete holder;

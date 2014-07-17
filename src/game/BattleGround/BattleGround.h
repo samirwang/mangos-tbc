@@ -270,6 +270,9 @@ class BattleGround
 {
 private:
     std::vector<ObjectGuid> m_FakedPlayers;
+public:
+    void RewardReputationToXBGTeam(uint32 faction_ally, uint32 faction_horde, uint32 gain, Team teamId);
+private:
     // !Custom
         friend class BattleGroundMgr;
 

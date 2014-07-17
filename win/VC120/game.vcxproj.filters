@@ -586,6 +586,9 @@
     <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
       <Filter>Custom\CPlusMgr</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\NewPlayer.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1081,12 +1084,6 @@
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h">
       <Filter>Custom\Warden</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
-      <Filter>Custom\AntiCheat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\CFBG.h">
-      <Filter>Custom\CFBG</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Custom.h">
       <Filter>Custom\Custom</Filter>
     </ClInclude>
@@ -1098,6 +1095,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
       <Filter>Custom\CPlusMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\NewPlayer.h">
+      <Filter>Custom</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

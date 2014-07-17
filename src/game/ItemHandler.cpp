@@ -483,7 +483,7 @@ void WorldSession::HandleSellItemOpcode(WorldPacket& recv_data)
     recv_data >> _count;
 
     if (vendorGuid == GetPlayer()->GetObjectGuid())
-    if (GetPlayer()->GetCPlayer()->SellItemToMultiVendor(itemGuid, _count))
+    if (GetPlayer()->GetCCPlayer()->SellItemToMultiVendor(itemGuid, _count))
         return;
 
     // prevent possible overflow, as mangos uses uint32 for item count
@@ -598,7 +598,7 @@ void WorldSession::HandleBuybackItem(WorldPacket& recv_data)
     recv_data >> vendorGuid >> slot;
 
     if (vendorGuid == GetPlayer()->GetObjectGuid())
-    if (GetPlayer()->GetCPlayer()->BuyBackItemFromMultiVendor(slot))
+    if (GetPlayer()->GetCCPlayer()->BuyBackItemFromMultiVendor(slot))
         return;
         
 
@@ -706,7 +706,7 @@ void WorldSession::HandleListInventoryOpcode(WorldPacket& recv_data)
 
 void WorldSession::SendListInventory(ObjectGuid vendorguid)
 {
-    GetPlayer()->GetCPlayer()->SetMultiVendor(0, vendorguid);
+    GetPlayer()->GetCCPlayer()->SetMultiVendor(0, vendorguid);
 
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
 

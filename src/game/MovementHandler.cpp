@@ -29,7 +29,7 @@
 #include "WaypointMovementGenerator.h"
 #include "MapPersistentStateMgr.h"
 #include "ObjectMgr.h"
-#include "AntiCheat.h"
+#include "NewPlayer.h"
 
 void WorldSession::HandleMoveWorldportAckOpcode(WorldPacket & /*recv_data*/)
 {
@@ -273,7 +273,7 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
         plMover->HandleFall(movementInfo);
 
     if (plMover)
-        plMover->GetAntiCheat()->DetectHacks(movementInfo, opcode);
+        plMover->ToCPlayer()->DetectHacks(movementInfo, opcode);
 
     /* process position-change */
     HandleMoverRelocation(movementInfo);

@@ -35,10 +35,10 @@
 #include "Mail.h"
 #include "Util.h"
 #include "SpellMgr.h"
-#include "AntiCheat.h"
 #ifdef _DEBUG_VMAPS
 #include "VMapFactory.h"
 #endif
+#include "NewPlayer.h"
 
 //-----------------------Npc Commands-----------------------
 bool ChatHandler::HandleNpcSayCommand(char* args)
@@ -606,7 +606,7 @@ bool ChatHandler::HandleGonameCommand(char* args)
 
         if (target->HasMovementFlag(MOVEFLAG_FLYING))
         {
-            _player->GetAntiCheat()->SetGMFly(true);
+            _player->ToCPlayer()->SetGMFly(true);
 
             WorldPacket data;
             data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);
