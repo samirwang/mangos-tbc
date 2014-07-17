@@ -60,11 +60,11 @@ uint32 World::GetSaveInterval()
 {
     uint32 hardtime = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
     
-    if (!sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE))
+    if (!hardtime)
         hardtime = ceil((float)(1.f / sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC) * sWorld.GetActiveSessionCount()*IN_MILLISECONDS));
 
-    if (hardtime < 2 * IN_MILLISECONDS)
-        hardtime = 2 * IN_MILLISECONDS;
+    if (hardtime < 2000) // Milliseconds
+        hardtime = 2000;
 
     return urand(hardtime / 2, hardtime * 3 / 2);
 }

@@ -318,7 +318,7 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
     if (!cinfo)
     {
-        BoxChat << MSG_COLOR_WHITE << " This pet seems to be removed from the database. Please report that creature " << entry << " is missing." << std::endl;
+        BoxChat << MSG_COLOR_WHITE << " This pet doesn't exist in our database. Please report that creature " << entry << " is missing." << std::endl;
         return;
     }
 
@@ -329,9 +329,7 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     // used guids from specially reserved range (can be 0 if no free values)
     uint32 lowguid = sObjectMgr.GenerateStaticCreatureLowGuid();
     if (!lowguid)
-    {
         return;
-    }
 
     if (!pCreature->Create(lowguid, pos, cinfo))
     {
@@ -349,7 +347,6 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     if(!pet->CreateBaseAtCreature(pCreature))
     {
         delete pet;
-        //PlayerTalkClass->CloseGossip();
         return;
     }
 
