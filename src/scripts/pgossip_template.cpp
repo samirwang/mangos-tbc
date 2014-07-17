@@ -18,7 +18,7 @@
 
 #include "Precompiled.h"
 #include "CPlayer.h"
-#include "Settings.h"
+#include "NewPlayer.h"
 
 class pgossip_templatesystem : public PlayerScript
 {
@@ -244,7 +244,7 @@ public:
             pCCPlayer->ApplyEnchantTemplate(3);
         }
 
-        pPlayer->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, 1);
+        pPlayer->ToCPlayer()->SetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU, 1);
         pCCPlayer->BoxChat << sCustom.ChatNameWrapper("Template System") << " If you want to show this menu again you can enable it by the teleporter npc" << std::endl;
 
         return true;

@@ -23,7 +23,6 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "DBCStores.h"
-#include "Settings.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
 #include "NewPlayer.h"
@@ -113,17 +112,17 @@ void CCPlayer::LoadCountryData()
 
 void CCPlayer::OnLogin()
 {
-    m_player->GetSettings()->LoadSettings();
+    m_player->ToCPlayer()->LoadSettings();
     //m_player->ToCPlayer()->SetFakeValues();
 
     LoadCountryData();
 
-    SetWChat(m_player->GetSettings()->GetSetting(SETTING_UINT_WCHAT));
+    SetWChat(m_player->ToCPlayer()->GetSetting(Settings::SETTING_UINT_WCHAT));
 
     if (!m_player->ToCPlayer()->NativeTeam())
         m_player->ToCPlayer()->SetFakeOnNextTick();
 
-    if (!m_player->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
+    if (!m_player->ToCPlayer()->GetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU))
         sCPlusMgr.OnGossipHello(m_player, 1);
 
     if (m_player->GetTotalPlayedTime() < 1)

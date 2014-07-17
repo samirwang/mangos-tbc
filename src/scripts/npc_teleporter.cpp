@@ -18,9 +18,9 @@
 
 #include "Precompiled.h"
 #include "ArenaTeam.h"
-#include "Settings.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
+#include "NewPlayer.h"
 
 class NPC_Teleporter : public CreatureScript
 {
@@ -119,7 +119,7 @@ public:
             pCCPlayer->AddGossipMenuItem(Icon::TABARD, "Create a guild    ", GOSSIP_SENDER_MAIN, 107);
             pCCPlayer->AddGossipMenuItem(Icon::TABARD, "Design your tabard", GOSSIP_SENDER_MAIN, 108);
 
-            if (pPlayer->GetSettings()->GetSetting(SETTING_UINT_HIDETEMPLATEMENU))
+            if (pPlayer->ToCPlayer()->GetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU))
                 pCCPlayer->AddGossipMenuItem(Icon::GEAR, "Show templates on login", GOSSIP_SENDER_MAIN, 109);
 
             pCCPlayer->AddGossipMenuItem(Icon::GEAR, "Back              ", GOSSIP_SENDER_MAIN, 0);
@@ -156,7 +156,7 @@ public:
             pPlayer->GetSession()->SendTabardVendorActivate(pCreature->GetObjectGuid());
         else if (action == 109)
         {
-            pPlayer->GetSettings()->SetSetting(SETTING_UINT_HIDETEMPLATEMENU, false);
+            pPlayer->ToCPlayer()->SetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU, false);
             pCCPlayer->BoxChat << sCustom.ChatNameWrapper(pCreature->GetName()) << " Template menu will be shown on next login" << std::endl;
         }
         else if (action == 200) // Change Level

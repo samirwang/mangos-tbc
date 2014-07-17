@@ -63,7 +63,6 @@
 #include "DBCStores.h"
 #include "SQLStorages.h"
 #include "Custom.h"
-#include "Settings.h"
 #include "CPlayer.h"
 #include "CPlusMgr.h"
 #include "NewPlayer.h"
@@ -385,7 +384,6 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
-    m_Settings = new Settings(this);
     m_CCPlayer = new CCPlayer(this);
 
     m_transport = 0;
@@ -15879,7 +15877,7 @@ void Player::SaveToDB()
         return;
     }
 
-    GetSettings()->SaveSettings();
+    ToCPlayer()->SaveSettings();
 
     // first save/honor gain after midnight will also update the player's honor fields
     UpdateHonorFields();

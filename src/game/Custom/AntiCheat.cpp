@@ -31,9 +31,9 @@ void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 
     for (auto i = 0; i < 2; ++i)
     {
-        m_MoveInfo[i][NEW] = MoveInfo;
-        m_Opcode[i][NEW] = Opcode;
-        m_ServerTime[i][NEW] = WorldTimer::getMSTime();
+        m_MoveInfo[i][Cheats::NEW] = MoveInfo;
+        m_Opcode[i][Cheats::NEW] = Opcode;
+        m_ServerTime[i][Cheats::NEW] = WorldTimer::getMSTime();
     }
 
     if (m_FirstMoveInfo)
@@ -44,21 +44,21 @@ void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 
     if (!m_SkipAntiCheat)
     {
-        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::SPEED))
+        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::MSPEED))
             DetectSpeed();
-        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::TIME))
+        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::MTIME))
             DetectTime();
-        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::JUMP))
+        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::MJUMP))
             DetectJump();
-        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::FLY))
+        if (sCustom.HasFlag(sWorld.getConfig(CONFIG_UINT32_ANTICHEAT_ENABLED), Cheats::MFLY))
             DetectFly();
     }
     else
         --m_SkipAntiCheat;
 
-    m_MoveInfo[COM][OLD] = m_MoveInfo[COM][NEW];
-    m_Opcode[COM][OLD] = m_Opcode[COM][NEW];
-    m_ServerTime[COM][OLD] = m_ServerTime[COM][NEW];
+    m_MoveInfo[Cheats::COM][Cheats::OLD] = m_MoveInfo[Cheats::COM][Cheats::NEW];
+    m_Opcode[Cheats::COM][Cheats::OLD] = m_Opcode[Cheats::COM][Cheats::NEW];
+    m_ServerTime[Cheats::COM][Cheats::OLD] = m_ServerTime[Cheats::COM][Cheats::NEW];
 }
 
 void CPlayer::DetectSpeed()
@@ -78,7 +78,7 @@ void CPlayer::DetectSpeed()
 
     if (Map* pMap = GetMap())
     {
-        const Position* pos = m_MoveInfo[SPEED][NEW].GetPos();
+        const Position* pos = m_MoveInfo[Cheats::SPEED][Cheats::NEW].GetPos();
 
         float groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
 
@@ -90,15 +90,15 @@ void CPlayer::DetectSpeed()
     {
         ReportCheat("Speed", ss.str());
 
-        m_MoveInfo[SPEED][NEW] = m_MoveInfo[SPEED][OLD];
-        const Position* pos = m_MoveInfo[SPEED][OLD].GetPos();
+        m_MoveInfo[Cheats::SPEED][Cheats::NEW] = m_MoveInfo[Cheats::SPEED][Cheats::OLD];
+        const Position* pos = m_MoveInfo[Cheats::SPEED][Cheats::OLD].GetPos();
 
         TeleportTo(GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
     }
 
-    m_MoveInfo[SPEED][OLD] = m_MoveInfo[SPEED][NEW];
-    m_Opcode[SPEED][OLD] = m_Opcode[SPEED][NEW];
-    m_ServerTime[SPEED][OLD] = WorldTimer::getMSTime();
+    m_MoveInfo[Cheats::SPEED][Cheats::OLD] = m_MoveInfo[Cheats::SPEED][Cheats::NEW];
+    m_Opcode[Cheats::SPEED][Cheats::OLD] = m_Opcode[Cheats::SPEED][Cheats::NEW];
+    m_ServerTime[Cheats::SPEED][Cheats::OLD] = WorldTimer::getMSTime();
 
     m_LastSpeedCheck = WorldTimer::getMSTime();
 }
@@ -107,29 +107,29 @@ void CPlayer::DetectTime()
 {
     std::ostringstream ss;
 
-    ss << "Client time: " << m_MoveInfo[COM][NEW].GetTime() << " Client based server time: " << m_ClientBasedServerTime;
+    ss << "Client time: " << m_MoveInfo[Cheats::COM][Cheats::NEW].GetTime() << " Client based server time: " << m_ClientBasedServerTime;
 
-    if (abs(int32(m_MoveInfo[COM][NEW].GetTime() - m_ClientBasedServerTime)) > 5000)
+    if (abs(int32(m_MoveInfo[Cheats::COM][Cheats::NEW].GetTime() - m_ClientBasedServerTime)) > 5000)
         ReportCheat("Time", ss.str());
 }
 
 void CPlayer::DetectJump()
 {
-    if (m_Opcode[COM][NEW] != MSG_MOVE_JUMP)
+    if (m_Opcode[Cheats::COM][Cheats::NEW] != MSG_MOVE_JUMP)
         return;
 
     std::ostringstream ss;
 
     bool Detected = false;
 
-    if (m_Opcode[COM][OLD] == m_Opcode[COM][NEW])
+    if (m_Opcode[Cheats::COM][Cheats::OLD] == m_Opcode[Cheats::COM][Cheats::NEW])
     {
         Detected = true;
         ss << "Opcode";
     }
     else
     {
-        const Position* pos = m_MoveInfo[COM][OLD].GetPos();
+        const Position* pos = m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos();
         float groundZ = pos->z;
         if (Map* pMap = GetMap())
             groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
@@ -145,14 +145,14 @@ void CPlayer::DetectJump()
     {
         ReportCheat("Jump", ss.str());
 
-        const Position* pos = m_MoveInfo[COM][OLD].GetPos();
+        const Position* pos = m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos();
         float newz = pos->z;
 
         if (Map* pMap = GetMap())
             newz = pMap->GetHeight(pos->x, pos->y, pos->z);
 
         TeleportTo(GetMapId(), pos->x, pos->y, newz, pos->o, 0, 0, true);
-        m_Opcode[COM][NEW] = MSG_NULL_ACTION;
+        m_Opcode[Cheats::COM][Cheats::NEW] = MSG_NULL_ACTION;
     }
 }
 
@@ -181,13 +181,13 @@ float CPlayer::GetCurSpeed()
     {
         float thisspeed = 0;
 
-        bool back = m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_BACKWARD);
+        bool back = m_MoveInfo[Cheats::COM][i].HasMovementFlag(MOVEFLAG_BACKWARD);
 
-        if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_WALK_MODE))
+        if (m_MoveInfo[Cheats::COM][i].HasMovementFlag(MOVEFLAG_WALK_MODE))
             thisspeed = GetSpeed(MOVE_WALK);
-        else if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_SWIMMING))
+        else if (m_MoveInfo[Cheats::COM][i].HasMovementFlag(MOVEFLAG_SWIMMING))
             thisspeed = GetSpeed(back ? MOVE_SWIM_BACK : MOVE_SWIM);
-        else if (m_MoveInfo[COM][i].HasMovementFlag(MOVEFLAG_FLYING))
+        else if (m_MoveInfo[Cheats::COM][i].HasMovementFlag(MOVEFLAG_FLYING))
             thisspeed = GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
         else
             thisspeed = GetSpeed(back ? MOVE_RUN_BACK : MOVE_RUN);
@@ -206,12 +206,12 @@ float CPlayer::GetSpeedRate()
 
 float CPlayer::GetClientDiff()
 {
-    return m_MoveInfo[COM][NEW].GetTime() - m_MoveInfo[COM][OLD].GetTime();
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].GetTime() - m_MoveInfo[Cheats::COM][Cheats::OLD].GetTime();
 }
 
 float CPlayer::GetServerDiff()
 {
-    return m_ServerTime[COM][NEW] - m_ServerTime[COM][OLD];
+    return m_ServerTime[Cheats::COM][Cheats::NEW] - m_ServerTime[Cheats::COM][Cheats::OLD];
 }
 
 float CPlayer::GetDistance(bool threeD)
@@ -222,23 +222,23 @@ float CPlayer::GetDistance(bool threeD)
 float CPlayer::GetDistance2D()
 {
     return sqrt(
-        pow(m_MoveInfo[COM][OLD].GetPos()->x - m_MoveInfo[COM][NEW].GetPos()->x, 2) +
-        pow(m_MoveInfo[COM][OLD].GetPos()->y - m_MoveInfo[COM][NEW].GetPos()->y, 2)
+        pow(m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->x - m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->x, 2) +
+        pow(m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->y - m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->y, 2)
         );
 }
 
 float CPlayer::GetDistance3D()
 {
     return sqrt(
-        pow(m_MoveInfo[COM][OLD].GetPos()->x - m_MoveInfo[COM][NEW].GetPos()->x, 2) +
-        pow(m_MoveInfo[COM][OLD].GetPos()->y - m_MoveInfo[COM][NEW].GetPos()->y, 2) +
-        pow(m_MoveInfo[COM][OLD].GetPos()->z - m_MoveInfo[COM][NEW].GetPos()->z, 2)
+        pow(m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->x - m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->x, 2) +
+        pow(m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->y - m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->y, 2) +
+        pow(m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->z - m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->z, 2)
         );
 }
 
 float CPlayer::GetDistanceZ()
 {
-    return m_MoveInfo[COM][NEW].GetPos()->z - m_MoveInfo[COM][OLD].GetPos()->z;
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].GetPos()->z - m_MoveInfo[Cheats::COM][Cheats::OLD].GetPos()->z;
 }
 
 float CPlayer::GetMoveAngle()
@@ -248,22 +248,22 @@ float CPlayer::GetMoveAngle()
 
 bool CPlayer::IsFlying()
 {
-    return m_MoveInfo[COM][NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FLYING | MOVEFLAG_FLYING2));
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FLYING | MOVEFLAG_FLYING2));
 }
 
 bool CPlayer::IsFalling()
 {
-    return m_MoveInfo[COM][NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL));
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].HasMovementFlag(MovementFlags(MOVEFLAG_FALLING | MOVEFLAG_FALLINGFAR | MOVEFLAG_SAFE_FALL));
 }
 
 bool CPlayer::IsSwimming()
 {
-    return m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_SWIMMING);
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].HasMovementFlag(MOVEFLAG_SWIMMING);
 }
 
 bool CPlayer::IsRooted()
 {
-    return m_MoveInfo[COM][NEW].HasMovementFlag(MOVEFLAG_ROOT);
+    return m_MoveInfo[Cheats::COM][Cheats::NEW].HasMovementFlag(MOVEFLAG_ROOT);
 }
 
 bool CPlayer::CanFly()

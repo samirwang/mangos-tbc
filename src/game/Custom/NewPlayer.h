@@ -21,29 +21,66 @@
 
 #include "Player.h"
 
-enum NewOld
-{
-    NEW = 0,
-    OLD,
-};
-
-enum Detector
-{
-    COM = 0,
-    SPEED,
-};
-
 namespace Cheats
 {
-    enum DetectBitmasks
+    enum NewOld
     {
-        SPEED = 1,
-        TIME = 2,
-        JUMP = 4,
-        FLY = 8,
+        NEW = 0,
+        OLD,
     };
 
-    const uint32 ALL_DETECTORS = SPEED | TIME | JUMP | FLY;
+    enum Detector
+    {
+        COM = 0,
+        SPEED,
+    };
+
+    enum DetectBitmasks
+    {
+        MSPEED = 1,
+        MTIME = 2,
+        MJUMP = 4,
+        MFLY = 8,
+    };
+
+    const uint32 ALL_DETECTORS = MSPEED | MTIME | MJUMP | MFLY;
+}
+
+namespace Settings
+{
+    enum DataTypeId
+    {
+        SETTING_FLOAT = 1,
+        SETTING_INT,
+        SETTING_UINT,
+        SETTING_STRING
+    };
+
+    enum FloatSettings
+    {
+        SETTING_FLOAT_BEGIN = 0,
+        SETTING_FLOAT_END
+    };
+
+    enum IntSettings
+    {
+        SETTING_INT_BEGIN = 0,
+        SETTING_INT_END
+    };
+
+    enum UintSettings
+    {
+        SETTING_UINT_BEGIN = 0,
+        SETTING_UINT_WCHAT,
+        SETTING_UINT_HIDETEMPLATEMENU,
+        SETTING_UINT_END
+    };
+
+    enum StringSettings
+    {
+        SETTING_STRING_BEGIN = 0,
+        SETTING_STRING_END
+    };
 }
 
 class CPlayer : public Player
@@ -94,7 +131,7 @@ public:
 
     void IncClientBasedServerTime(uint32 diff) { if (!m_FirstMoveInfo) m_ClientBasedServerTime += diff; }
 
-    uint32 GetLastServerTime() { return m_ServerTime[COM][NEW]; }
+    uint32 GetLastServerTime() { return m_ServerTime[Cheats::COM][Cheats::NEW]; }
     uint32 GetClientBasedServerTime() { return m_ClientBasedServerTime; }
     bool HadFirstMovementSent() { return !m_FirstMoveInfo; }
 
@@ -158,6 +195,38 @@ private:
 
     bool m_Recache;
     bool m_FakeOnNextTick;
+
+    /************************************************************************/
+    /*************************************CFBG*******************************/
+    /************************************************************************/
+public:
+    typedef std::map<Settings::FloatSettings, float>      FloatContainer;
+    typedef std::map<Settings::IntSettings, int32>      IntContainer;
+    typedef std::map<Settings::UintSettings, uint32>     UintContainer;
+    typedef std::map<Settings::StringSettings, std::string>StringContainer;
+
+    void LoadSettings();
+    void SaveSettings();
+
+    void SetSetting(Settings::FloatSettings setting, float value) { m_FloatContainer[setting] = value; }
+    float GetSetting(Settings::FloatSettings setting) { return m_FloatContainer[setting]; }
+
+    void SetSetting(Settings::IntSettings setting, int32 value) { m_IntContainer[setting] = value; }
+    int32 GetSetting(Settings::IntSettings setting) { return m_IntContainer[setting]; }
+
+    void SetSetting(Settings::UintSettings setting, uint32 value) { m_UintContainer[setting] = value; }
+    uint32 GetSetting(Settings::UintSettings setting) { return m_UintContainer[setting]; }
+
+    void SetSetting(Settings::StringSettings setting, std::string value) { m_StringContainer[setting] = value; }
+    std::string GetSetting(Settings::StringSettings setting) { return m_StringContainer[setting]; }
+
+private:
+    Player* m_player;
+
+    FloatContainer  m_FloatContainer;
+    IntContainer    m_IntContainer;
+    UintContainer   m_UintContainer;
+    StringContainer m_StringContainer;
 };
 
 #endif

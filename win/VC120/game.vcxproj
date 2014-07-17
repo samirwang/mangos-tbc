@@ -558,7 +558,6 @@
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
     <ClInclude Include="..\..\src\game\Custom\NewPlayer.h" />
-    <ClInclude Include="..\..\src\game\Custom\Settings.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenDataStorage.h" />
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenMac.h" />

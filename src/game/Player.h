@@ -900,20 +900,17 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
-class Settings;
 class CCPlayer;
 class CPlayer;
 
 class MANGOS_DLL_SPEC Player : public Unit
 {
     public:
-        Settings* GetSettings() { return m_Settings; }
         CCPlayer* GetCCPlayer() { return m_CCPlayer; }
         CPlayer* ToCPlayer() { return reinterpret_cast<CPlayer*>(this); }
 
     private:
         CPlayer* m_AntiCheat;
-        Settings* m_Settings;
         CCPlayer* m_CCPlayer;
 
         // --------------------------------------

@@ -1087,9 +1087,6 @@
     <ClInclude Include="..\..\src\game\Custom\Custom.h">
       <Filter>Custom\Custom</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\Settings.h">
-      <Filter>Custom\Settings</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
       <Filter>Custom\CPlayer</Filter>
     </ClInclude>
