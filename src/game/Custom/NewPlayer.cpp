@@ -24,6 +24,7 @@ CPlayer::CPlayer(WorldSession* session) : Player(session)
     m_CheatDetectors.push_back(new AntiCheat_speed(this));
     m_CheatDetectors.push_back(new AntiCheat_jump(this));
     m_CheatDetectors.push_back(new AntiCheat_fly(this));
+    m_CheatDetectors.push_back(new AntiCheat_climb(this));
 
     m_GmFly = false;
     m_FirstMoveInfo = false;

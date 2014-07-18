@@ -23,26 +23,26 @@
 
 void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
-    if (WorldTimer::getMSTimeDiff(m_LastSpeedCheck, WorldTimer::getMSTime()) < sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL))
+    if (WorldTimer::getMSTimeDiff(m_LastSpeedCheck, WorldTimer::getMSTime()) < sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL) && GetDistance(IsFlying(Cheat::BOTH)) < GetCurSpeed())
         return;
 
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
     std::ostringstream ss;
-    float Traveled = GetDistance(IsFlying(Cheat::BOTH));
-    float Allowed = GetSpeedRate() * 1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100.f);
+    auto Traveled = GetDistance(IsFlying(Cheat::BOTH));
+    auto Allowed = GetSpeedRate() * 1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100.f);
 
-    bool TooFast = Traveled > Allowed;
+    auto TooFast = Traveled > Allowed;
 
     ss << "Diff: " << Traveled - Allowed << " Traveled: " << Traveled << " Allowed: " << Allowed;
 
-    bool Sliding = false;
+    auto Sliding = false;
 
     if (Map* pMap = m_Player->GetMap())
     {
-        const Position* pos = m_MoveInfo[Cheat::NEW].GetPos();
+        auto pos = m_MoveInfo[Cheat::NEW].GetPos();
 
-        float groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
+        auto groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
 
         if (abs(groundZ - pos->z) < 1 && IsFalling(Cheat::BOTH))
             Sliding = true;
@@ -52,8 +52,8 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     {
         ReportCheat("Speed", ss.str());
 
-        m_MoveInfo[Cheat::NEW] = m_MoveInfo[Cheat::OLD];
-        const Position* pos = m_MoveInfo[Cheat::OLD].GetPos();
+        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
+        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
 
         m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
     }
@@ -76,7 +76,7 @@ void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     std::ostringstream ss;
 
-    bool Detected = false;
+    auto Detected = false;
 
     if (m_Opcode[Cheat::OLD] == m_Opcode[Cheat::NEW])
     {
@@ -85,8 +85,8 @@ void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     }
     else
     {
-        const Position* pos = m_MoveInfo[Cheat::OLD].GetPos();
-        float groundZ = pos->z;
+        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
+        auto groundZ = pos->z;
         if (Map* pMap = m_Player->GetMap())
             groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
 
@@ -101,8 +101,8 @@ void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     {
         ReportCheat("Jump", ss.str());
 
-        const Position* pos = m_MoveInfo[Cheat::OLD].GetPos();
-        float newz = pos->z;
+        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
+        auto newz = pos->z;
 
         if (Map* pMap = m_Player->GetMap())
             newz = pMap->GetHeight(pos->x, pos->y, pos->z);
@@ -131,6 +131,36 @@ void AntiCheat_fly::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
         ReportCheat("Fly", ss.str());
         SendFly(false);
+    }
+
+    SetOldValues();
+}
+
+void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+{
+    AntiCheat::DetectHack(MoveInfo, Opcode);
+
+    if (IsFlying(Cheat::BOTH) || IsFalling(Cheat::BOTH) || IsSwimming(Cheat::BOTH))
+    {
+        SetOldValues();
+        return;
+    }
+
+    if (GetDistance3D() < 1)
+        return;
+
+    auto angle = std::atan2(GetDistanceZ(), GetDistance2D()) * 180.f / M_PI_F;
+
+    if (angle > 50)
+    {
+        std::ostringstream ss;
+        ss << "Angle: " << angle;
+        ReportCheat("Climb", ss.str());
+
+        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
+        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
+
+        m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
     }
 
     SetOldValues();

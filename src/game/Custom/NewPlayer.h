@@ -104,6 +104,7 @@ public:
     bool IsGMFly() { return m_GmFly; }
     void SkipAntiCheat() { ++m_SkipAntiCheat; }
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
+    void SetAntiCheatMoveInfo(MovementInfo& MoveInfo);
 private:
     bool m_GmFly;
     bool m_FirstMoveInfo;

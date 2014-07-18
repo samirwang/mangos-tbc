@@ -21,11 +21,20 @@
 
 namespace Cheat
 {
-    enum Version
+    enum Time
     {
         NEW,
         OLD,
         BOTH,
+    };
+
+    enum Detector
+    {
+        NONE,
+        SPEED,
+        JUMP,
+        FLY,
+        CLIMB,
     };
 }
 
@@ -35,6 +44,7 @@ public:
     AntiCheat(CPlayer* pPlayer);
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
     void SetOldValues();
+    void SetMoveInfo(MovementInfo& MoveInfo);
 
     void ReportCheat(std::string cheat, std::string info);
 
@@ -60,6 +70,7 @@ public:
 protected:
     CPlayer* m_Player;
 
+    Cheat::Detector m_Detector;
     MovementInfo m_MoveInfo[2];
     Opcodes m_Opcode[2];
     uint32 m_ServerTime[2];
@@ -68,7 +79,11 @@ protected:
 class AntiCheat_speed : public AntiCheat
 {
 public:
-    AntiCheat_speed(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_LastSpeedCheck = 0; }
+    AntiCheat_speed(CPlayer* pPlayer) : AntiCheat(pPlayer)
+    {
+        m_Detector = Cheat::SPEED;
+        m_LastSpeedCheck = 0;
+    }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
 private:
     uint32 m_LastSpeedCheck;
@@ -77,14 +92,21 @@ private:
 class AntiCheat_jump : public AntiCheat
 {
 public:
-    AntiCheat_jump(CPlayer* pPlayer) : AntiCheat(pPlayer) {}
+    AntiCheat_jump(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::JUMP; }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
 };
 
 class AntiCheat_fly : public AntiCheat
 {
 public:
-    AntiCheat_fly(CPlayer* pPlayer) : AntiCheat(pPlayer) {}
+    AntiCheat_fly(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::FLY; }
+    void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+};
+
+class AntiCheat_climb : public AntiCheat
+{
+public:
+    AntiCheat_climb(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::CLIMB; }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
 };
 

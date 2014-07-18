@@ -30,6 +30,12 @@ void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
         i->DetectHack(MoveInfo, Opcode);
 }
 
+void CPlayer::SetAntiCheatMoveInfo(MovementInfo& MoveInfo)
+{
+    for (auto& i : m_CheatDetectors)
+        i->SetMoveInfo(MoveInfo);
+}
+
 AntiCheat::AntiCheat(CPlayer* pPlayer)
 {
     m_Player = pPlayer;
@@ -53,6 +59,12 @@ void AntiCheat::SetOldValues()
     m_MoveInfo[Cheat::OLD] = m_MoveInfo[Cheat::NEW];
     m_Opcode[Cheat::OLD] = m_Opcode[Cheat::NEW];
     m_ServerTime[Cheat::OLD] = WorldTimer::getMSTime();
+}
+
+void AntiCheat::SetMoveInfo(MovementInfo& MoveInfo)
+{
+    for (auto i = 0; i < 2; ++i)
+        m_MoveInfo[i] = MoveInfo;
 }
 
 void AntiCheat::ReportCheat(std::string cheat, std::string info)
