@@ -50,7 +50,7 @@ public:
 
     float GetCurSpeed();
     float GetSpeedRate();
-    float GetClientDiff();
+    float GetClientDiff(bool limit = true);
     float GetServerDiff();
     float GetDistance(bool is3D);
     float GetDistance2D();
@@ -66,6 +66,7 @@ public:
     bool CanFly();
 
     void SendFly(bool value);
+    bool Skipping() { return m_Player->SkipAC(); }
 
 protected:
     CPlayer* m_Player;

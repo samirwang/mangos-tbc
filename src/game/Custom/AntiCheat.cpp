@@ -28,6 +28,9 @@ void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     for (auto& i : m_CheatDetectors)
         i->DetectHack(MoveInfo, Opcode);
+
+    if (SkipAC())
+        --m_SkipAntiCheat;
 }
 
 void CPlayer::SetAntiCheatMoveInfo(MovementInfo& MoveInfo)
@@ -106,9 +109,10 @@ float AntiCheat::GetSpeedRate()
     return GetCurSpeed() * (GetClientDiff() / 1000.f);
 }
 
-float AntiCheat::GetClientDiff()
+float AntiCheat::GetClientDiff(bool limit)
 {
-    return m_MoveInfo[Cheat::NEW].GetTime() - m_MoveInfo[Cheat::OLD].GetTime();
+    auto diff = m_MoveInfo[Cheat::NEW].GetTime() - m_MoveInfo[Cheat::OLD].GetTime();
+    return diff > 2500 ? 2500 : diff;
 }
 
 float AntiCheat::GetServerDiff()

@@ -28,7 +28,7 @@ CPlayer::CPlayer(WorldSession* session) : Player(session)
 
     m_GmFly = false;
     m_FirstMoveInfo = false;
-    m_SkipAntiCheat = 0;
+    m_SkipAntiCheat = 1;
 
     m_fRace = 0;
     m_oRace = 0;

@@ -105,6 +105,7 @@ public:
     void SkipAntiCheat() { ++m_SkipAntiCheat; }
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
     void SetAntiCheatMoveInfo(MovementInfo& MoveInfo);
+    bool SkipAC() { return m_SkipAntiCheat; }
 private:
     bool m_GmFly;
     bool m_FirstMoveInfo;

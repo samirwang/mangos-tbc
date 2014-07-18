@@ -48,7 +48,7 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
             Sliding = true;
     }
 
-    if (TooFast && !Sliding)
+    if (TooFast && !Sliding && !Skipping())
     {
         ReportCheat("Speed", ss.str());
 
@@ -97,7 +97,7 @@ void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         }
     }
 
-    if (Detected)
+    if (Detected && !Skipping())
     {
         ReportCheat("Jump", ss.str());
 
@@ -118,7 +118,7 @@ void AntiCheat_fly::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
-    if (IsFlying(Cheat::NEW) && !CanFly())
+    if (IsFlying(Cheat::NEW) && !CanFly() && !Skipping())
     {
         std::ostringstream ss;
 
@@ -151,7 +151,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     auto angle = std::atan2(GetDistanceZ(), GetDistance2D()) * 180.f / M_PI_F;
 
-    if (angle > 50)
+    if (angle > 50 && !Skipping())
     {
         std::ostringstream ss;
         ss << "Angle: " << angle;
