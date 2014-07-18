@@ -21,31 +21,6 @@
 
 #include "Player.h"
 
-namespace Cheats
-{
-    enum NewOld
-    {
-        NEW = 0,
-        OLD,
-    };
-
-    enum Detector
-    {
-        COM = 0,
-        SPEED,
-    };
-
-    enum DetectBitmasks
-    {
-        MSPEED = 1,
-        MTIME = 2,
-        MJUMP = 4,
-        MFLY = 8,
-    };
-
-    const uint32 ALL_DETECTORS = MSPEED | MTIME | MJUMP | MFLY;
-}
-
 namespace Settings
 {
     enum DataTypeId
@@ -104,24 +79,18 @@ struct MultiVendor
 
 struct Country
 {
-    Country()
-    {
-        ISO2 = "";
-        ISO3 = "";
-        FULL = "";
-    }
-
-    std::string ISO2;
-    std::string ISO3;
-    std::string FULL;
+    std::string ISO2 = "";
+    std::string ISO3 = "";
+    std::string FULL = "";
 };
+
+class AntiCheat;
 
 class CPlayer : public Player
 {
 public:
     explicit CPlayer(WorldSession* session);
-
-    ~CPlayer() {}
+    ~CPlayer();
 
     Player* ToPlayer() { return static_cast<Player*>(this); }
 
@@ -129,56 +98,17 @@ public:
     /**********************************ANTICHEAT*****************************/
     /************************************************************************/
 public:
-    void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
-    void DetectSpeed();
-    void DetectTime();
-    void DetectJump();
-    void DetectFly();
-
-    void ReportCheat(std::string cheat, std::string info);
-
-    float GetCurSpeed();
-    float GetSpeedRate();
-    float GetClientDiff();
-    float GetServerDiff();
-    float GetDistance(bool threeD);
-    float GetDistance2D();
-    float GetDistance3D();
-    float GetDistanceZ();
-    float GetMoveAngle();
-
-    bool IsFlying();
-    bool IsFalling();
-    bool IsSwimming();
-    bool IsRooted();
-
-    bool CanFly();
+    typedef std::vector<AntiCheat*> CheatDetectors;
 
     void SetGMFly(bool value) { m_GmFly = value; }
-    void SkipAntiCheat() { ++m_SkipAntiCheat; }
-
-    bool Skipping() { return m_SkipAntiCheat; }
     bool IsGMFly() { return m_GmFly; }
-
-    void SendFly(bool value);
-
-    void IncClientBasedServerTime(uint32 diff) { if (!m_FirstMoveInfo) m_ClientBasedServerTime += diff; }
-
-    uint32 GetLastServerTime() { return m_ServerTime[Cheats::COM][Cheats::NEW]; }
-    uint32 GetClientBasedServerTime() { return m_ClientBasedServerTime; }
-    bool HadFirstMovementSent() { return !m_FirstMoveInfo; }
-
+    void SkipAntiCheat() { ++m_SkipAntiCheat; }
+    void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
 private:
-    MovementInfo m_MoveInfo[2][2];
-    Opcodes m_Opcode[2][2];
-    uint32 m_ServerTime[2][2];
-
-    uint32 m_SkipAntiCheat;
     bool m_GmFly;
     bool m_FirstMoveInfo;
-
-    uint32 m_LastSpeedCheck;
-    uint32 m_ClientBasedServerTime;
+    uint32 m_SkipAntiCheat;
+    CheatDetectors m_CheatDetectors;
 
     /************************************************************************/
     /*************************************CFBG*******************************/

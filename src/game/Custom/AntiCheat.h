@@ -1,0 +1,91 @@
+/*
+* See AUTHORS file for Copyright information
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#ifndef _ANTICHEAT_H
+#define _ANTICHEAT_H
+
+namespace Cheat
+{
+    enum Version
+    {
+        NEW,
+        OLD,
+        BOTH,
+    };
+}
+
+class AntiCheat
+{
+public:
+    AntiCheat(CPlayer* pPlayer);
+    virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+    void SetOldValues();
+
+    void ReportCheat(std::string cheat, std::string info);
+
+    float GetCurSpeed();
+    float GetSpeedRate();
+    float GetClientDiff();
+    float GetServerDiff();
+    float GetDistance(bool is3D);
+    float GetDistance2D();
+    float GetDistance3D();
+    float GetDistanceZ();
+    float GetMoveAngle();
+
+    bool IsFlying(uint8 when);
+    bool IsFalling(uint8 when);
+    bool IsSwimming(uint8 when);
+    bool IsRooted(uint8 when);
+
+    bool CanFly();
+
+    void SendFly(bool value);
+
+protected:
+    CPlayer* m_Player;
+
+    MovementInfo m_MoveInfo[2];
+    Opcodes m_Opcode[2];
+    uint32 m_ServerTime[2];
+};
+
+class AntiCheat_speed : public AntiCheat
+{
+public:
+    AntiCheat_speed(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_LastSpeedCheck = 0; }
+    void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+private:
+    uint32 m_LastSpeedCheck;
+};
+
+class AntiCheat_jump : public AntiCheat
+{
+public:
+    AntiCheat_jump(CPlayer* pPlayer) : AntiCheat(pPlayer) {}
+    void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+};
+
+class AntiCheat_fly : public AntiCheat
+{
+public:
+    AntiCheat_fly(CPlayer* pPlayer) : AntiCheat(pPlayer) {}
+    void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+};
+
+#endif

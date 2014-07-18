@@ -17,23 +17,17 @@
 */
 
 #include "NewPlayer.h"
+#include "AntiCheat.h"
 
 CPlayer::CPlayer(WorldSession* session) : Player(session)
 {
-    /************************************************************************/
-    /**********************************ANTICHEAT*****************************/
-    /************************************************************************/
+    m_CheatDetectors.push_back(new AntiCheat_speed(this));
+    m_CheatDetectors.push_back(new AntiCheat_jump(this));
+    m_CheatDetectors.push_back(new AntiCheat_fly(this));
 
-    m_SkipAntiCheat = 5;
     m_GmFly = false;
-
-    m_FirstMoveInfo = true;
-    m_ClientBasedServerTime = 0;
-    m_LastSpeedCheck = 0;
-
-    /************************************************************************/
-    /*************************************CFBG*******************************/
-    /************************************************************************/
+    m_FirstMoveInfo = false;
+    m_SkipAntiCheat = 0;
 
     m_fRace = 0;
     m_oRace = 0;
@@ -43,5 +37,19 @@ CPlayer::CPlayer(WorldSession* session) : Player(session)
     m_oPlayerBytes2 = 0;
     m_fPlayerBytes = 0;
     m_fPlayerBytes2 = 0;
+    m_Recache = 0;
     m_FakeOnNextTick = 0;
+
+    m_wChatOn = false;
+    m_Country = Country();
+    m_LastGossipGuid = ObjectGuid();
+    m_MultiVendor = MultiVendor();
+    m_ScriptID = 0;
+    m_SelectedGObject = 0;
+}
+
+CPlayer::~CPlayer()
+{
+    for (auto& i : m_CheatDetectors)
+        delete i;
 }

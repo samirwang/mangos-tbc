@@ -34,8 +34,6 @@ void CPlayer::CUpdate(uint32 diff)
     SendSavedChat(CHAT_BOX, BoxChat);
     SendSavedChat(CHAT_WIDE, WideChat);
     SendSavedChat(CHAT_BOTH, BothChat);
-
-    ToCPlayer()->IncClientBasedServerTime(diff);
 }
 
 void CPlayer::Sometimes()

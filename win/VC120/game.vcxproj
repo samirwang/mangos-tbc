@@ -378,6 +378,7 @@
     <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CFBG.cpp" />
+    <ClCompile Include="..\..\src\game\Custom\CheatDetectors.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp" />
     <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp" />
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp" />
@@ -554,7 +555,7 @@
     <ClInclude Include="..\..\src\game\CreatureEventAI.h" />
     <ClInclude Include="..\..\src\game\CreatureEventAIMgr.h" />
     <ClInclude Include="..\..\src\game\CreatureLinkingMgr.h" />
-    <ClInclude Include="..\..\src\game\Custom\CPlayer.h" />
+    <ClInclude Include="..\..\src\game\Custom\AntiCheat.h" />
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h" />
     <ClInclude Include="..\..\src\game\Custom\Custom.h" />
     <ClInclude Include="..\..\src\game\Custom\NewPlayer.h" />
