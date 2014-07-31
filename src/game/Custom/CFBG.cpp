@@ -50,7 +50,6 @@ void CPlayer::SetFakeValues()
         m_fPlayerBytes2 = m_oPlayerBytes2;
 }
 
-
 void CPlayer::RecachePlayersFromBG()
 {
     BattleGround* bg = GetBattleGround();
@@ -225,7 +224,6 @@ bool CPlayer::SendBattleGroundChat(ChatMsg msgtype, std::string message)
             if (GetDistance2d(pPlayer->GetPositionX(), pPlayer->GetPositionY()) <= distance)
             {
                 WorldPacket data(SMSG_MESSAGECHAT, 200);
-
 
                 if (GetTeam() == pPlayer->GetTeam())
                     ChatHandler::BuildChatPacket(data, msgtype, message.c_str(), LANG_UNIVERSAL, GetChatTag(), GetObjectGuid(), GetName());

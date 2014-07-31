@@ -1,5 +1,6 @@
 /*
 * See AUTHORS file for Copyright information
+
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {
-    if(m_session->GetPlayer() && m_session->GetPlayer()->GetBattleGround())
+    if (m_session->GetPlayer() && m_session->GetPlayer()->GetBattleGround())
         m_session->GetPlayer()->GetBattleGround()->SetStartDelayTime(100);
 
     PSendSysMessage("Battleground was started instantly.");
@@ -37,7 +38,7 @@ bool ChatHandler::HandleBGStopCommand(char*)
     Player* pPlayer = m_session->GetPlayer();
     BattleGround* pBattleGround = pPlayer->GetBattleGround();
 
-    if(pPlayer && pBattleGround)
+    if (pPlayer && pBattleGround)
         pBattleGround->EndBattleGround(pPlayer->GetTeam());
 
     PSendSysMessage("Battleground was stopped instantly.");

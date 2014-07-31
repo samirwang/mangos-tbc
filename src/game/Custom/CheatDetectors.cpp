@@ -63,7 +63,6 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     m_LastSpeedCheck = WorldTimer::getMSTime();
 }
 
-
 void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat::DetectHack(MoveInfo, Opcode);

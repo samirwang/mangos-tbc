@@ -259,7 +259,6 @@ public:
     }
 };
 
-
 void AddSC_npc_enchant()
 {
     new npc_enchant;

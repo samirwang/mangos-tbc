@@ -312,7 +312,7 @@ public:
             case 403: bgtype = BATTLEGROUND_EY; break;
             case 404: bgtype = BATTLEGROUND_AV; break;
             }
-            
+
             WorldPacket data(CMSG_BATTLEMASTER_JOIN, 8 + 4 + 4 + 1);
             data << ObjectGuid(pCreature->GetObjectGuid());
             data << uint32(bgtype);

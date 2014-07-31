@@ -79,7 +79,7 @@ public:
         if (!result)
             return;
 
-        do 
+        do
         {
             Field* fields = result->Fetch();
             uint32 entry = fields[0].GetUInt32();
@@ -96,8 +96,7 @@ public:
                     break;
                 }
             }
-        }
-        while (result->NextRow());
+        } while (result->NextRow());
     }
 
 private:
@@ -127,7 +126,7 @@ class PlayerScript;
 class CPlusMgr
 {
 public:
-    CPlusMgr() {};  
+    CPlusMgr() {};
     ~CPlusMgr() {};
 
     void LoadScripts()

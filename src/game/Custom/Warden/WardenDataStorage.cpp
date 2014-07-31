@@ -134,7 +134,7 @@ void CWardenDataStorage::LoadWardenDataResult()
                 memcpy(temp, wr->res.AsByteArray(), wr->res.GetNumBytes());
                 std::reverse(temp, temp + len);
                 wr->res.SetBinary((uint8*)temp, len);
-                delete [] temp;
+                delete[] temp;
             }
             _result_map[id] = wr;
         }

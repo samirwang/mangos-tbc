@@ -40,12 +40,12 @@ and JustDied also it let autocast the channel-spell
 
 enum
 {
-    SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
+    SPELL_SPIRIT_HEAL_CHANNEL = 22011,                // Spirit Heal Channel
 
-    SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal
-    SPELL_SPIRIT_HEAL_MANA          = 44535,                // in battlegrounds player get this no-mana-cost-buff
+    SPELL_SPIRIT_HEAL = 22012,                // Spirit Heal
+    SPELL_SPIRIT_HEAL_MANA = 44535,                // in battlegrounds player get this no-mana-cost-buff
 
-    SPELL_WAITING_TO_RESURRECT      = 2584                  // players who cancel this aura don't want a resurrection
+    SPELL_WAITING_TO_RESURRECT = 2584                  // players who cancel this aura don't want a resurrection
 };
 
 class npc_spirit_guideAI : public CreatureAI
@@ -108,7 +108,6 @@ public:
         pPlayer->CastSpell(pPlayer, SPELL_WAITING_TO_RESURRECT, true);
         return true;
     }
-
 };
 
 void AddSC_battleground()

@@ -26,7 +26,6 @@
 #include "CPlusMgr.h"
 #include "NewPlayer.h"
 
-
 void CPlayer::CUpdate(uint32 diff)
 {
     LearnGreenSpells();
@@ -62,17 +61,17 @@ void CPlayer::LoadCountryData()
     std::ostringstream ss;
 
     ss << " SELECT"
-       << " c.iso_code_2, c.iso_code_3, c.country"
-       << " FROM"
-       << " ip2nationcountries c,"
-       << " ip2nation i"
-       << " WHERE"
-       << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
-       << " AND"
-       << " c.code = i.country"
-       << " ORDER BY"
-       << " i.ip DESC"
-       << " LIMIT 1";
+        << " c.iso_code_2, c.iso_code_3, c.country"
+        << " FROM"
+        << " ip2nationcountries c,"
+        << " ip2nation i"
+        << " WHERE"
+        << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
+        << " AND"
+        << " c.code = i.country"
+        << " ORDER BY"
+        << " i.ip DESC"
+        << " LIMIT 1";
 
     if (QueryResult* result = LoginDatabase.PQuery("%s", ss.str().c_str()))
     {
@@ -242,7 +241,6 @@ void CPlayer::FillGreenSpellList()
 
     m_DelayedSpellLearn.clear();
 
-
     for (auto itr = allSpellContainer->cbegin(); itr != allSpellContainer->cend(); ++itr)
     {
         TrainerSpell const* tSpell = &*itr;
@@ -272,7 +270,7 @@ void CPlayer::FillGreenSpellList()
                 if (!CastLearned)
                     m_DelayedSpellLearn.push_back(tSpell->spell);
             }
-        }   
+        }
     }
 }
 
@@ -325,7 +323,7 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
 
     Pet* pet = new Pet(HUNTER_PET);
 
-    if(!pet->CreateBaseAtCreature(pCreature))
+    if (!pet->CreateBaseAtCreature(pCreature))
     {
         delete pet;
         return;
@@ -356,11 +354,11 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     pet->GetMap()->Add((Creature*)pet);
 
     // visual effect for levelup
-    pet->SetUInt32Value(UNIT_FIELD_LEVEL,70);
+    pet->SetUInt32Value(UNIT_FIELD_LEVEL, 70);
 
     for (auto x = 0; x < 6; x++)
     {
-        pet->SetPower(POWER_HAPPINESS,66600000);
+        pet->SetPower(POWER_HAPPINESS, 66600000);
         pet->ModifyLoyalty(150000);
         pet->TickLoyaltyChange();
         pet->SetTP(350);
@@ -444,7 +442,6 @@ void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
 
     VendorItemData const* vItems = sObjectMgr.GetNpcVendorItemList(cEntry);
     VendorItemData const* tItems = cinfo->vendorId ? sObjectMgr.GetNpcVendorTemplateItemList(cinfo->vendorId) : NULL;
-
 
     if (!vItems && !tItems)
     {
@@ -535,7 +532,6 @@ bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 
     uint32 entry;
     ObjectGuid guid;
     GetMultiVendor(entry, guid);
-
 
     CreatureInfo const *cinfo = sObjectMgr.GetCreatureTemplate(entry);
     if (!cinfo)
@@ -658,14 +654,14 @@ bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 
         return false;
     }
 
-//     if (GetAverageItemLevel() < crItem->itemlevel && !isGameMaster())
-//     {
-//         // probably not the proper equip err
-//         SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, NULL);
-//         SendChatMessage("You need at least %u averange itemlevel.", crItem->itemlevel);
-//         SendChatMessage("You currently have a averange itemlevel %u.", uint32(floor(GetAverageItemLevel())));
-//         return false;
-//     }
+    //     if (GetAverageItemLevel() < crItem->itemlevel && !isGameMaster())
+    //     {
+    //         // probably not the proper equip err
+    //         SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, NULL);
+    //         SendChatMessage("You need at least %u averange itemlevel.", crItem->itemlevel);
+    //         SendChatMessage("You currently have a averange itemlevel %u.", uint32(floor(GetAverageItemLevel())));
+    //         return false;
+    //     }
 
     Item* pItem = NULL;
 
@@ -856,7 +852,6 @@ bool CPlayer::BuyBackItemFromMultiVendor(uint32 slot)
     ObjectGuid vendorGuid;
     GetMultiVendor(entry, vendorGuid);
 
-
     Creature* pCreature = GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_NONE);
     if (!pCreature)
     {
@@ -907,7 +902,6 @@ void CPlayer::LearnTalentTemplate(uint8 spec)
     if (itr->ClassId == getClass() && itr->SpecId == spec)
         LearnTalent(itr->TalentId, itr->TalentRank - 1);
 }
-
 
 void CPlayer::ApplyEnchantTemplate(uint8 spec)
 {

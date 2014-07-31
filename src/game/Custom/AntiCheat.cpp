@@ -85,7 +85,7 @@ float AntiCheat::GetCurSpeed()
     for (uint8 i = 0; i < 2; ++i)
     {
         float thisspeed = 0;
- 
+
         bool back = m_MoveInfo[i].HasMovementFlag(MOVEFLAG_BACKWARD);
 
         if (m_MoveInfo[i].HasMovementFlag(MOVEFLAG_WALK_MODE))

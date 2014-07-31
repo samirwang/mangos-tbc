@@ -58,8 +58,8 @@ Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     SpellContainer spellContainer;
 
     if (TrainerSpellData const* spelldata = sObjectMgr.GetNpcTrainerSpells(entry))
-        for (auto& itr : spelldata->spellList)
-            spellContainer.push_back(itr.second);
+    for (auto& itr : spelldata->spellList)
+        spellContainer.push_back(itr.second);
 
     const CreatureInfo* creature = sObjectMgr.GetCreatureTemplate(entry);
 
@@ -69,9 +69,9 @@ Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     uint32 trainertemplate = creature->trainerId;
 
     if (trainertemplate)
-        if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))
-            for (auto& itr : spelldata2->spellList)
-                spellContainer.push_back(itr.second);
+    if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))
+    for (auto& itr : spelldata2->spellList)
+        spellContainer.push_back(itr.second);
 
     return spellContainer;
 }
@@ -83,7 +83,6 @@ Custom::SpellContainer* Custom::GetCachedSpellContainer(uint32 crval)
 
     return NULL;
 }
-
 
 const std::string Custom::m_ClassColor[] =
 {
@@ -148,12 +147,12 @@ void Custom::LoadFakePlayerBytes()
     QueryResult* result = WorldDatabase.PQuery("SELECT race, maleBytes, maleBytes2, femaleBytes, femaleBytes2 FROM fakeplayerbytes");
     if (result)
     {
-        do 
+        do
         {
             Field* fields = result->Fetch();
 
             FakePlayerBytes bytes;
-            
+
             uint8 race = fields[0].GetUInt8();
             bytes.PlayerBytes[GENDER_MALE] = fields[1].GetUInt32();
             bytes.PlayerBytes2[GENDER_MALE] = fields[2].GetUInt32();
@@ -164,12 +163,10 @@ void Custom::LoadFakePlayerBytes()
 
             if (race && bytes.PlayerBytes[GENDER_MALE] && bytes.PlayerBytes2[GENDER_MALE] &&
                 bytes.PlayerBytes[GENDER_FEMALE] && bytes.PlayerBytes[GENDER_FEMALE])
-            ++count;
-        }
-        while (result->NextRow());
+                ++count;
+        } while (result->NextRow());
     }
-    
-    
+
     if (sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) && (count < 10 || !result))
     {
         const char* message = "There was something wrong with loading fakeplayerbytes for crossfaction battlegrounds!";
@@ -266,15 +263,14 @@ void Custom::LoadTalentContainer()
 
             TalentTemplate* pTalent = new TalentTemplate;
 
-            pTalent->ClassId    = fields[0].GetUInt8();
-            pTalent->SpecId     = fields[1].GetUInt8();
-            pTalent->TalentId   = fields[2].GetUInt32();
+            pTalent->ClassId = fields[0].GetUInt8();
+            pTalent->SpecId = fields[1].GetUInt8();
+            pTalent->TalentId = fields[2].GetUInt32();
             pTalent->TalentRank = fields[3].GetUInt8();
 
             m_TalentContainer.push_back(pTalent);
             ++count;
-        }
-        while (result->NextRow());
+        } while (result->NextRow());
 
         delete result;
     }
@@ -298,15 +294,14 @@ void Custom::LoadEnchantContainer()
 
             EnchantTemplate* pEnchant = new EnchantTemplate;
 
-            pEnchant->ClassId   = fields[0].GetUInt8();
-            pEnchant->SpecId    = fields[1].GetUInt8();
-            pEnchant->SpellId   = fields[2].GetUInt32();
-            pEnchant->SlotId    = fields[3].GetUInt8();
+            pEnchant->ClassId = fields[0].GetUInt8();
+            pEnchant->SpecId = fields[1].GetUInt8();
+            pEnchant->SpellId = fields[2].GetUInt32();
+            pEnchant->SlotId = fields[3].GetUInt8();
 
             m_EnchantContainer.push_back(pEnchant);
             ++count;
-        }
-        while (result->NextRow());
+        } while (result->NextRow());
 
         delete result;
     }

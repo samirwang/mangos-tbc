@@ -49,8 +49,7 @@ void CPlayer::LoadSettings()
                 sLog.outError("Invalid DataTypeId %u for player %u", uint32(rDataTypeId), GetGUIDLow());
                 break;
             }
-        }
-        while (result->NextRow());
+        } while (result->NextRow());
 
         delete result;
     }

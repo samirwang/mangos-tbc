@@ -38,24 +38,24 @@ struct WardenDataResult
 
 class CWardenDataStorage
 {
-    public:
-        CWardenDataStorage();
-        ~CWardenDataStorage();
-        uint32 InternalDataID;
-        std::vector<uint32> MemCheckIds;
+public:
+    CWardenDataStorage();
+    ~CWardenDataStorage();
+    uint32 InternalDataID;
+    std::vector<uint32> MemCheckIds;
 
-    private:
-        std::map<uint32, WardenData*> _data_map;
-        std::map<uint32, WardenDataResult*> _result_map;
+private:
+    std::map<uint32, WardenData*> _data_map;
+    std::map<uint32, WardenDataResult*> _result_map;
 
-    public:
-        inline uint32 GenerateInternalDataID() { return InternalDataID++; }
-        WardenData *GetWardenDataById(uint32 Id);
-        WardenDataResult *GetWardenResultById(uint32 Id);
-        void Init();
+public:
+    inline uint32 GenerateInternalDataID() { return InternalDataID++; }
+    WardenData *GetWardenDataById(uint32 Id);
+    WardenDataResult *GetWardenResultById(uint32 Id);
+    void Init();
 
-    protected:
-        void LoadWardenDataResult();
+protected:
+    void LoadWardenDataResult();
 };
 
 extern CWardenDataStorage WardenDataStorage;

@@ -42,7 +42,7 @@ void WorldSession::InitWarden(BigNumber *K, std::string os)
 
 bool ChatHandler::HandleReloadWarden(char* /*args*/)
 {
-    sLog.outString( "Re-Loading Warden..." );
+    sLog.outString("Re-Loading Warden...");
     WardenDataStorage.Init();
     SendGlobalSysMessage("Warden DB reloaded.");
     return true;
@@ -59,7 +59,7 @@ Team Player::GetTeam() const
 uint32 World::GetSaveInterval()
 {
     uint32 hardtime = sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVE);
-    
+
     if (!hardtime)
         hardtime = ceil((float)(1.f / sWorld.getConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC) * sWorld.GetActiveSessionCount()*IN_MILLISECONDS));
 

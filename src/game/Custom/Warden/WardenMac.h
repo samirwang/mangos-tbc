@@ -29,17 +29,17 @@ class WardenBase;
 
 class WardenMac : WardenBase
 {
-    public:
-        WardenMac();
-        ~WardenMac();
+public:
+    WardenMac();
+    ~WardenMac();
 
-        void Init(WorldSession *pClient, BigNumber *K);
-        ClientWardenModule *GetModuleForClient(WorldSession *session);
-        void InitializeModule();
-        void RequestHash();
-        void HandleHashResult(ByteBuffer &buff);
-        void RequestData();
-        void HandleData(ByteBuffer &buff);
+    void Init(WorldSession *pClient, BigNumber *K);
+    ClientWardenModule *GetModuleForClient(WorldSession *session);
+    void InitializeModule();
+    void RequestHash();
+    void HandleHashResult(ByteBuffer &buff);
+    void RequestData();
+    void HandleData(ByteBuffer &buff);
 };
 
 #endif

@@ -116,13 +116,12 @@ void WardenMac::RequestHash()
 
 void WardenMac::HandleHashResult(ByteBuffer &buff)
 {
-
     // test
     int keyIn[4];
 
     uint8 mod_seed[16] = { 0x4D, 0x80, 0x8D, 0x2C, 0x77, 0xD9, 0x05, 0xC4, 0x1A, 0x63, 0x80, 0xEC, 0x08, 0x58, 0x6A, 0xFE };
 
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         keyIn[i] = *(int*)(&mod_seed[0] + i * 4);
     }
@@ -160,7 +159,7 @@ void WardenMac::HandleHashResult(ByteBuffer &buff)
 
         if (sWorld.getConfig(CONFIG_FLOAT_WARDEN_KICK_BAN) == 2)
         {
-           sWorld.BanAccount(BAN_CHARACTER, Client->GetPlayerName(), sWorld.getConfig(CONFIG_UINT32_WARDEN_BAN_TIME) * 900000 * IN_MILLISECONDS, "Cheating software usage", "Warden System");
+            sWorld.BanAccount(BAN_CHARACTER, Client->GetPlayerName(), sWorld.getConfig(CONFIG_UINT32_WARDEN_BAN_TIME) * 900000 * IN_MILLISECONDS, "Cheating software usage", "Warden System");
         }
         return;
     }
@@ -223,10 +222,10 @@ void WardenMac::HandleData(ByteBuffer &buff)
 
     if (!IsValidCheckSum(Checksum, buff.contents() + buff.rpos(), Length))
     {
-        buff.rpos(buff.wpos());
-        if (sWorld.getConfig(CONFIG_BOOL_WARDEN_KICK))
-            Client->KickPlayer();
-        return;
+    buff.rpos(buff.wpos());
+    if (sWorld.getConfig(CONFIG_BOOL_WARDEN_KICK))
+    Client->KickPlayer();
+    return;
     }*/
 
     bool found = false;

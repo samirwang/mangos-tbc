@@ -7,4 +7,3 @@
 #include "CPlusMgr.h"
 
 #endif
-
