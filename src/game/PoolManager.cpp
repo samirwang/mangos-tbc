@@ -19,7 +19,6 @@
 #include "PoolManager.h"
 #include "ObjectMgr.h"
 #include "ObjectGuid.h"
-#include "ProgressBar.h"
 #include "Log.h"
 #include "MapPersistentStateMgr.h"
 #include "MapManager.h"
@@ -591,13 +590,10 @@ void PoolManager::LoadFromDB()
 
     uint32 count = 0;
 
-    BarGoLink bar(result->GetRowCount());
     do
     {
         ++count;
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint16 pool_id = fields[0].GetUInt16();
 
@@ -624,20 +620,14 @@ void PoolManager::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar2(1);
-        bar2.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u creatures in pools from `pool_creature`", count);
     }
     else
     {
-        BarGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint16 pool_id = fields[1].GetUInt16();
@@ -685,20 +675,14 @@ void PoolManager::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar2(1);
-        bar2.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u creatures in pools from `pool_creature_template`", count);
     }
     else
     {
-        BarGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint16 pool_id = fields[1].GetUInt16();
@@ -762,20 +746,14 @@ void PoolManager::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar2(1);
-        bar2.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u gameobject in pools from `pool_gameobject`", count);
     }
     else
     {
-        BarGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint16 pool_id = fields[1].GetUInt16();
@@ -833,20 +811,14 @@ void PoolManager::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar2(1);
-        bar2.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u gameobject in pools from `pool_gameobject_template`", count);
     }
     else
     {
-        BarGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar2.step();
 
             uint32 guid    = fields[0].GetUInt32();
             uint16 pool_id = fields[1].GetUInt16();
@@ -917,20 +889,14 @@ void PoolManager::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar2(1);
-        bar2.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u pools in pools", count);
     }
     else
     {
-        BarGoLink bar2(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar2.step();
 
             uint16 child_pool_id  = fields[0].GetUInt16();
             uint16 mother_pool_id = fields[1].GetUInt16();

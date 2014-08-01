@@ -17,7 +17,6 @@
  */
 
 #include "AuctionHouseBot.h"
-#include "ProgressBar.h"
 #include "Log.h"
 #include "ObjectMgr.h"
 #include "AuctionHouseMgr.h"
@@ -905,20 +904,13 @@ bool AuctionBotSeller::Initialize()
     sLog.outString("Loading npc vendor items for filter..");
     if (QueryResult* result = WorldDatabase.Query("SELECT DISTINCT item FROM npc_vendor"))
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
             npcItems.push_back(fields[0].GetUInt32());
         }
         while (result->NextRow());
         delete result;
-    }
-    else
-    {
-        BarGoLink bar(1);
-        bar.step();
     }
     sLog.outString("Npc vendor filter has " SIZEFMTD " items", npcItems.size());
     sLog.outString();
@@ -934,10 +926,8 @@ bool AuctionBotSeller::Initialize()
                                   "SELECT item FROM prospecting_loot_template UNION "
                                   "SELECT item FROM skinning_loot_template"))
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
 
             uint32 entry = fields[0].GetUInt32();
@@ -949,11 +939,6 @@ bool AuctionBotSeller::Initialize()
         while (result->NextRow());
         delete result;
     }
-    else
-    {
-        BarGoLink bar(1);
-        bar.step();
-    }
     sLog.outString("Loot filter has " SIZEFMTD " items", lootItems.size());
     sLog.outString();
 
@@ -961,12 +946,9 @@ bool AuctionBotSeller::Initialize()
 
     uint32 itemsAdded = 0;
 
-    BarGoLink bar(sItemStorage.GetMaxEntry());
     for (uint32 itemID = 0; itemID < sItemStorage.GetMaxEntry(); ++itemID)
     {
         ItemPrototype const* prototype = sObjectMgr.GetItemPrototype(itemID);
-
-        bar.step();
 
         if (!prototype)
             continue;

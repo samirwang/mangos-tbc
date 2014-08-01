@@ -22,7 +22,6 @@
 #include "ObjectGuid.h"
 #include "Database/DatabaseEnv.h"
 #include "Policies/Singleton.h"
-#include "ProgressBar.h"
 #include "World.h"
 
 INSTANTIATE_SINGLETON_1(GuildMgr);
@@ -95,10 +94,6 @@ void GuildMgr::LoadGuilds()
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u guild definitions", count);
         return;
@@ -123,13 +118,10 @@ void GuildMgr::LoadGuilds()
     //                                                                      0       1     2   3       4
     QueryResult* guildBankTabRightsResult = CharacterDatabase.Query("SELECT guildid,TabId,rid,gbright,SlotPerDay FROM guild_bank_right ORDER BY guildid ASC, TabId ASC");
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         // Field *fields = result->Fetch();
 
-        bar.step();
         ++count;
 
         Guild* newGuild = new Guild;

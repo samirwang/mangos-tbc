@@ -34,7 +34,6 @@
 
 #include "CreatureLinkingMgr.h"
 #include "Policies/Singleton.h"
-#include "ProgressBar.h"
 #include "Database/DatabaseEnv.h"
 #include "ObjectMgr.h"
 #include "SharedDefines.h"
@@ -73,19 +72,13 @@ void CreatureLinkingMgr::LoadFromDB()
     QueryResult* result = WorldDatabase.Query("SELECT entry, map, master_entry, flag, search_range FROM creature_linking_template");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString(">> Table creature_linking_template is empty.");
         sLog.outString();
     }
     else
     {
-        BarGoLink bar((int)result->GetRowCount());
         do
         {
-            bar.step();
-
             Field* fields = result->Fetch();
             CreatureLinkingInfo tmp;
 
@@ -131,20 +124,14 @@ void CreatureLinkingMgr::LoadFromDB()
     result = WorldDatabase.Query("SELECT guid, master_guid, flag FROM creature_linking");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString(">> Table creature_linking is empty.");
         sLog.outString();
 
         return;
     }
 
-    BarGoLink guidBar((int)result->GetRowCount());
     do
     {
-        guidBar.step();
-
         Field* fields = result->Fetch();
         CreatureLinkingInfo tmp;
 

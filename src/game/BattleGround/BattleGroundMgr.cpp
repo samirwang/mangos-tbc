@@ -31,7 +31,6 @@
 #include "MapManager.h"
 #include "Map.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "Chat.h"
 #include "ArenaTeam.h"
 #include "World.h"
@@ -1577,21 +1576,14 @@ void BattleGroundMgr::CreateInitialBattleGrounds()
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outErrorDb(">> Loaded 0 battlegrounds. DB table `battleground_template` is empty.");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-        bar.step();
 
         uint32 bgTypeID_ = fields[0].GetUInt32();
 
@@ -1956,21 +1948,15 @@ void BattleGroundMgr::LoadBattleMastersEntry()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded 0 battlemaster entries - table is empty!");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
 
     do
     {
         ++count;
-        bar.step();
-
         Field* fields = result->Fetch();
 
         uint32 entry = fields[0].GetUInt32();
@@ -2066,19 +2052,13 @@ void BattleGroundMgr::LoadBattleEventIndexes()
                             "ORDER BY m, ev1, ev2");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outErrorDb(">> Loaded 0 battleground eventindexes.");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
-        bar.step();
         Field* fields = result->Fetch();
         if (fields[2].GetUInt8() == BG_EVENT_NONE || fields[3].GetUInt8() == BG_EVENT_NONE)
             continue;                                       // we don't need to add those to the eventmap

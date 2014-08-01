@@ -19,7 +19,6 @@
 #include "SkillExtraItems.h"
 #include "Database/DatabaseEnv.h"
 #include "Log.h"
-#include "ProgressBar.h"
 #include "Player.h"
 #include "DBCStores.h"
 
@@ -63,12 +62,9 @@ void LoadSkillExtraItemTable()
 
     if (result)
     {
-        BarGoLink bar(result->GetRowCount());
-
         do
         {
             Field* fields = result->Fetch();
-            bar.step();
 
             uint32 spellId = fields[0].GetUInt32();
 

@@ -22,7 +22,6 @@
 #include "CreatureEventAI.h"
 #include "CreatureEventAIMgr.h"
 #include "ObjectMgr.h"
-#include "ProgressBar.h"
 #include "Policies/Singleton.h"
 #include "ObjectGuid.h"
 #include "GridDefines.h"
@@ -94,12 +93,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
     QueryResult* result = WorldDatabase.Query("SELECT id, position_x, position_y, position_z, orientation, spawntimesecs FROM creature_ai_summons");
     if (result)
     {
-        BarGoLink bar(result->GetRowCount());
         uint32 Count = 0;
 
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
 
             CreatureEventAI_Summon temp;
@@ -133,8 +130,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Summons(bool check_entry_use)
     }
     else
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI Summon definitions. DB table `creature_ai_summons` is empty.");
     }
@@ -257,12 +252,10 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
                           "FROM creature_ai_scripts");
     if (result)
     {
-        BarGoLink bar(result->GetRowCount());
         uint32 Count = 0;
 
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
 
             CreatureEventAI_Event temp;
@@ -903,8 +896,6 @@ void CreatureEventAIMgr::LoadCreatureEventAI_Scripts()
     }
     else
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 CreatureEventAI scripts. DB table `creature_ai_scripts` is empty.");
     }

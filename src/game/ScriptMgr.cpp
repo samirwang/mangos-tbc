@@ -19,7 +19,6 @@
 #include "ScriptMgr.h"
 #include "Policies/Singleton.h"
 #include "Log.h"
-#include "ProgressBar.h"
 #include "ObjectMgr.h"
 #include "WaypointManager.h"
 #include "World.h"
@@ -114,20 +113,13 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u script definitions", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
-        bar.step();
-
         Field* fields = result->Fetch();
 
         ScriptInfo tmp;
@@ -1768,20 +1760,14 @@ void ScriptMgr::LoadAreaTriggerScripts()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u scripted areatrigger", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         ++count;
-        bar.step();
 
         Field* fields = result->Fetch();
 
@@ -1813,15 +1799,10 @@ void ScriptMgr::LoadEventIdScripts()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u scripted event id", count);
         return;
     }
-
-    BarGoLink bar(result->GetRowCount());
 
     std::set<uint32> eventIds;                              // Store possible event ids
     CollectPossibleEventIds(eventIds);
@@ -1829,8 +1810,6 @@ void ScriptMgr::LoadEventIdScripts()
     do
     {
         ++count;
-        bar.step();
-
         Field* fields = result->Fetch();
 
         uint32 eventId          = fields[0].GetUInt32();
@@ -1871,19 +1850,15 @@ void ScriptMgr::LoadScriptNames()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outErrorDb(">> Loaded empty set of Script Names!");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
     uint32 count = 0;
 
     do
     {
-        bar.step();
         m_scriptNames.push_back((*result)[0].GetString());
         ++count;
     }

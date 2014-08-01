@@ -21,7 +21,6 @@
 #include "ObjectMgr.h"
 #include "ObjectGuid.h"
 #include "PoolManager.h"
-#include "ProgressBar.h"
 #include "Language.h"
 #include "Log.h"
 #include "MapManager.h"
@@ -121,13 +120,10 @@ void GameEventMgr::LoadFromDB()
     uint32 count = 0;
 
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             ++count;
             Field* fields = result->Fetch();
-
-            bar.step();
 
             uint16 event_id = fields[0].GetUInt16();
             if (event_id == 0)
@@ -181,20 +177,14 @@ void GameEventMgr::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u creatures in game events", count);
     }
     else
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar.step();
 
             uint32 guid    = fields[0].GetUInt32();
             int16 event_id = fields[1].GetInt16();
@@ -258,20 +248,14 @@ void GameEventMgr::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u gameobjects in game events", count);
     }
     else
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
-
-            bar.step();
 
             uint32 guid    = fields[0].GetUInt32();
             int16 event_id = fields[1].GetInt16();
@@ -348,20 +332,15 @@ void GameEventMgr::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u creature reactions at game events", count);
     }
     else
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar.step();
             uint32 guid     = fields[0].GetUInt32();
             uint16 event_id = fields[1].GetUInt16();
 
@@ -427,20 +406,15 @@ void GameEventMgr::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u quests additions in game events", count);
     }
     else
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar.step();
             uint32 quest    = fields[0].GetUInt32();
             uint16 event_id = fields[1].GetUInt16();
 
@@ -486,20 +460,15 @@ void GameEventMgr::LoadFromDB()
     count = 0;
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u start/end game event mails", count);
     }
     else
     {
-        BarGoLink bar(result->GetRowCount());
         do
         {
             Field* fields = result->Fetch();
 
-            bar.step();
             uint16 event_id = fields[0].GetUInt16();
 
             GameEventMail mail;

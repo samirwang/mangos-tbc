@@ -19,7 +19,6 @@
 #ifndef SQLSTORAGE_IMPL_H
 #define SQLSTORAGE_IMPL_H
 
-#include "ProgressBar.h"
 #include "Log.h"
 #include "DBCFileLoader.h"
 
@@ -248,11 +247,9 @@ void SQLStorageLoaderBase<DerivedLoader, StorageClass>::Load(StorageClass& store
     // Prepare data storage and lookup storage
     store.prepareToLoad(maxRecordId, recordCount, recordsize);
 
-    BarGoLink bar(recordCount);
     do
     {
         fields = result->Fetch();
-        bar.step();
 
         char* record = store.createRecord(fields[0].GetUInt32());
         offset = 0;

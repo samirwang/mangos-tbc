@@ -34,7 +34,6 @@
 #include "World.h"
 #include "Group.h"
 #include "InstanceData.h"
-#include "ProgressBar.h"
 
 INSTANTIATE_SINGLETON_1(MapPersistentStateManager);
 
@@ -698,9 +697,6 @@ void MapPersistentStateManager::_DelHelper(DatabaseType& db, const char* fields,
 
 void MapPersistentStateManager::CleanupInstances()
 {
-    BarGoLink bar(2);
-    bar.step();
-
     // load reset times and clean expired instances
     m_Scheduler.LoadResetTimes();
 
@@ -722,7 +718,6 @@ void MapPersistentStateManager::CleanupInstances()
     // execute transaction directly
     CharacterDatabase.CommitTransaction();
 
-    bar.step();
     sLog.outString();
     sLog.outString(">> Instances cleaned up");
 }
@@ -750,9 +745,6 @@ void MapPersistentStateManager::PackInstances()
         delete result;
     }
 
-    BarGoLink bar(InstanceSet.size() + 1);
-    bar.step();
-
     uint32 InstanceNumber = 1;
     // we do assume std::set is sorted properly on integer value
     for (std::set<uint32>::iterator i = InstanceSet.begin(); i != InstanceSet.end(); ++i)
@@ -772,7 +764,6 @@ void MapPersistentStateManager::PackInstances()
         }
 
         ++InstanceNumber;
-        bar.step();
     }
 
     sLog.outString(">> Instance numbers remapped, next instance id is %u", InstanceNumber);
@@ -917,21 +908,14 @@ void MapPersistentStateManager::LoadCreatureRespawnTimes()
     QueryResult* result = CharacterDatabase.Query("SELECT guid, respawntime, map, instance, difficulty, resettime FROM creature_respawn LEFT JOIN instance ON instance = id");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded 0 creature respawn time.");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-        bar.step();
 
         uint32 loguid               = fields[0].GetUInt32();
         uint64 respawn_time         = fields[1].GetUInt64();
@@ -990,21 +974,15 @@ void MapPersistentStateManager::LoadGameobjectRespawnTimes()
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded 0 gameobject respawn time.");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
 
     do
     {
         Field* fields = result->Fetch();
-        bar.step();
 
         uint32 loguid               = fields[0].GetUInt32();
         uint64 respawn_time         = fields[1].GetUInt64();

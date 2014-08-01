@@ -22,7 +22,6 @@
 #include "GMTicketMgr.h"
 #include "ObjectMgr.h"
 #include "ObjectGuid.h"
-#include "ProgressBar.h"
 #include "Policies/Singleton.h"
 #include "Player.h"
 
@@ -38,21 +37,13 @@ void GMTicketMgr::LoadGMTickets()
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded `character_ticket`, table is empty.");
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
-        bar.step();
-
         Field* fields = result->Fetch();
 
         uint32 guidlow = fields[0].GetUInt32();

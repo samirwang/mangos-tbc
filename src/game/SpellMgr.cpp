@@ -19,7 +19,6 @@
 #include "SpellMgr.h"
 #include "ObjectMgr.h"
 #include "SpellAuraDefines.h"
-#include "ProgressBar.h"
 #include "DBCStores.h"
 #include "SQLStorages.h"
 #include "World.h"
@@ -1037,22 +1036,14 @@ void SpellMgr::LoadSpellTargetPositions()
     QueryResult* result = WorldDatabase.Query("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell target destination coordinates", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 Spell_ID = fields[0].GetUInt32();
 
@@ -1298,8 +1289,6 @@ void SpellMgr::LoadSpellProcEvents()
     QueryResult* result = WorldDatabase.Query("SELECT entry, SchoolMask, SpellFamilyName, SpellFamilyMask0, SpellFamilyMask1, SpellFamilyMask2, procFlags, procEx, ppmRate, CustomChance, Cooldown FROM spell_proc_event");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> No spell proc event conditions loaded");
         return;
@@ -1307,12 +1296,9 @@ void SpellMgr::LoadSpellProcEvents()
 
     SpellRankHelper<SpellProcEventEntry, DoSpellProcEvent, SpellProcEventMap> rankHelper(*this, mSpellProcEventMap);
 
-    BarGoLink bar(result->GetRowCount());
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 entry = fields[0].GetUInt32();
 
@@ -1361,22 +1347,14 @@ void SpellMgr::LoadSpellProcItemEnchant()
     QueryResult* result = WorldDatabase.Query("SELECT entry, ppmRate FROM spell_proc_item_enchant");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u proc item enchant definitions", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 entry = fields[0].GetUInt32();
         float ppmRate = fields[1].GetFloat();
@@ -1431,18 +1409,14 @@ void SpellMgr::LoadSpellBonuses()
     QueryResult* result = WorldDatabase.Query("SELECT entry, direct_bonus, dot_bonus, ap_bonus, ap_dot_bonus FROM spell_bonus_data");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded %u spell bonus data", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
     do
     {
         Field* fields = result->Fetch();
-        bar.step();
         uint32 entry = fields[0].GetUInt32();
 
         SpellEntry const* spell = sSpellStore.LookupEntry(entry);
@@ -1629,22 +1603,14 @@ void SpellMgr::LoadSpellElixirs()
     QueryResult* result = WorldDatabase.Query("SELECT entry, mask FROM spell_elixir");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell elixir definitions", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 entry = fields[0].GetUInt32();
         uint8 mask = fields[1].GetUInt8();
@@ -1730,8 +1696,6 @@ void SpellMgr::LoadSpellThreats()
     QueryResult* result = WorldDatabase.Query("SELECT entry, Threat, multiplier, ap_bonus FROM spell_threat");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> No spell threat entries loaded.");
         return;
@@ -1739,13 +1703,9 @@ void SpellMgr::LoadSpellThreats()
 
     SpellRankHelper<SpellThreatEntry, DoSpellThreat, SpellThreatMap> rankHelper(*this, mSpellThreatMap);
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 entry = fields[0].GetUInt32();
 
@@ -2563,9 +2523,6 @@ void SpellMgr::LoadSpellChains()
     QueryResult* result = WorldDatabase.Query("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded 0 spell chain records");
         sLog.outErrorDb("`spell_chains` table is empty!");
@@ -2576,10 +2533,8 @@ void SpellMgr::LoadSpellChains()
     uint32 new_count = 0;
     uint32 req_count = 0;
 
-    BarGoLink bar(result->GetRowCount());
     do
     {
-        bar.step();
         Field* fields = result->Fetch();
 
         uint32 spell_id = fields[0].GetUInt32();
@@ -2793,10 +2748,8 @@ void SpellMgr::LoadSpellLearnSkills()
 
     // search auto-learned skills and add its to map also for use in unlearn spells/talents
     uint32 dbc_count = 0;
-    BarGoLink bar(sSpellStore.GetNumRows());
     for (uint32 spell = 0; spell < sSpellStore.GetNumRows(); ++spell)
     {
-        bar.step();
         SpellEntry const* entry = sSpellStore.LookupEntry(spell);
 
         if (!entry)
@@ -2834,9 +2787,6 @@ void SpellMgr::LoadSpellLearnSpells()
     QueryResult* result = WorldDatabase.Query("SELECT entry, SpellID, Active FROM spell_learn_spell");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded 0 spell learn spells");
         sLog.outErrorDb("`spell_learn_spell` table is empty!");
@@ -2845,10 +2795,8 @@ void SpellMgr::LoadSpellLearnSpells()
 
     uint32 count = 0;
 
-    BarGoLink bar(result->GetRowCount());
     do
     {
-        bar.step();
         Field* fields = result->Fetch();
 
         uint32 spell_id    = fields[0].GetUInt32();
@@ -3066,22 +3014,14 @@ void SpellMgr::LoadSpellPetAuras()
     QueryResult* result = WorldDatabase.Query("SELECT spell, pet, aura FROM spell_pet_auras");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell pet auras", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 spell = fields[0].GetUInt32();
         uint32 pet = fields[1].GetUInt32();
@@ -3221,22 +3161,14 @@ void SpellMgr::LoadSpellAreas()
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell area requirements", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 spell = fields[0].GetUInt32();
         SpellArea spellArea;
@@ -3534,12 +3466,10 @@ void SpellMgr::LoadSkillLineAbilityMap()
 {
     mSkillLineAbilityMap.clear();
 
-    BarGoLink bar(sSkillLineAbilityStore.GetNumRows());
     uint32 count = 0;
 
     for (uint32 i = 0; i < sSkillLineAbilityStore.GetNumRows(); ++i)
     {
-        bar.step();
         SkillLineAbilityEntry const* SkillInfo = sSkillLineAbilityStore.LookupEntry(i);
         if (!SkillInfo)
             continue;
@@ -3556,12 +3486,10 @@ void SpellMgr::LoadSkillRaceClassInfoMap()
 {
     mSkillRaceClassInfoMap.clear();
 
-    BarGoLink bar(sSkillRaceClassInfoStore.GetNumRows());
     uint32 count = 0;
 
     for (uint32 i = 0; i < sSkillRaceClassInfoStore.GetNumRows(); ++i)
     {
-        bar.step();
         SkillRaceClassInfoEntry const* skillRCInfo = sSkillRaceClassInfoStore.LookupEntry(i);
         if (!skillRCInfo)
             continue;
@@ -3589,22 +3517,14 @@ void SpellMgr::CheckUsedSpells(char const* table)
 
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outErrorDb("`%s` table is empty!", table);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 spell       = fields[0].GetUInt32();
         int32  family      = fields[1].GetInt32();
@@ -4051,22 +3971,14 @@ void SpellMgr::LoadSpellAffects()
     QueryResult* result = WorldDatabase.Query("SELECT entry, effectId, SpellFamilyMask FROM spell_affect");
     if (!result)
     {
-        BarGoLink bar(1);
-
-        bar.step();
-
         sLog.outString();
         sLog.outString(">> Loaded %u spell affect definitions", count);
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-
-        bar.step();
 
         uint32 entry = fields[0].GetUInt32();
         uint8 effectId = fields[1].GetUInt8();

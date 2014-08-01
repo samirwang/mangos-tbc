@@ -51,9 +51,6 @@
     <ClCompile Include="..\..\src\shared\Log.cpp">
       <Filter>Log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\shared\ProgressBar.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\shared\Util.cpp">
       <Filter>Util</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dep\include\mersennetwister\MersenneTwister.h">
-      <Filter>Util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\shared\ProgressBar.h">
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\shared\Timer.h">

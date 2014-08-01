@@ -20,7 +20,6 @@
 #include "Database/DatabaseEnv.h"
 #include "GridDefines.h"
 #include "Policies/Singleton.h"
-#include "ProgressBar.h"
 #include "MapManager.h"
 #include "ObjectMgr.h"
 #include "ScriptMgr.h"
@@ -65,19 +64,15 @@ void WaypointManager::Load()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 paths. DB table `creature_movement` is empty.");
     }
     else
     {
         total_paths = (uint32)result->GetRowCount();
-        BarGoLink bar(total_paths);
 
         do
         {
-            bar.step();
             Field* fields   = result->Fetch();
 
             uint32 id       = fields[0].GetUInt32();
@@ -97,14 +92,11 @@ void WaypointManager::Load()
                                      //   7        8        9        10       11       12     13     14           15      16
                                      "textid1, textid2, textid3, textid4, textid5, emote, spell, orientation, model1, model2 FROM creature_movement");
 
-        BarGoLink barRow((int)result->GetRowCount());
-
         // error after load, we check if creature guid corresponding to the path id has proper MovementType
         std::set<uint32> creatureNoMoveType;
 
         do
         {
-            barRow.step();
             Field* fields = result->Fetch();
             uint32 id           = fields[0].GetUInt32();
             uint32 point        = fields[1].GetUInt32();
@@ -236,8 +228,6 @@ void WaypointManager::Load()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 path templates. DB table `creature_movement_template` is empty.");
     }
@@ -246,11 +236,9 @@ void WaypointManager::Load()
         total_nodes = 0;
         total_behaviors = 0;
         total_paths = (uint32)result->GetRowCount();
-        BarGoLink barRow(total_paths);
 
         do
         {
-            barRow.step();
             Field* fields = result->Fetch();
 
             uint32 entry    = fields[0].GetUInt32();
@@ -270,11 +258,8 @@ void WaypointManager::Load()
                                      //   7        8        9        10       11       12     13     14           15      16
                                      "textid1, textid2, textid3, textid4, textid5, emote, spell, orientation, model1, model2 FROM creature_movement_template");
 
-        BarGoLink bar(result->GetRowCount());
-
         do
         {
-            bar.step();
             Field* fields = result->Fetch();
 
             uint32 entry        = fields[0].GetUInt32();

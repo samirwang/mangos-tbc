@@ -20,7 +20,6 @@
 #include "Database/DatabaseEnv.h"
 #include "SQLStorages.h"
 #include "DBCStores.h"
-#include "ProgressBar.h"
 
 #include "AccountMgr.h"
 #include "Item.h"
@@ -285,22 +284,16 @@ void AuctionHouseMgr::LoadAuctionItems()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 auction items");
         return;
     }
-
-    BarGoLink bar(result->GetRowCount());
 
     uint32 count = 0;
 
     Field* fields;
     do
     {
-        bar.step();
-
         fields = result->Fetch();
         uint32 item_guid        = fields[1].GetUInt32();
         uint32 item_template    = fields[2].GetUInt32();
@@ -336,8 +329,6 @@ void AuctionHouseMgr::LoadAuctions()
     QueryResult* result = CharacterDatabase.Query("SELECT COUNT(*) FROM auction");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table `auction` is empty.");
         return;
@@ -349,8 +340,6 @@ void AuctionHouseMgr::LoadAuctions()
 
     if (!AuctionCount)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table `auction` is empty.");
         return;
@@ -359,14 +348,10 @@ void AuctionHouseMgr::LoadAuctions()
     result = CharacterDatabase.Query("SELECT id,houseid,itemguid,item_template,item_count,item_randompropertyid,itemowner,buyoutprice,time,buyguid,lastbid,startbid,deposit FROM auction");
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outString();
         sLog.outString(">> Loaded 0 auctions. DB table `auction` is empty.");
         return;
     }
-
-    BarGoLink bar(AuctionCount);
 
     typedef std::map<uint32, std::wstring> PlayerNames;
     PlayerNames playerNames;                                // caching for load time
@@ -374,8 +359,6 @@ void AuctionHouseMgr::LoadAuctions()
     do
     {
         fields = result->Fetch();
-
-        bar.step();
 
         AuctionEntry* auction = new AuctionEntry;
         auction->Id = fields[0].GetUInt32();
