@@ -39,19 +39,19 @@ public:
             return true;
         }
 
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bat         ", GOSSIP_SENDER_MAIN, 1); // 16173
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bear        ", GOSSIP_SENDER_MAIN, 2); // 23584
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Boar        ", GOSSIP_SENDER_MAIN, 3); // 21878
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bat", GOSSIP_SENDER_MAIN, 1); // 16173
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Bear", GOSSIP_SENDER_MAIN, 2); // 23584
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Boar", GOSSIP_SENDER_MAIN, 3); // 21878
         pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Carrion Bird", GOSSIP_SENDER_MAIN, 4); // 18707
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Cat         ", GOSSIP_SENDER_MAIN, 5); // 20671
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crab        ", GOSSIP_SENDER_MAIN, 6); // 18241
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crocolisk   ", GOSSIP_SENDER_MAIN, 7); // 20773
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Dragonhawk  ", GOSSIP_SENDER_MAIN, 8); // 18155
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Gorilla     ", GOSSIP_SENDER_MAIN, 9); // 6585
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Hyena       ", GOSSIP_SENDER_MAIN, 10); // 8300
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Nether Ray  ", GOSSIP_SENDER_MAIN, 11); // 17731
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Raptor      ", GOSSIP_SENDER_MAIN, 12); // 20634
-        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Next Page          ", GOSSIP_SENDER_MAIN, 13);
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Cat", GOSSIP_SENDER_MAIN, 5); // 20671
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crab", GOSSIP_SENDER_MAIN, 6); // 18241
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Crocolisk", GOSSIP_SENDER_MAIN, 7); // 20773
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Dragonhawk", GOSSIP_SENDER_MAIN, 8); // 18155
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Gorilla", GOSSIP_SENDER_MAIN, 9); // 6585
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Hyena", GOSSIP_SENDER_MAIN, 10); // 8300
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Nether Ray", GOSSIP_SENDER_MAIN, 11); // 17731
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Raptor", GOSSIP_SENDER_MAIN, 12); // 20634
+        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Next Page", GOSSIP_SENDER_MAIN, 13);
 
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
             pPlayer->PlayerTalkClass->SendGossipMenu("Those beasts mean nothing to me!", pCreature->GetObjectGuid());
@@ -215,16 +215,16 @@ public:
         }
         else if (action == 13)
         {
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Ravager     ", GOSSIP_SENDER_MAIN, 14); // 23326
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Scorpid     ", GOSSIP_SENDER_MAIN, 15); // 21864
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Serpent     ", GOSSIP_SENDER_MAIN, 16); // 19784
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Spider      ", GOSSIP_SENDER_MAIN, 17); // 16170
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Tallstrider ", GOSSIP_SENDER_MAIN, 18); // 22807
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Turtle      ", GOSSIP_SENDER_MAIN, 19); // 5431
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Ravager", GOSSIP_SENDER_MAIN, 14); // 23326
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Scorpid", GOSSIP_SENDER_MAIN, 15); // 21864
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Serpent", GOSSIP_SENDER_MAIN, 16); // 19784
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Spider", GOSSIP_SENDER_MAIN, 17); // 16170
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Tallstrider", GOSSIP_SENDER_MAIN, 18); // 22807
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Turtle", GOSSIP_SENDER_MAIN, 19); // 5431
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Warp Stalker", GOSSIP_SENDER_MAIN, 20); // 23219
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wind Serpent", GOSSIP_SENDER_MAIN, 21); // 20673
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wolf        ", GOSSIP_SENDER_MAIN, 22); // 17280
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Previous Page      ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Summon me a: Wolf", GOSSIP_SENDER_MAIN, 22); // 17280
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Go to Previous Page", GOSSIP_SENDER_MAIN, 0);
         }
         else if (action == 14) // Ravager 23326
         {

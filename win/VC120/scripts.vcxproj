@@ -23,7 +23,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\..\src\scripts\ScriptLoader.cpp" />
-    <ClCompile Include="..\..\src\scripts\sc_default.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\scripts\Precompiled.h" />

@@ -51,10 +51,10 @@ public:
             pPlayer->isGameMaster())
             pCPlayer->AddGossipMenuItem(Icon::TAXI, "Teleport To: Gurubashi Arena", GOSSIP_SENDER_MAIN, 3);
 
-        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Open Tools                  ", GOSSIP_SENDER_MAIN, 100);
-        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Change Your Level           ", GOSSIP_SENDER_MAIN, 200);
-        pCPlayer->AddGossipMenuItem(Icon::BAG, "Open Vendors                ", GOSSIP_SENDER_MAIN, 300);
-        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Queue for battle            ", GOSSIP_SENDER_MAIN, 400);
+        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Open Tools", GOSSIP_SENDER_MAIN, 100);
+        pCPlayer->AddGossipMenuItem(Icon::GEAR, "Change Your Level", GOSSIP_SENDER_MAIN, 200);
+        pCPlayer->AddGossipMenuItem(Icon::BAG, "Open Vendors", GOSSIP_SENDER_MAIN, 300);
+        pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Queue for battle", GOSSIP_SENDER_MAIN, 400);
 
         if (pPlayer->isGameMaster())
             pCPlayer->AddGossipMenuItem(Icon::BAG, "GM menu", GOSSIP_SENDER_MAIN, 1337);
@@ -110,12 +110,12 @@ public:
         }
         else if (action == 100) // Open Tools
         {
-            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Reset Talents     ", GOSSIP_SENDER_MAIN, 101);
-            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Reset Cooldowns   ", GOSSIP_SENDER_MAIN, 104);
-            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Max Weapon Skills ", GOSSIP_SENDER_MAIN, 103);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Open Bank         ", GOSSIP_SENDER_MAIN, 105);
+            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Reset Talents", GOSSIP_SENDER_MAIN, 101);
+            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Reset Cooldowns", GOSSIP_SENDER_MAIN, 104);
+            pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Max Weapon Skills", GOSSIP_SENDER_MAIN, 103);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Open Bank", GOSSIP_SENDER_MAIN, 105);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Open Auction House", GOSSIP_SENDER_MAIN, 106);
-            pCPlayer->AddGossipMenuItem(Icon::TABARD, "Create a guild    ", GOSSIP_SENDER_MAIN, 107);
+            pCPlayer->AddGossipMenuItem(Icon::TABARD, "Create a guild", GOSSIP_SENDER_MAIN, 107);
             pCPlayer->AddGossipMenuItem(Icon::TABARD, "Design your tabard", GOSSIP_SENDER_MAIN, 108);
 
             if (pPlayer->ToCPlayer()->GetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU))
@@ -126,9 +126,9 @@ public:
         else if (action == 101) // Reset Talents
         {
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Are you sure you want to reset your talents?", GOSSIP_SENDER_MAIN, 100);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Yes                                         ", GOSSIP_SENDER_MAIN, 102);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "No                                          ", GOSSIP_SENDER_MAIN, 100);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back                                        ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Yes", GOSSIP_SENDER_MAIN, 102);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "No", GOSSIP_SENDER_MAIN, 100);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 0);
         }
         else if (action == 102) // Talents Reset
         {
@@ -191,20 +191,20 @@ public:
         }
         else if (action == 300)
         {
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Starter Items   ", GOSSIP_SENDER_MAIN, 301);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Season Items    ", GOSSIP_SENDER_MAIN, 302);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "PvE Items       ", GOSSIP_SENDER_MAIN, 303);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Gems            ", GOSSIP_SENDER_MAIN, 304);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Jewelry         ", GOSSIP_SENDER_MAIN, 305);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Cloaks          ", GOSSIP_SENDER_MULTIVENDOR, 81023);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Relics          ", GOSSIP_SENDER_MULTIVENDOR, 82016);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Starter Items", GOSSIP_SENDER_MAIN, 301);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Season Items", GOSSIP_SENDER_MAIN, 302);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "PvE Items", GOSSIP_SENDER_MAIN, 303);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Gems", GOSSIP_SENDER_MAIN, 304);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Jewelry", GOSSIP_SENDER_MAIN, 305);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Cloaks", GOSSIP_SENDER_MULTIVENDOR, 81023);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Relics", GOSSIP_SENDER_MULTIVENDOR, 82016);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Offhands/Shields", GOSSIP_SENDER_MULTIVENDOR, 82034);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Tabards         ", GOSSIP_SENDER_MULTIVENDOR, 81024);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Tabards", GOSSIP_SENDER_MULTIVENDOR, 81024);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Profession Goods", GOSSIP_SENDER_MULTIVENDOR, 81034);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "General Goods   ", GOSSIP_SENDER_MULTIVENDOR, 81027);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "General Goods", GOSSIP_SENDER_MULTIVENDOR, 81027);
 
             if (pPlayer->getClass() == CLASS_ROGUE)
-                pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Rogue Supplies ", GOSSIP_SENDER_MULTIVENDOR, 81026);
+                pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Rogue Supplies", GOSSIP_SENDER_MULTIVENDOR, 81026);
             else if (pPlayer->getClass() == CLASS_WARLOCK)
                 pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Pet Spell books", GOSSIP_SENDER_MULTIVENDOR, 81037);
 
@@ -212,57 +212,57 @@ public:
         }
         else if (action == 301)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Weapons ", GOSSIP_SENDER_MULTIVENDOR, 82022);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Mainset ", GOSSIP_SENDER_MULTIVENDOR, 82020);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Offset  ", GOSSIP_SENDER_MULTIVENDOR, 82021);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Weapons", GOSSIP_SENDER_MULTIVENDOR, 82022);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Mainset", GOSSIP_SENDER_MULTIVENDOR, 82020);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Offset ", GOSSIP_SENDER_MULTIVENDOR, 82021);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Jewelery", GOSSIP_SENDER_MULTIVENDOR, 82015);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Gems    ", GOSSIP_SENDER_MULTIVENDOR, 82027);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Starter Gems", GOSSIP_SENDER_MULTIVENDOR, 82027);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back            ", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 302)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S1: Gladiator ", GOSSIP_SENDER_MULTIVENDOR, 81000);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S1: General   ", GOSSIP_SENDER_MULTIVENDOR, 81001);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S2: Merciless ", GOSSIP_SENDER_MULTIVENDOR, 81002);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S2: Veteran   ", GOSSIP_SENDER_MULTIVENDOR, 81003);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S3: Vengeful  ", GOSSIP_SENDER_MULTIVENDOR, 81035);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S1: Gladiator", GOSSIP_SENDER_MULTIVENDOR, 81000);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S1: General", GOSSIP_SENDER_MULTIVENDOR, 81001);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S2: Merciless", GOSSIP_SENDER_MULTIVENDOR, 81002);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S2: Veteran", GOSSIP_SENDER_MULTIVENDOR, 81003);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S3: Vengeful", GOSSIP_SENDER_MULTIVENDOR, 81035);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S3: Vindicator", GOSSIP_SENDER_MULTIVENDOR, 81005);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S4: Brutal    ", GOSSIP_SENDER_MULTIVENDOR, 81006);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S4: Guardian  ", GOSSIP_SENDER_MULTIVENDOR, 81029);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back          ", GOSSIP_SENDER_MAIN, 300);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S4: Brutal", GOSSIP_SENDER_MULTIVENDOR, 81006);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "S4: Guardian", GOSSIP_SENDER_MULTIVENDOR, 81029);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 303)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "T6: Mainset      ", GOSSIP_SENDER_MULTIVENDOR, 82035);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "T6: Offset       ", GOSSIP_SENDER_MULTIVENDOR, 82037);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "MISC: PvE Gear   ", GOSSIP_SENDER_MULTIVENDOR, 81036);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "T6: Mainset", GOSSIP_SENDER_MULTIVENDOR, 82035);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "T6: Offset", GOSSIP_SENDER_MULTIVENDOR, 82037);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "MISC: PvE Gear", GOSSIP_SENDER_MULTIVENDOR, 81036);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "MISC: PvE Weapons", GOSSIP_SENDER_MULTIVENDOR, 81033);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back             ", GOSSIP_SENDER_MAIN, 300);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 304)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_WHITE   "Meta  ", GOSSIP_SENDER_MULTIVENDOR, 81028);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_RED     "Red   ", GOSSIP_SENDER_MULTIVENDOR, 81014);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_WHITE   "Meta", GOSSIP_SENDER_MULTIVENDOR, 81028);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_RED     "Red", GOSSIP_SENDER_MULTIVENDOR, 81014);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_ORANGE  "Orange", GOSSIP_SENDER_MULTIVENDOR, 81009);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_YELLOW  "Yellow", GOSSIP_SENDER_MULTIVENDOR, 81012);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_GREEN   "Green ", GOSSIP_SENDER_MULTIVENDOR, 81010);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_BLUE    "Blue  ", GOSSIP_SENDER_MULTIVENDOR, 81013);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_GREEN   "Green", GOSSIP_SENDER_MULTIVENDOR, 81010);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_BLUE    "Blue ", GOSSIP_SENDER_MULTIVENDOR, 81013);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_PURPLE  "Purple", GOSSIP_SENDER_MULTIVENDOR, 81011);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back             ", GOSSIP_SENDER_MAIN, 300);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 305)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Trinkets ", GOSSIP_SENDER_MULTIVENDOR, 81022);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Rings    ", GOSSIP_SENDER_MULTIVENDOR, 81025);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Trinkets", GOSSIP_SENDER_MULTIVENDOR, 81022);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Rings", GOSSIP_SENDER_MULTIVENDOR, 81025);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Necklaces", GOSSIP_SENDER_MULTIVENDOR, 81021);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back     ", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 400)
         {
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Warsong Gulch   ", GOSSIP_SENDER_MAIN, 401);
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Arathi Basin    ", GOSSIP_SENDER_MAIN, 402);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Warsong Gulch", GOSSIP_SENDER_MAIN, 401);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Arathi Basin", GOSSIP_SENDER_MAIN, 402);
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Eye of the Storm", GOSSIP_SENDER_MAIN, 403);
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Alterac Valley  ", GOSSIP_SENDER_MAIN, 404);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Alterac Valley", GOSSIP_SENDER_MAIN, 404);
 
             if (Group* grp = pPlayer->GetGroup())
             {
@@ -299,7 +299,7 @@ public:
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Skirmish 2v2", GOSSIP_SENDER_MAIN, 408);
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Skirmish 3v3", GOSSIP_SENDER_MAIN, 409);
             pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Skirmish 5v5", GOSSIP_SENDER_MAIN, 410);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back        ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 0);
         }
         else if (action >= 401 && action <= 404)
         {
@@ -367,15 +367,15 @@ public:
         }
         else if (action == 1340)
         {
-            pCPlayer->AddGossipMenuItem(Icon::CHAT, "Icon::CHAT     ", GOSSIP_SENDER_MAIN, 0);
-            pCPlayer->AddGossipMenuItem(Icon::BAG, "Icon::BAG      ", GOSSIP_SENDER_MAIN, 0);
-            pCPlayer->AddGossipMenuItem(Icon::TAXI, "Icon::TAXI     ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::CHAT, "Icon::CHAT", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::BAG, "Icon::BAG", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::TAXI, "Icon::TAXI", GOSSIP_SENDER_MAIN, 0);
             pCPlayer->AddGossipMenuItem(Icon::TRAINER, "Icon::TRAINER  ", GOSSIP_SENDER_MAIN, 0);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Icon::GEAR     ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Icon::GEAR", GOSSIP_SENDER_MAIN, 0);
             pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, "Icon::MONEY_BAG", GOSSIP_SENDER_MAIN, 0);
             pCPlayer->AddGossipMenuItem(Icon::CHAT_DOTS, "Icon::CHAT_DOTS", GOSSIP_SENDER_MAIN, 0);
-            pCPlayer->AddGossipMenuItem(Icon::TABARD, "Icon::TABARD   ", GOSSIP_SENDER_MAIN, 0);
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Icon::SWORDS   ", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::TABARD, "Icon::TABARD", GOSSIP_SENDER_MAIN, 0);
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Icon::SWORDS", GOSSIP_SENDER_MAIN, 0);
         }
         else if (action == 1341)
         {

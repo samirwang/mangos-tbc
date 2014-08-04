@@ -16,7 +16,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\scripts\npc_spirit_guide.cpp" />
     <ClCompile Include="..\..\src\scripts\npc_teleporter.cpp" />
-    <ClCompile Include="..\..\src\scripts\sc_default.cpp" />
     <ClCompile Include="..\..\src\scripts\ScriptLoader.cpp" />
     <ClCompile Include="..\..\src\scripts\npc_beast_master.cpp" />
     <ClCompile Include="..\..\src\scripts\npc_enchant.cpp" />
