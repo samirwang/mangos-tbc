@@ -68,7 +68,7 @@ Custom::SpellContainer Custom::GetSpellContainerByCreatureEntry(uint32 entry)
     if (!creature)
         return spellContainer;
 
-    uint32 trainertemplate = creature->trainerId;
+    uint32 trainertemplate = creature->TrainerTemplateId;
 
     if (trainertemplate)
     if (TrainerSpellData const* spelldata2 = sObjectMgr.GetNpcTrainerTemplateSpells(trainertemplate))

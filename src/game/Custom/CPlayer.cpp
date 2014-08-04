@@ -478,7 +478,7 @@ void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
     }
 
     VendorItemData const* vItems = sObjectMgr.GetNpcVendorItemList(cEntry);
-    VendorItemData const* tItems = cinfo->vendorId ? sObjectMgr.GetNpcVendorTemplateItemList(cinfo->vendorId) : NULL;
+    VendorItemData const* tItems = cinfo->VendorTemplateId ? sObjectMgr.GetNpcVendorTemplateItemList(cinfo->VendorTemplateId) : NULL;
 
     if (!vItems && !tItems)
     {
@@ -586,7 +586,7 @@ bool CPlayer::BuyItemFromMultiVendor(uint32 item, uint8 count, uint8 bag, uint8 
     }
 
     VendorItemData const* vItems = sObjectMgr.GetNpcVendorItemList(entry);
-    VendorItemData const* tItems = cinfo->vendorId ? sObjectMgr.GetNpcVendorTemplateItemList(cinfo->vendorId) : NULL;
+    VendorItemData const* tItems = cinfo->VendorTemplateId ? sObjectMgr.GetNpcVendorTemplateItemList(cinfo->VendorTemplateId) : NULL;
 
     if ((!vItems || vItems->Empty()) && (!tItems || tItems->Empty()))
     {
