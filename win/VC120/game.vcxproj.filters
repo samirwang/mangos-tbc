@@ -614,7 +614,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\BattleGround\BattleGroundWS.h">
       <Filter>BattleGround</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\Cell.h">
       <Filter>World/Handlers</Filter>
     </ClInclude>
