@@ -62,13 +62,6 @@ bool ChatHandler::load_command_table = true;
 
 ChatCommand* ChatHandler::getCommandTable()
 {
-    static ChatCommand worldchatCommandTable[] =
-    {
-        { "toggle", SEC_PLAYER, true, &ChatHandler::HandleWToggleCommand, "", NULL },
-        { "", SEC_PLAYER, true, &ChatHandler::HandleWChatCommand, "", NULL },
-        { NULL, 0, false, NULL, "", NULL }
-    };
-
     static ChatCommand accountSetCommandTable[] =
     {
         { "addon",          SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleAccountSetAddonCommand,     "", NULL },
@@ -698,10 +691,18 @@ ChatCommand* ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
+    static ChatCommand worldchatCommandTable[] =
+    {
+        { "toggle", SEC_PLAYER, true, &ChatHandler::HandleWToggleCommand,   "", NULL },
+        { "",       SEC_PLAYER, true, &ChatHandler::HandleWChatCommand,     "", NULL },
+        { NULL, 0, false, NULL, "", NULL }
+    };
+
     static ChatCommand commandTable[] =
     {
         { "battlestart",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStartCommand,             "", NULL },
         { "battlestop",     SEC_ADMINISTRATOR,  false, &ChatHandler::HandleBGStopCommand,              "", NULL },
+        { "findnpcspell",   SEC_ADMINISTRATOR,  false, &ChatHandler::HandleSpellCreatureFindCommand,   "", NULL },
         { "c",              SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
         { "chat",           SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },
         { "w",              SEC_PLAYER,         true,  NULL,                                           "", worldchatCommandTable },

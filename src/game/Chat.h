@@ -155,6 +155,8 @@ class MANGOS_DLL_SPEC ChatHandler
         bool HandleWToggleCommand(char* args);
         bool HandleWChatCommand(char* args);
 
+        bool HandleSpellCreatureFindCommand(char* args);
+
         bool HandleAccountCommand(char* args);
         bool HandleAccountCharactersCommand(char* args);
         bool HandleAccountCreateCommand(char* args);

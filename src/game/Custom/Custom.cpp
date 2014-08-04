@@ -26,6 +26,8 @@
 #include "GossipDef.h"
 #include "NewPlayer.h"
 
+#include <fstream>
+
 Custom::~Custom()
 {
     for (auto& itr : m_CachedSpellContainer)
@@ -215,6 +217,43 @@ bool ChatHandler::HandleWChatCommand(char* args)
         m_session->GetPlayer()->ToCPlayer()->SendWorldChatMsg(args);
     else
         PSendSysMessage("%s You have disabled the worldchat, please enable it to speak in it.", sCustom.ChatNameWrapper("World Chat").c_str());
+
+    return true;
+}
+
+bool ChatHandler::HandleSpellCreatureFindCommand(char*)
+{
+    ofstream myfile;
+    myfile.open("npcdbc.log");
+
+    uint16 count = 0;
+    for (uint32 i = 1; i < 53086; ++i)
+    {
+        SpellEntry const* spellInfo = sSpellStore.LookupEntry(i);
+        if (spellInfo)
+        {
+            for (uint32 idx = 0; idx < 3; ++idx)
+            {
+                if (spellInfo->EffectApplyAuraName[idx] == SPELL_AURA_MOUNTED)
+                {
+                    myfile << spellInfo->EffectMiscValue[idx] << "\n";
+                    ++count;
+                }
+                if (spellInfo->EffectApplyAuraName[idx] == SPELL_AURA_TRANSFORM)
+                {
+                    myfile << spellInfo->EffectMiscValue[idx] << "\n";
+                    ++count;
+                }
+                else if (spellInfo->Effect[idx] == SPELL_EFFECT_SUMMON)
+                {
+                    myfile << spellInfo->EffectMiscValue[idx] << "\n";
+                    ++count;
+                }
+            }
+        }
+    }
+    PSendSysMessage("Found %u npc's in spell.dbc", count);
+    myfile.close();
 
     return true;
 }
