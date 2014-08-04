@@ -18,7 +18,7 @@
 
 #include "CPlusMgr.h"
 #include "ObjectGuid.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 /* CreatureScript */
 

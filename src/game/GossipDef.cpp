@@ -23,7 +23,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "Formulas.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 GossipMenu::GossipMenu(WorldSession* session) : m_session(session)
 {

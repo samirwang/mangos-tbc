@@ -68,7 +68,7 @@
 #include "WardenDataStorage.h"
 #include "Custom.h"
 #include "CPlusMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 INSTANTIATE_SINGLETON_1(World);
 

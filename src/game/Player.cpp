@@ -64,7 +64,7 @@
 #include "SQLStorages.h"
 #include "Custom.h"
 #include "CPlusMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 #include <cmath>
 

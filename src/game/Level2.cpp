@@ -49,7 +49,7 @@
 #include <map>
 #include <typeinfo>
 #include "Formulas.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 #include "MoveMap.h"                                        // for mmap manager

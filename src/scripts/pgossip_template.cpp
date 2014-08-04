@@ -17,7 +17,7 @@
 */
 
 #include "Precompiled.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 class pgossip_templatesystem : public PlayerScript
 {

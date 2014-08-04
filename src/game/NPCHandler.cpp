@@ -35,7 +35,7 @@
 #include "GuildMgr.h"
 #include "Chat.h"
 #include "CPlusMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 enum StableResultCode
 {

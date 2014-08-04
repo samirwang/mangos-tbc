@@ -51,7 +51,7 @@
 #include "movement/MoveSplineInit.h"
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 #include <math.h>
 #include <stdarg.h>

@@ -23,7 +23,7 @@
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
 #include "BattleGround/BattleGroundMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 bool CPlayer::NativeTeam() const
 {

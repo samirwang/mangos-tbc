@@ -1,5 +1,5 @@
 #include "Precompiled.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 class npc_enchant : public CreatureScript
 {

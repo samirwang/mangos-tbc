@@ -42,7 +42,7 @@
 #include "Pet.h"
 #include "SocialMgr.h"
 #include "Custom.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 void WorldSession::HandleRepopRequestOpcode(WorldPacket& recv_data)
 {

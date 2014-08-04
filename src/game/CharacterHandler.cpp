@@ -39,7 +39,7 @@
 #include "ArenaTeam.h"
 #include "Language.h"
 #include "SpellMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 // config option SkipCinematics supported values
 enum CinematicsSkipMode

@@ -17,7 +17,7 @@
 */
 
 #include "Log.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 void CPlayer::LoadSettings()
 {

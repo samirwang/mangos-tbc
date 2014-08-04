@@ -19,7 +19,7 @@
 #include "Precompiled.h"
 #include "ArenaTeam.h"
 #include "CPlusMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 class NPC_Teleporter : public CreatureScript
 {

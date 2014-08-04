@@ -24,7 +24,44 @@
 #include "ObjectMgr.h"
 #include "DBCStores.h"
 #include "CPlusMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
+#include "AntiCheat.h"
+
+CPlayer::CPlayer(WorldSession* session) : Player(session)
+{
+    m_CheatDetectors.push_back(new AntiCheat_speed(this));
+    m_CheatDetectors.push_back(new AntiCheat_jump(this));
+    m_CheatDetectors.push_back(new AntiCheat_fly(this));
+    m_CheatDetectors.push_back(new AntiCheat_climb(this));
+
+    m_GmFly = false;
+    m_FirstMoveInfo = false;
+    m_SkipAntiCheat = 1;
+
+    m_fRace = 0;
+    m_oRace = 0;
+    m_fFaction = 0;
+    m_oFaction = 0;
+    m_oPlayerBytes = 0;
+    m_oPlayerBytes2 = 0;
+    m_fPlayerBytes = 0;
+    m_fPlayerBytes2 = 0;
+    m_Recache = 0;
+    m_FakeOnNextTick = 0;
+
+    m_wChatOn = false;
+    m_Country = Country();
+    m_LastGossipGuid = ObjectGuid();
+    m_MultiVendor = MultiVendor();
+    m_ScriptID = 0;
+    m_SelectedGObject = 0;
+}
+
+CPlayer::~CPlayer()
+{
+    for (auto& i : m_CheatDetectors)
+        delete i;
+}
 
 void CPlayer::CUpdate(uint32 diff)
 {

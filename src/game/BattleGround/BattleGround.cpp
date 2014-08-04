@@ -35,7 +35,7 @@
 #include "GridNotifiersImpl.h"
 #include "Chat.h"
 #include "Custom.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 namespace MaNGOS
 {

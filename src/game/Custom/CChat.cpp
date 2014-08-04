@@ -21,7 +21,7 @@
 #include "WorldSession.h"
 #include "Player.h"
 #include "BattleGround/BattleGround.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {

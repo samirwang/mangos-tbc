@@ -52,7 +52,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
 {

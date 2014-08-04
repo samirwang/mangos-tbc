@@ -24,7 +24,7 @@
 #include "Log.h"
 #include "SocialMgr.h"
 #include "GossipDef.h"
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 #include <fstream>
 

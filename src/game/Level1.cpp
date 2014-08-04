@@ -38,7 +38,7 @@
 #ifdef _DEBUG_VMAPS
 #include "VMapFactory.h"
 #endif
-#include "NewPlayer.h"
+#include "CPlayer.h"
 
 //-----------------------Npc Commands-----------------------
 bool ChatHandler::HandleNpcSayCommand(char* args)
