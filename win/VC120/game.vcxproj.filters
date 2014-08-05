@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="World/Handlers">
       <UniqueIdentifier>{d75ae330-80de-4aaf-8274-ae85f49dbcd9}</UniqueIdentifier>
@@ -38,19 +38,10 @@
       <UniqueIdentifier>{0af4d063-6d01-4546-a429-59bd828ab270}</UniqueIdentifier>
     </Filter>
     <Filter Include="Custom">
-      <UniqueIdentifier>{e0fd42ff-5639-4a1e-a762-bbb6246faaf9}</UniqueIdentifier>
+      <UniqueIdentifier>{76464b09-0e7c-431c-8841-1f0aa30a418e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Custom\Warden">
-      <UniqueIdentifier>{6c93fca1-b19a-488c-80b4-f9125e1f0fd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Custom\Custom">
-      <UniqueIdentifier>{2dadc0f3-d540-4021-be10-edc4b09a7739}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Custom\CPlusMgr">
-      <UniqueIdentifier>{1554c497-b3da-4233-b975-1f65cd76b980}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Custom\AntiCheat">
-      <UniqueIdentifier>{ba6daacb-0ec9-4c4d-8693-5cdb35e5ca42}</UniqueIdentifier>
+      <UniqueIdentifier>{a3279e8c-a15c-46e1-9879-4b40ee17c365}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,39 +53,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\game\AuctionHouseHandler.cpp">
       <Filter>World/Handlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGround.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAA.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAB.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAV.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundBE.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundEY.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundHandler.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundMgr.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundNA.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundRL.cpp">
-      <Filter>BattleGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundWS.cpp">
-      <Filter>BattleGround</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Channel.cpp">
       <Filter>World/Handlers</Filter>
@@ -541,6 +499,39 @@
     <ClCompile Include="..\..\src\game\TransportSystem.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGround.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAA.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAB.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundAV.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundBE.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundEY.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundHandler.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundMgr.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundNA.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundRL.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\BattleGround\BattleGroundWS.cpp">
+      <Filter>BattleGround</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenBase.cpp">
       <Filter>Custom\Warden</Filter>
     </ClCompile>
@@ -553,67 +544,38 @@
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenWin.cpp">
       <Filter>Custom\Warden</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\Misc.cpp">
+    <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CChat.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
-      <Filter>Custom\Custom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
-      <Filter>Custom\CPlusMgr</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CFBG.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CheatDetectors.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\Settings.cpp">
+    <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
-      <Filter>Custom\AntiCheat</Filter>
+    <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
+      <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CheatDetectors.cpp">
-      <Filter>Custom\AntiCheat</Filter>
+    <ClCompile Include="..\..\src\game\Custom\Misc.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\Settings.cpp">
+      <Filter>Custom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
       <Filter>World/Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGround.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAA.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAB.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAV.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundBE.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundEY.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundMgr.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundNA.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundRL.h">
-      <Filter>BattleGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundWS.h">
-      <Filter>BattleGround</Filter>
     <ClInclude Include="..\..\src\game\Cell.h">
       <Filter>World/Handlers</Filter>
     </ClInclude>
@@ -1056,6 +1018,36 @@
     <ClInclude Include="..\..\src\game\TransportSystem.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGround.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAA.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAB.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundAV.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundBE.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundEY.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundMgr.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundNA.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundRL.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\BattleGround\BattleGroundWS.h">
+      <Filter>BattleGround</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenBase.h">
       <Filter>Custom\Warden</Filter>
     </ClInclude>
@@ -1074,16 +1066,16 @@
     <ClInclude Include="..\..\src\game\Custom\Warden\WardenWin.h">
       <Filter>Custom\Warden</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\Custom.h">
-      <Filter>Custom\Custom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
-      <Filter>Custom\CPlusMgr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
-      <Filter>Custom\AntiCheat</Filter>
+      <Filter>Custom</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Custom.h">
       <Filter>Custom</Filter>
     </ClInclude>
   </ItemGroup>
