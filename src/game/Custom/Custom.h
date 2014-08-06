@@ -186,6 +186,9 @@ public:
     void LoadEnchantContainer();
     const EnchantContainer GetEnchantContainer() { return m_EnchantContainer; }
 
+    static CPlayer* GetCPlayer(const char* name);                                 ///< Wrapper for ObjectAccessor::FindPlayerByName
+    static CPlayer* GetCPlayer(ObjectGuid guid, bool inWorld = true);             ///< Wrapper for ObjectAccessor::FindPlayer
+
 private:
     static const std::string m_ClassColor[];
     static const std::string m_ItemColor[];

@@ -34,6 +34,8 @@ CPlayer::CPlayer(WorldSession* session) : Player(session)
     m_CheatDetectors.push_back(new AntiCheat_fly(this));
     m_CheatDetectors.push_back(new AntiCheat_climb(this));
 
+    m_PendingReward = 0;
+
     m_GmFly = false;
     m_FirstMoveInfo = false;
     m_SkipAntiCheat = 1;

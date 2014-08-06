@@ -40,6 +40,18 @@
     <Filter Include="Custom\Warden">
       <UniqueIdentifier>{a3279e8c-a15c-46e1-9879-4b40ee17c365}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom\CPlusMgr">
+      <UniqueIdentifier>{bcc9e530-d0e9-4ca2-857c-20a875b74b8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\AntiCheat">
+      <UniqueIdentifier>{020ee021-3ee7-4c5e-8d50-c44087feadc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\Custom">
+      <UniqueIdentifier>{87926f89-abd0-436b-81b9-d4dfe480c92e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Custom\CPlayer">
+      <UniqueIdentifier>{1e393796-75bf-4b50-92f0-150ac9325447}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -538,32 +550,35 @@
     <ClCompile Include="..\..\src\game\Custom\Warden\WardenWin.cpp">
       <Filter>Custom\Warden</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
-      <Filter>Custom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CChat.cpp">
-      <Filter>Custom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CFBG.cpp">
-      <Filter>Custom</Filter>
+    <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
+      <Filter>Custom\CPlusMgr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\CheatDetectors.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\AntiCheat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp">
-      <Filter>Custom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\game\Custom\CPlusMgr.cpp">
-      <Filter>Custom</Filter>
+    <ClCompile Include="..\..\src\game\Custom\AntiCheat.cpp">
+      <Filter>Custom\AntiCheat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\Custom.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CChat.cpp">
+      <Filter>Custom\CPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CFBG.cpp">
+      <Filter>Custom\CPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\CPlayer.cpp">
+      <Filter>Custom\CPlayer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\Misc.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\CPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\Custom\PvPReward.cpp">
+      <Filter>Custom\CPlayer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\game\Custom\Settings.cpp">
-      <Filter>Custom</Filter>
+      <Filter>Custom\CPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1058,16 +1073,16 @@
       <Filter>Custom\Warden</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\AntiCheat.h">
-      <Filter>Custom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
-      <Filter>Custom</Filter>
+      <Filter>Custom\AntiCheat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\CPlusMgr.h">
-      <Filter>Custom</Filter>
+      <Filter>Custom\CPlusMgr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\game\Custom\Custom.h">
-      <Filter>Custom</Filter>
+      <Filter>Custom\Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\CPlayer.h">
+      <Filter>Custom\CPlayer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

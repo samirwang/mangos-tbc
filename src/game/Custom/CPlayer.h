@@ -86,6 +86,9 @@ struct Country
 
 class AntiCheat;
 
+typedef std::unordered_map<ObjectGuid, float> DMGHEALMap;
+typedef std::vector<std::string> RewardMap;
+
 class CPlayer : public Player
 {
 public:
@@ -93,6 +96,22 @@ public:
     ~CPlayer();
 
     Player* ToPlayer() { return static_cast<Player*>(this); }
+
+    /************************************************************************/
+    /********************************PVPKILLREWARD***************************/
+    /************************************************************************/
+public:
+    void HandlePvPKill(CPlayer* pVictim);
+    DMGHEALMap GetDamagers() { return m_Damagers; }
+    DMGHEALMap GetHealers() { return m_Healers; }
+    void AddReward(std::string name, float amount);
+    std::string GetRewardNames(bool duplicates = true);
+    static std::string GetGoldString(uint32 copper);
+private:
+    DMGHEALMap m_Damagers;
+    DMGHEALMap m_Healers;
+    RewardMap m_Rewards;
+    float m_PendingReward;
 
     /************************************************************************/
     /**********************************ANTICHEAT*****************************/

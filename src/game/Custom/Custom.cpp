@@ -371,3 +371,20 @@ void BattleGround::RewardReputationToXBGTeam(uint32 faction_ally, uint32 faction
             plr->GetReputationMgr().ModifyReputation(plr->GetOTeam() == ALLIANCE ? a_factionEntry : h_factionEntry, gain);
     }
 }
+
+CPlayer* Custom::GetCPlayer(const char* name)
+{
+    Player* plr = ObjectAccessor::FindPlayerByName(name);
+    if (!plr)
+        return NULL;
+
+    return static_cast<CPlayer*>(plr);
+}
+CPlayer* Custom::GetCPlayer(ObjectGuid guid, bool inWorld /*=true*/)
+{
+    Player* plr = ObjectAccessor::FindPlayer(guid, inWorld);
+    if (!plr)
+        return NULL;
+
+    return static_cast<CPlayer*>(plr);
+}
