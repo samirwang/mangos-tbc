@@ -55,7 +55,7 @@ enum LogFilters
     LOG_FILTER_EVENT_AI_DEV       = 0x040000,               // 18 Event AI actions
 };
 
-#define LOG_FILTER_COUNT            19
+#define LOG_FILTER_COUNT 17
 
 struct LogFilterData
 {
