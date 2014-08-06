@@ -19,21 +19,21 @@
 #include "CPlayer.h"
 #include "Custom.h"
 
-void CPlayer::HandlePvPKill(CPlayer* pVictim)
+void CPlayer::HandlePvPKill()
 {
     // Damage
     float TotalDMG = 0;
-    for (auto& i : pVictim->GetDamagers())
+    for (auto& i : GetDamagers())
         TotalDMG += i.second;
 
-    for (auto& i : pVictim->GetDamagers())
+    for (auto& i : GetDamagers())
     {
         CPlayer* pAttacker = sCustom.GetCPlayer(i.first);
         if (!pAttacker)
             continue;
 
         float AReward = i.second / TotalDMG;
-        pAttacker->AddReward(pVictim->GetNameLink(true), AReward);
+        pAttacker->AddReward(GetNameLink(true), AReward);
 
         // Healing
         float TotalHeal = 0;
@@ -46,15 +46,31 @@ void CPlayer::HandlePvPKill(CPlayer* pVictim)
             if (!pHealer)
                 continue;
 
-            float HReward = AReward * (j.second / TotalDMG);
-            pHealer->AddReward(pVictim->GetNameLink(true), HReward);
+            float HReward = AReward * (j.second / TotalDMG) * (j.second / pAttacker->GetMaxHealth());
+            pHealer->AddReward(GetNameLink(true), HReward);
         }
+
+        for (auto& j : pAttacker->GetHealers())
+            j.second *= 0.75;
     }
+
+    GetDamagers().clear();
+    GetHealers().clear();
+}
+
+void CPlayer::AddDamage(ObjectGuid guid, uint32 amount)
+{
+    m_Damagers[guid] += amount;
+}
+
+void CPlayer::AddHealing(ObjectGuid guid, uint32 amount)
+{
+    m_Healers[guid] += amount;
 }
 
 void CPlayer::AddReward(std::string name, float amount)
 {
-    m_Rewards.push_back(name);
+    m_Rewards.push_back(name+"|r");
     m_PendingReward += amount;
 
     if (m_PendingReward >= 1)
@@ -64,6 +80,7 @@ void CPlayer::AddReward(std::string name, float amount)
 
         SetMoney(GetMoney() + Reward);
         BoxChat << "You were rewarded with " << GetGoldString(Reward) << " for the kills of " << GetRewardNames() << std::endl;
+        m_Rewards.clear();
     }
 }
 
@@ -111,9 +128,7 @@ std::string CPlayer::GetGoldString(uint32 copper)
     if (silver)
         ss << silver << " Silver";
     if (silver && copper)
-        ss << " and ";
-    if (copper)
-        ss << copper << " Copper";
+        ss << " and " << copper << " Copper";
 
     return ss.str();
 }

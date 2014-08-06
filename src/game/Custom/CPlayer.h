@@ -101,9 +101,11 @@ public:
     /********************************PVPKILLREWARD***************************/
     /************************************************************************/
 public:
-    void HandlePvPKill(CPlayer* pVictim);
-    DMGHEALMap GetDamagers() { return m_Damagers; }
-    DMGHEALMap GetHealers() { return m_Healers; }
+    void HandlePvPKill();
+    void AddDamage(ObjectGuid guid, uint32 amount);
+    void AddHealing(ObjectGuid guid, uint32 amount);
+    DMGHEALMap& GetDamagers() { return m_Damagers; }
+    DMGHEALMap& GetHealers() { return m_Healers; }
     void AddReward(std::string name, float amount);
     std::string GetRewardNames(bool duplicates = true);
     static std::string GetGoldString(uint32 copper);
