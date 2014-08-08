@@ -19,9 +19,8 @@
 
 #include "Chat.h"
 #include "WorldSession.h"
-#include "Player.h"
-#include "BattleGround/BattleGround.h"
 #include "CPlayer.h"
+#include "BattleGround/BattleGround.h"
 
 bool ChatHandler::HandleBGStartCommand(char*)
 {
@@ -33,13 +32,32 @@ bool ChatHandler::HandleBGStartCommand(char*)
     return true;
 }
 
-bool ChatHandler::HandleBGStopCommand(char*)
+bool ChatHandler::HandleBGStopCommand(char* args)
 {
     Player* pPlayer = m_session->GetPlayer();
     BattleGround* pBattleGround = pPlayer->GetBattleGround();
 
+    Team WinTeam = TEAM_NONE;
+    char* StrTeam = ExtractQuotedOrLiteralArg(&args);
+    if (!StrTeam)
+        WinTeam = pPlayer->GetTeam();
+    else
+    {
+        std::string TeamStr(StrTeam);
+        for (auto& i : TeamStr)
+            i = std::towlower(i);
+
+        if (TeamStr.find("alliance") != std::string::npos ||
+            TeamStr.find("ally") != std::string::npos)
+            WinTeam = ALLIANCE;
+        else if (TeamStr.find("horde") != std::string::npos)
+            WinTeam = HORDE;
+        else
+            WinTeam = pPlayer->GetTeam();
+    }
+
     if (pPlayer && pBattleGround)
-        pBattleGround->EndBattleGround(pPlayer->GetTeam());
+        pBattleGround->EndBattleGround(WinTeam);
 
     PSendSysMessage("Battleground was stopped instantly.");
 
