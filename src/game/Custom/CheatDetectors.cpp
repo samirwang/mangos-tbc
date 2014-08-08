@@ -16,10 +16,8 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "CPlayer.h"
 #include "AntiCheat.h"
 #include "World.h"
-#include "MapManager.h"
 
 void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {

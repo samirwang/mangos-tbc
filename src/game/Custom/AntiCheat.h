@@ -19,6 +19,8 @@
 #ifndef _ANTICHEAT_H
 #define _ANTICHEAT_H
 
+#include "CPlayer.h"
+
 namespace Cheat
 {
     enum Time

@@ -16,13 +16,10 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "AntiCheat.h"
 #include "CPlayer.h"
 #include "Custom.h"
-#include "World.h"
-#include "Mail.h"
 #include "MapManager.h"
-#include "Player.h"
-#include "AntiCheat.h"
 
 void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {

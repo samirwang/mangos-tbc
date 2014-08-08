@@ -21,6 +21,7 @@
 
 #include "Policies/Singleton.h"
 #include "Util.h"
+#include "Log.h"
 
 #include <typeinfo>
 
@@ -28,6 +29,10 @@ class Creature;
 class CreatureAI;
 class Player;
 class GameObject;
+class Quest;
+class Item;
+class SpellCastTargets;
+class ObjectGuid;
 
 template<class T>
 class ScriptStorage
