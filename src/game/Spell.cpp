@@ -45,6 +45,7 @@
 #include "Util.h"
 #include "Chat.h"
 #include "SQLStorages.h"
+#include "PathFinder.h"
 
 extern pEffect SpellEffects[TOTAL_SPELL_EFFECTS];
 
@@ -4829,6 +4830,34 @@ SpellCastResult Spell::CheckCast(bool strict)
             {
                 if (m_caster->hasUnitState(UNIT_STAT_ROOT))
                     return SPELL_FAILED_ROOTED;
+
+                if (Unit* target = m_targets.getUnitTarget())
+                {
+                    float x, y, z;
+                    target->GetContactPoint(m_caster, x, y, z, 3.666666f);
+
+                    float lenght = 0;
+                    PathFinder path(m_caster);
+                    path.calculate(x, y, z, true);
+                    for (auto itr = path.getPath().begin(); itr != path.getPath().end(); ++itr)
+                    {
+                        auto jtr = itr;
+                        ++jtr;
+
+                        if (jtr == path.getPath().end())
+                            break;
+
+                        lenght += sqrt(
+                            pow(itr->x - jtr->x, 2) +
+                            pow(itr->y - jtr->y, 2) +
+                            pow(itr->z - jtr->z, 2));
+                    }
+
+                    SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
+
+                    if (lenght >= srange->maxRange * 2)
+                        return SPELL_FAILED_OUT_OF_RANGE;
+                }
 
                 break;
             }
