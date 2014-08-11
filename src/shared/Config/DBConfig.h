@@ -16,40 +16,39 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef DBCONFIG_H
+#define DBCONFIG_H
 
-#include "Common.h"
 #include <Policies/Singleton.h>
-#include "Platform/Define.h"
 #include "Database/DatabaseEnv.h"
-#include "DBConfig.h"
 
-class ACE_Configuration_Heap;
-
-class FileConfig
+class DBConfig
 {
-    public:
+public:
+    DBConfig()
+    {
+        m_Database = NULL;
+    }
+    ~DBConfig()
+    { }
 
-        FileConfig();
-        ~FileConfig();
+    typedef std::unordered_map<std::string, std::string> ConfigEntries;
 
-        bool SetSource(const char* file);
-        bool Reload();
+    bool SetSource(DatabaseType& DB);
+    bool Reload();
 
-        std::string GetStringDefault(const char* name, const char* def);
-        bool GetBoolDefault(const char* name, const bool def = false);
-        int32 GetIntDefault(const char* name, const int32 def);
-        float GetFloatDefault(const char* name, const float def);
+    bool FindEntry(const std::string name);
 
-        std::string GetFilename() const { return mFilename; }
+    std::string GetStringDefault(const std::string name, const std::string def);
+    bool GetBoolDefault(const std::string name, const bool def = false);
+    int32 GetIntDefault(const std::string name, const int32 def);
+    float GetFloatDefault(const std::string name, const float def);
 
-    private:
-
-        std::string mFilename;
-        ACE_Configuration_Heap* mConf;
+private:
+    DatabaseType* m_Database;
+    ConfigEntries m_ConfigEntries;
 };
 
-#define sFileConfig MaNGOS::Singleton<FileConfig>::Instance()
+#define sDBConfig MaNGOS::Singleton<DBConfig>::Instance()
 
 #endif

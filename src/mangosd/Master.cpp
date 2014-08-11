@@ -135,8 +135,8 @@ class RARunnable : public ACE_Based::Runnable
 
         void run()
         {
-            uint16 raport = sConfig.GetIntDefault("Ra.Port", 3443);
-            std::string stringip = sConfig.GetStringDefault("Ra.IP", "0.0.0.0");
+            uint16 raport = sDBConfig.GetIntDefault("Ra.Port", 3443);
+            std::string stringip = sDBConfig.GetStringDefault("Ra.IP", "0.0.0.0");
 
             ACE_INET_Addr listen_addr(raport, stringip.c_str());
 
@@ -176,7 +176,7 @@ Master::~Master()
 int Master::Run()
 {
     /// worldd PID file creation
-    std::string pidfile = sConfig.GetStringDefault("PidFile", "");
+    std::string pidfile = sFileConfig.GetStringDefault("PidFile", "");
     if (!pidfile.empty())
     {
         uint32 pid = CreatePIDFile(pidfile);
@@ -226,9 +226,9 @@ int Master::Run()
     ACE_Based::Thread* cliThread = NULL;
 
 #ifdef WIN32
-    if (sConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
+    if (sFileConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
 #else
-    if (sConfig.GetBoolDefault("Console.Enable", true))
+    if (sFileConfig.GetBoolDefault("Console.Enable", true))
 #endif
     {
         ///- Launch CliRunnable thread
@@ -236,7 +236,7 @@ int Master::Run()
     }
 
     ACE_Based::Thread* rar_thread = NULL;
-    if (sConfig.GetBoolDefault("Ra.Enable", false))
+    if (sFileConfig.GetBoolDefault("Ra.Enable", false))
     {
         rar_thread = new ACE_Based::Thread(new RARunnable);
     }
@@ -246,7 +246,7 @@ int Master::Run()
     {
         HANDLE hProcess = GetCurrentProcess();
 
-        uint32 Aff = sConfig.GetIntDefault("UseProcessors", 0);
+        uint32 Aff = sFileConfig.GetIntDefault("UseProcessors", 0);
         if (Aff > 0)
         {
             ULONG_PTR appAff;
@@ -271,7 +271,7 @@ int Master::Run()
             sLog.outString();
         }
 
-        bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
+        bool Prio = sFileConfig.GetBoolDefault("ProcessPriority", false);
 
 //        if(Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
         if (Prio)
@@ -288,17 +288,17 @@ int Master::Run()
     ///- Start soap serving thread
     ACE_Based::Thread* soap_thread = NULL;
 
-    if (sConfig.GetBoolDefault("SOAP.Enabled", false))
+    if (sFileConfig.GetBoolDefault("SOAP.Enabled", false))
     {
         MaNGOSsoapRunnable* runnable = new MaNGOSsoapRunnable();
 
-        runnable->setListenArguments(sConfig.GetStringDefault("SOAP.IP", "127.0.0.1"), sConfig.GetIntDefault("SOAP.Port", 7878));
+        runnable->setListenArguments(sFileConfig.GetStringDefault("SOAP.IP", "127.0.0.1"), sFileConfig.GetIntDefault("SOAP.Port", 7878));
         soap_thread = new ACE_Based::Thread(runnable);
     }
 
     ///- Start up freeze catcher thread
     ACE_Based::Thread* freeze_thread = NULL;
-    if (uint32 freeze_delay = sConfig.GetIntDefault("MaxCoreStuckTime", 0))
+    if (uint32 freeze_delay = sFileConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
         FreezeDetectorRunnable* fdr = new FreezeDetectorRunnable();
         fdr->SetDelayTime(freeze_delay * 1000);
@@ -308,7 +308,7 @@ int Master::Run()
 
     ///- Launch the world listener socket
     uint16 wsport = sWorld.getConfig(CONFIG_UINT32_PORT_WORLD);
-    std::string bind_ip = sConfig.GetStringDefault("BindIP", "0.0.0.0");
+    std::string bind_ip = sFileConfig.GetStringDefault("BindIP", "0.0.0.0");
 
     if (sWorldSocketMgr->StartNetwork(wsport, bind_ip) == -1)
     {
@@ -423,8 +423,8 @@ int Master::Run()
 bool Master::_StartDB()
 {
     ///- Get world database info from configuration file
-    std::string dbstring = sConfig.GetStringDefault("WorldDatabaseInfo", "");
-    int nConnections = sConfig.GetIntDefault("WorldDatabaseConnections", 1);
+    std::string dbstring = sFileConfig.GetStringDefault("WorldDatabaseInfo", "");
+    int nConnections = sFileConfig.GetIntDefault("WorldDatabaseConnections", 1);
     if (dbstring.empty())
     {
         sLog.outError("Database not specified in configuration file");
@@ -446,8 +446,8 @@ bool Master::_StartDB()
         return false;
     }
 
-    dbstring = sConfig.GetStringDefault("CharacterDatabaseInfo", "");
-    nConnections = sConfig.GetIntDefault("CharacterDatabaseConnections", 1);
+    dbstring = sFileConfig.GetStringDefault("CharacterDatabaseInfo", "");
+    nConnections = sFileConfig.GetIntDefault("CharacterDatabaseConnections", 1);
     if (dbstring.empty())
     {
         sLog.outError("Character Database not specified in configuration file");
@@ -477,8 +477,8 @@ bool Master::_StartDB()
     }
 
     ///- Get login database info from configuration file
-    dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
-    nConnections = sConfig.GetIntDefault("LoginDatabaseConnections", 1);
+    dbstring = sFileConfig.GetStringDefault("LoginDatabaseInfo", "");
+    nConnections = sFileConfig.GetIntDefault("LoginDatabaseConnections", 1);
     if (dbstring.empty())
     {
         sLog.outError("Login database not specified in configuration file");
@@ -511,7 +511,7 @@ bool Master::_StartDB()
     }
 
     ///- Get the realm Id from the configuration file
-    realmID = sConfig.GetIntDefault("RealmID", 0);
+    realmID = sFileConfig.GetIntDefault("RealmID", 0);
     if (!realmID)
     {
         sLog.outError("Realm ID not defined in configuration file");
@@ -524,6 +524,8 @@ bool Master::_StartDB()
     }
 
     sLog.outString("Realm running as realm ID %d", realmID);
+
+    sDBConfig.SetSource(WorldDatabase);
 
     ///- Clean the database before starting
     clearOnlineAccounts();

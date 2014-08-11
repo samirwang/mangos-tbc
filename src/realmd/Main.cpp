@@ -164,7 +164,7 @@ extern int main(int argc, char** argv)
     }
 #endif
 
-    if (!sConfig.SetSource(cfg_file))
+    if (!sFileConfig.SetSource(cfg_file))
     {
         sLog.outError("Could not find configuration file %s.", cfg_file);
         Log::WaitBeforeContinueIfNeed();
@@ -190,7 +190,7 @@ extern int main(int argc, char** argv)
     sLog.outString("Using configuration file %s.", cfg_file);
 
     ///- Check the version of the configuration file
-    uint32 confVersion = sConfig.GetIntDefault("ConfVersion", 0);
+    uint32 confVersion = sFileConfig.GetIntDefault("ConfVersion", 0);
     if (confVersion < _REALMDCONFVERSION)
     {
         sLog.outError("*****************************************************************************");
@@ -219,7 +219,7 @@ extern int main(int argc, char** argv)
     sLog.outBasic("Max allowed open files is %d", ACE::max_handles());
 
     /// realmd PID file creation
-    std::string pidfile = sConfig.GetStringDefault("PidFile", "");
+    std::string pidfile = sFileConfig.GetStringDefault("PidFile", "");
     if (!pidfile.empty())
     {
         uint32 pid = CreatePIDFile(pidfile);
@@ -241,7 +241,7 @@ extern int main(int argc, char** argv)
     }
 
     ///- Get the list of realms for the server
-    sRealmList.Initialize(sConfig.GetIntDefault("RealmsStateUpdateDelay", 20));
+    sRealmList.Initialize(sFileConfig.GetIntDefault("RealmsStateUpdateDelay", 20));
     if (sRealmList.size() == 0)
     {
         sLog.outError("No valid realms specified.");
@@ -259,8 +259,8 @@ extern int main(int argc, char** argv)
     ///- Launch the listening network socket
     ACE_Acceptor<AuthSocket, ACE_SOCK_Acceptor> acceptor;
 
-    uint16 rmport = sConfig.GetIntDefault("RealmServerPort", DEFAULT_REALMSERVER_PORT);
-    std::string bind_ip = sConfig.GetStringDefault("BindIP", "0.0.0.0");
+    uint16 rmport = sFileConfig.GetIntDefault("RealmServerPort", DEFAULT_REALMSERVER_PORT);
+    std::string bind_ip = sFileConfig.GetStringDefault("BindIP", "0.0.0.0");
 
     ACE_INET_Addr bind_addr(rmport, bind_ip.c_str());
 
@@ -279,7 +279,7 @@ extern int main(int argc, char** argv)
     {
         HANDLE hProcess = GetCurrentProcess();
 
-        uint32 Aff = sConfig.GetIntDefault("UseProcessors", 0);
+        uint32 Aff = sFileConfig.GetIntDefault("UseProcessors", 0);
         if (Aff > 0)
         {
             ULONG_PTR appAff;
@@ -304,7 +304,7 @@ extern int main(int argc, char** argv)
             sLog.outString();
         }
 
-        bool Prio = sConfig.GetBoolDefault("ProcessPriority", false);
+        bool Prio = sFileConfig.GetBoolDefault("ProcessPriority", false);
 
         if (Prio)
         {
@@ -321,7 +321,7 @@ extern int main(int argc, char** argv)
     LoginDatabase.AllowAsyncTransactions();
 
     // maximum counter for next ping
-    uint32 numLoops = (sConfig.GetIntDefault("MaxPingTime", 30) * (MINUTE * 1000000 / 100000));
+    uint32 numLoops = (sFileConfig.GetIntDefault("MaxPingTime", 30) * (MINUTE * 1000000 / 100000));
     uint32 loopCounter = 0;
 
 #ifndef WIN32
@@ -381,7 +381,7 @@ void OnSignal(int s)
 /// Initialize connection to the database
 bool StartDB()
 {
-    std::string dbstring = sConfig.GetStringDefault("LoginDatabaseInfo", "");
+    std::string dbstring = sFileConfig.GetStringDefault("LoginDatabaseInfo", "");
     if (dbstring.empty())
     {
         sLog.outError("Database not specified");

@@ -28,6 +28,8 @@
 
 #include <fstream>
 
+INSTANTIATE_SINGLETON_1(Custom);
+
 Custom::~Custom()
 {
     for (auto& itr : m_CachedSpellContainer)

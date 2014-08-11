@@ -22,6 +22,8 @@
 #include "GameObject.h"
 #include "Creature.h"
 
+INSTANTIATE_SINGLETON_1(CPlusMgr);
+
 /* CreatureScript */
 
 CreatureAI* CPlusMgr::GetCreatureAI(Creature* pCreature)

@@ -84,6 +84,9 @@
     <ClCompile Include="..\..\src\shared\Auth\SARC4.cpp">
       <Filter>Auth</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\shared\Config\DBConfig.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\shared\Database\Database.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\shared\Auth\WardenKeyGeneration.h">
       <Filter>Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shared\Config\DBConfig.h">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

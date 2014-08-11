@@ -100,15 +100,15 @@ bool Database::Initialize(const char* infoString, int nConns /*= 1*/)
 {
     // Enable logging of SQL commands (usually only GM commands)
     // (See method: PExecuteLog)
-    m_logSQL = sConfig.GetBoolDefault("LogSQL", false);
-    m_logsDir = sConfig.GetStringDefault("LogsDir","");
+    m_logSQL = sFileConfig.GetBoolDefault("LogSQL", false);
+    m_logsDir = sFileConfig.GetStringDefault("LogsDir", "");
     if (!m_logsDir.empty())
     {
         if ((m_logsDir.at(m_logsDir.length()-1)!='/') && (m_logsDir.at(m_logsDir.length()-1)!='\\'))
             m_logsDir.append("/");
     }
 
-    m_pingIntervallms = sConfig.GetIntDefault("MaxPingTime", 30) * (MINUTE * 1000);
+    m_pingIntervallms = sFileConfig.GetIntDefault("MaxPingTime", 30) * (MINUTE * 1000);
 
     // create DB connections
 

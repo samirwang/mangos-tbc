@@ -41,9 +41,9 @@ RASocket::RASocket()
       stage(NONE)
 {
     ///- Get the config parameters
-    bSecure = sConfig.GetBoolDefault("RA.Secure", true);
-    bStricted = sConfig.GetBoolDefault("RA.Stricted", false);
-    iMinLevel = AccountTypes(sConfig.GetIntDefault("RA.MinLevel", SEC_ADMINISTRATOR));
+    bSecure = sFileConfig.GetBoolDefault("RA.Secure", true);
+    bStricted = sFileConfig.GetBoolDefault("RA.Stricted", false);
+    iMinLevel = AccountTypes(sFileConfig.GetIntDefault("RA.MinLevel", SEC_ADMINISTRATOR));
     reference_counting_policy().value(ACE_Event_Handler::Reference_Counting_Policy::ENABLED);
 }
 

@@ -215,7 +215,7 @@ void Log::SetLogFileLevel(char* level)
 void Log::Initialize()
 {
     /// Common log files data
-    m_logsDir = sConfig.GetStringDefault("LogsDir", "");
+    m_logsDir = sFileConfig.GetStringDefault("LogsDir", "");
     if (!m_logsDir.empty())
     {
         if ((m_logsDir.at(m_logsDir.length() - 1) != '/') && (m_logsDir.at(m_logsDir.length() - 1) != '\\'))
@@ -227,16 +227,16 @@ void Log::Initialize()
     /// Open specific log files
     logfile = openLogFile("LogFile", "LogTimestamp", "w");
 
-    m_gmlog_per_account = sConfig.GetBoolDefault("GmLogPerAccount", false);
+    m_gmlog_per_account = sFileConfig.GetBoolDefault("GmLogPerAccount", false);
     if (!m_gmlog_per_account)
         gmLogfile = openLogFile("GMLogFile", "GmLogTimestamp", "a");
     else
     {
         // GM log settings for per account case
-        m_gmlog_filename_format = sConfig.GetStringDefault("GMLogFile", "");
+        m_gmlog_filename_format = sFileConfig.GetStringDefault("GMLogFile", "");
         if (!m_gmlog_filename_format.empty())
         {
-            bool m_gmlog_timestamp = sConfig.GetBoolDefault("GmLogTimestamp", false);
+            bool m_gmlog_timestamp = sFileConfig.GetBoolDefault("GmLogTimestamp", false);
 
             size_t dot_pos = m_gmlog_filename_format.find_last_of(".");
             if (dot_pos != m_gmlog_filename_format.npos)
@@ -266,28 +266,28 @@ void Log::Initialize()
     wardenLogFile = openLogFile("WardenLogFile", NULL, "a");
 
     // Main log file settings
-    m_includeTime  = sConfig.GetBoolDefault("LogTime", false);
-    m_logLevel     = LogLevel(sConfig.GetIntDefault("LogLevel", 0));
-    m_logFileLevel = LogLevel(sConfig.GetIntDefault("LogFileLevel", 0));
-    InitColors(sConfig.GetStringDefault("LogColors", ""));
+    m_includeTime = sFileConfig.GetBoolDefault("LogTime", false);
+    m_logLevel = LogLevel(sFileConfig.GetIntDefault("LogLevel", 0));
+    m_logFileLevel = LogLevel(sFileConfig.GetIntDefault("LogFileLevel", 0));
+    InitColors(sFileConfig.GetStringDefault("LogColors", ""));
 
     m_logFilter = 0;
     for (int i = 0; i < LOG_FILTER_COUNT; ++i)
-        if (*logFilterData[i].name)
-            if (sConfig.GetBoolDefault(logFilterData[i].configName, logFilterData[i].defaultState))
-                m_logFilter |= (1 << i);
+    if (*logFilterData[i].name)
+    if (sFileConfig.GetBoolDefault(logFilterData[i].configName, logFilterData[i].defaultState))
+        m_logFilter |= (1 << i);
 
     // Char log settings
-    m_charLog_Dump = sConfig.GetBoolDefault("CharLogDump", false);
+    m_charLog_Dump = sFileConfig.GetBoolDefault("CharLogDump", false);
 }
 
 FILE* Log::openLogFile(char const* configFileName, char const* configTimeStampFlag, char const* mode)
 {
-    std::string logfn = sConfig.GetStringDefault(configFileName, "");
+    std::string logfn = sFileConfig.GetStringDefault(configFileName, "");
     if (logfn.empty())
         return NULL;
 
-    if (configTimeStampFlag && sConfig.GetBoolDefault(configTimeStampFlag, false))
+    if (configTimeStampFlag && sFileConfig.GetBoolDefault(configTimeStampFlag, false))
     {
         size_t dot_pos = logfn.find_last_of(".");
         if (dot_pos != logfn.npos)
@@ -962,7 +962,7 @@ void Log::outWarden(const char * str, ...)
 
 void Log::WaitBeforeContinueIfNeed()
 {
-    int mode = sConfig.GetIntDefault("WaitAtStartupError", 0);
+    int mode = sFileConfig.GetIntDefault("WaitAtStartupError", 0);
 
     if (mode < 0)
     {

@@ -408,15 +408,15 @@ void World::LoadConfigSettings(bool reload)
 {
     if (reload)
     {
-        if (!sConfig.Reload())
+        if (!sDBConfig.Reload())
         {
-            sLog.outError("World settings reload fail: can't read settings from %s.", sConfig.GetFilename().c_str());
+            sLog.outError("World settings reload fail: can't read settings!");
             return;
         }
     }
 
     ///- Read the version of the configuration file and warn the user in case of emptiness or mismatch
-    uint32 confVersion = sConfig.GetIntDefault("ConfVersion", 0);
+    uint32 confVersion = sDBConfig.GetIntDefault("ConfVersion", 0);
     if (!confVersion)
     {
         sLog.outError("*****************************************************************************");
@@ -438,9 +438,11 @@ void World::LoadConfigSettings(bool reload)
         }
     }
 
+    sLog.outString("ConfVersion: %u", confVersion);
+
     ///- Read the player limit and the Message of the day from the config file
-    SetPlayerLimit(sConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT), true);
-    SetMotd(sConfig.GetStringDefault("Motd", "Welcome to the Massive Network Game Object Server."));
+    SetPlayerLimit(sDBConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT), true);
+    SetMotd(sDBConfig.GetStringDefault("Motd", "Welcome to the Massive Network Game Object Server."));
 
     ///- Read all rates from the config file
     setConfigPos(CONFIG_FLOAT_RATE_HEALTH, "Rate.Health", 1.0f);
@@ -762,16 +764,16 @@ void World::LoadConfigSettings(bool reload)
 
     setConfig(CONFIG_BOOL_PET_UNSUMMON_AT_MOUNT,      "PetUnsummonAtMount", true);
 
-    m_relocation_ai_notify_delay = sConfig.GetIntDefault("Visibility.AIRelocationNotifyDelay", 1000u);
-    m_relocation_lower_limit_sq  = pow(sConfig.GetFloatDefault("Visibility.RelocationLowerLimit", 10), 2);
+    m_relocation_ai_notify_delay = sDBConfig.GetIntDefault("Visibility.AIRelocationNotifyDelay", 1000u);
+    m_relocation_lower_limit_sq = pow(sDBConfig.GetFloatDefault("Visibility.RelocationLowerLimit", 10), 2);
 
-    m_VisibleUnitGreyDistance = sConfig.GetFloatDefault("Visibility.Distance.Grey.Unit", 1);
+    m_VisibleUnitGreyDistance = sDBConfig.GetFloatDefault("Visibility.Distance.Grey.Unit", 1);
     if (m_VisibleUnitGreyDistance >  MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Grey.Unit can't be greater %f", MAX_VISIBILITY_DISTANCE);
         m_VisibleUnitGreyDistance = MAX_VISIBILITY_DISTANCE;
     }
-    m_VisibleObjectGreyDistance = sConfig.GetFloatDefault("Visibility.Distance.Grey.Object", 10);
+    m_VisibleObjectGreyDistance = sDBConfig.GetFloatDefault("Visibility.Distance.Grey.Object", 10);
     if (m_VisibleObjectGreyDistance >  MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.Grey.Object can't be greater %f", MAX_VISIBILITY_DISTANCE);
@@ -779,7 +781,7 @@ void World::LoadConfigSettings(bool reload)
     }
 
     // visibility on continents
-    m_MaxVisibleDistanceOnContinents      = sConfig.GetFloatDefault("Visibility.Distance.Continents",     DEFAULT_VISIBILITY_DISTANCE);
+    m_MaxVisibleDistanceOnContinents = sDBConfig.GetFloatDefault("Visibility.Distance.Continents", DEFAULT_VISIBILITY_DISTANCE);
     if (m_MaxVisibleDistanceOnContinents < 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.Continents can't be less max aggro radius %f", 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO));
@@ -792,7 +794,7 @@ void World::LoadConfigSettings(bool reload)
     }
 
     // visibility in instances
-    m_MaxVisibleDistanceInInstances        = sConfig.GetFloatDefault("Visibility.Distance.Instances",       DEFAULT_VISIBILITY_INSTANCE);
+    m_MaxVisibleDistanceInInstances = sDBConfig.GetFloatDefault("Visibility.Distance.Instances", DEFAULT_VISIBILITY_INSTANCE);
     if (m_MaxVisibleDistanceInInstances < 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.Instances can't be less max aggro radius %f", 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO));
@@ -805,7 +807,7 @@ void World::LoadConfigSettings(bool reload)
     }
 
     // visibility in BG/Arenas
-    m_MaxVisibleDistanceInBGArenas        = sConfig.GetFloatDefault("Visibility.Distance.BGArenas",       DEFAULT_VISIBILITY_BGARENAS);
+    m_MaxVisibleDistanceInBGArenas = sDBConfig.GetFloatDefault("Visibility.Distance.BGArenas", DEFAULT_VISIBILITY_BGARENAS);
     if (m_MaxVisibleDistanceInBGArenas < 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO))
     {
         sLog.outError("Visibility.Distance.BGArenas can't be less max aggro radius %f", 45 * getConfig(CONFIG_FLOAT_RATE_CREATURE_AGGRO));
@@ -817,7 +819,7 @@ void World::LoadConfigSettings(bool reload)
         m_MaxVisibleDistanceInBGArenas = MAX_VISIBILITY_DISTANCE - m_VisibleUnitGreyDistance;
     }
 
-    m_MaxVisibleDistanceInFlight    = sConfig.GetFloatDefault("Visibility.Distance.InFlight",      DEFAULT_VISIBILITY_DISTANCE);
+    m_MaxVisibleDistanceInFlight = sDBConfig.GetFloatDefault("Visibility.Distance.InFlight", DEFAULT_VISIBILITY_DISTANCE);
     if (m_MaxVisibleDistanceInFlight + m_VisibleObjectGreyDistance > MAX_VISIBILITY_DISTANCE)
     {
         sLog.outError("Visibility.Distance.InFlight can't be greater %f", MAX_VISIBILITY_DISTANCE - m_VisibleObjectGreyDistance);
@@ -835,7 +837,7 @@ void World::LoadConfigSettings(bool reload)
         setConfig(CONFIG_UINT32_GUID_RESERVE_SIZE_GAMEOBJECT, "GuidReserveSize.GameObject", 100);
 
     ///- Read the "Data" directory from the config file
-    std::string dataPath = sConfig.GetStringDefault("DataDir", "./");
+    std::string dataPath = sFileConfig.GetStringDefault("DataDir", "./");
 
     // for empty string use current dir as for absent case
     if (dataPath.empty())
@@ -856,9 +858,9 @@ void World::LoadConfigSettings(bool reload)
     }
 
     setConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK, "vmap.enableIndoorCheck", true);
-    bool enableLOS = sConfig.GetBoolDefault("vmap.enableLOS", false);
-    bool enableHeight = sConfig.GetBoolDefault("vmap.enableHeight", false);
-    std::string ignoreSpellIds = sConfig.GetStringDefault("vmap.ignoreSpellIds", "");
+    bool enableLOS = sDBConfig.GetBoolDefault("vmap.enableLOS", false);
+    bool enableHeight = sDBConfig.GetBoolDefault("vmap.enableHeight", false);
+    std::string ignoreSpellIds = sDBConfig.GetStringDefault("vmap.ignoreSpellIds", "");
 
     if (!enableHeight)
         sLog.outError("VMAP height use disabled! Creatures movements and other things will be in broken state.");
@@ -871,7 +873,7 @@ void World::LoadConfigSettings(bool reload)
     sLog.outString("WORLD: VMap data directory is: %svmaps", m_dataPath.c_str());
 
     setConfig(CONFIG_BOOL_MMAP_ENABLED, "mmap.enabled", true);
-    std::string ignoreMapIds = sConfig.GetStringDefault("mmap.ignoreMapIds", "");
+    std::string ignoreMapIds = sDBConfig.GetStringDefault("mmap.ignoreMapIds", "");
     MMAP::MMapFactory::preventPathfindingOnMaps(ignoreMapIds.c_str());
     sLog.outString("WORLD: mmap pathfinding %sabled", getConfig(CONFIG_BOOL_MMAP_ENABLED) ? "en" : "dis");
 
@@ -1372,7 +1374,7 @@ void World::SetInitialWorldSettings()
 
 void World::DetectDBCLang()
 {
-    uint32 m_lang_confid = sConfig.GetIntDefault("DBC.Locale", 255);
+    uint32 m_lang_confid = sDBConfig.GetIntDefault("DBC.Locale", 255);
 
     if (m_lang_confid != 255 && m_lang_confid >= MAX_LOCALE)
     {
@@ -2034,7 +2036,7 @@ void World::LoadDBVersion()
 
 void World::setConfig(eConfigUInt32Values index, char const* fieldname, uint32 defvalue)
 {
-    setConfig(index, sConfig.GetIntDefault(fieldname, defvalue));
+    setConfig(index, sDBConfig.GetIntDefault(fieldname, defvalue));
     if (int32(getConfig(index)) < 0)
     {
         sLog.outError("%s (%i) can't be negative. Using %u instead.", fieldname, int32(getConfig(index)), defvalue);
@@ -2044,17 +2046,17 @@ void World::setConfig(eConfigUInt32Values index, char const* fieldname, uint32 d
 
 void World::setConfig(eConfigInt32Values index, char const* fieldname, int32 defvalue)
 {
-    setConfig(index, sConfig.GetIntDefault(fieldname, defvalue));
+    setConfig(index, sDBConfig.GetIntDefault(fieldname, defvalue));
 }
 
 void World::setConfig(eConfigFloatValues index, char const* fieldname, float defvalue)
 {
-    setConfig(index, sConfig.GetFloatDefault(fieldname, defvalue));
+    setConfig(index, sDBConfig.GetFloatDefault(fieldname, defvalue));
 }
 
 void World::setConfig(eConfigBoolValues index, char const* fieldname, bool defvalue)
 {
-    setConfig(index, sConfig.GetBoolDefault(fieldname, defvalue));
+    setConfig(index, sDBConfig.GetBoolDefault(fieldname, defvalue));
 }
 
 void World::setConfigPos(eConfigFloatValues index, char const* fieldname, float defvalue)
@@ -2147,7 +2149,7 @@ bool World::configNoReload(bool reload, eConfigUInt32Values index, char const* f
     if (!reload)
         return true;
 
-    uint32 val = sConfig.GetIntDefault(fieldname, defvalue);
+    uint32 val = sDBConfig.GetIntDefault(fieldname, defvalue);
     if (val != getConfig(index))
         sLog.outError("%s option can't be changed at mangosd.conf reload, using current value (%u).", fieldname, getConfig(index));
 
@@ -2159,7 +2161,7 @@ bool World::configNoReload(bool reload, eConfigInt32Values index, char const* fi
     if (!reload)
         return true;
 
-    int32 val = sConfig.GetIntDefault(fieldname, defvalue);
+    int32 val = sDBConfig.GetIntDefault(fieldname, defvalue);
     if (val != getConfig(index))
         sLog.outError("%s option can't be changed at mangosd.conf reload, using current value (%i).", fieldname, getConfig(index));
 
@@ -2171,7 +2173,7 @@ bool World::configNoReload(bool reload, eConfigFloatValues index, char const* fi
     if (!reload)
         return true;
 
-    float val = sConfig.GetFloatDefault(fieldname, defvalue);
+    float val = sDBConfig.GetFloatDefault(fieldname, defvalue);
     if (val != getConfig(index))
         sLog.outError("%s option can't be changed at mangosd.conf reload, using current value (%f).", fieldname, getConfig(index));
 
@@ -2183,7 +2185,7 @@ bool World::configNoReload(bool reload, eConfigBoolValues index, char const* fie
     if (!reload)
         return true;
 
-    bool val = sConfig.GetBoolDefault(fieldname, defvalue);
+    bool val = sDBConfig.GetBoolDefault(fieldname, defvalue);
     if (val != getConfig(index))
         sLog.outError("%s option can't be changed at mangosd.conf reload, using current value (%s).", fieldname, getConfig(index) ? "'true'" : "'false'");
 

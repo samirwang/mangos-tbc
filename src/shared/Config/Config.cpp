@@ -18,10 +18,9 @@
 
 #include "Config.h"
 #include "ace/Configuration_Import_Export.h"
-
 #include "Policies/Singleton.h"
 
-INSTANTIATE_SINGLETON_1(Config);
+INSTANTIATE_SINGLETON_1(FileConfig);
 
 static bool GetValueHelper(ACE_Configuration_Heap* mConf, const char* name, ACE_TString& result)
 {
@@ -44,24 +43,24 @@ static bool GetValueHelper(ACE_Configuration_Heap* mConf, const char* name, ACE_
     return false;
 }
 
-Config::Config()
+FileConfig::FileConfig()
     : mConf(NULL)
 {
 }
 
-Config::~Config()
+FileConfig::~FileConfig()
 {
     delete mConf;
 }
 
-bool Config::SetSource(const char* file)
+bool FileConfig::SetSource(const char* file)
 {
     mFilename = file;
 
     return Reload();
 }
 
-bool Config::Reload()
+bool FileConfig::Reload()
 {
     delete mConf;
     mConf = new ACE_Configuration_Heap;
@@ -78,13 +77,13 @@ bool Config::Reload()
     return false;
 }
 
-std::string Config::GetStringDefault(const char* name, const char* def)
+std::string FileConfig::GetStringDefault(const char* name, const char* def)
 {
     ACE_TString val;
     return GetValueHelper(mConf, name, val) ? val.c_str() : def;
 }
 
-bool Config::GetBoolDefault(const char* name, bool def)
+bool FileConfig::GetBoolDefault(const char* name, bool def)
 {
     ACE_TString val;
     if (!GetValueHelper(mConf, name, val))
@@ -100,14 +99,14 @@ bool Config::GetBoolDefault(const char* name, bool def)
 }
 
 
-int32 Config::GetIntDefault(const char* name, int32 def)
+int32 FileConfig::GetIntDefault(const char* name, int32 def)
 {
     ACE_TString val;
     return GetValueHelper(mConf, name, val) ? atoi(val.c_str()) : def;
 }
 
 
-float Config::GetFloatDefault(const char* name, float def)
+float FileConfig::GetFloatDefault(const char* name, float def)
 {
     ACE_TString val;
     return GetValueHelper(mConf, name, val) ? (float)atof(val.c_str()) : def;
