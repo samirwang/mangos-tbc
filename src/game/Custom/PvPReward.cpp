@@ -70,7 +70,7 @@ void CPlayer::AddHealing(ObjectGuid guid, uint32 amount)
 
 void CPlayer::AddReward(std::string name, float amount)
 {
-    m_Rewards.push_back(name+"|r");
+    m_Rewards.push_back(name + "|r");
     m_PendingReward += amount;
 
     if (m_PendingReward >= 1)
