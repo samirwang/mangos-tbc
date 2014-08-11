@@ -600,7 +600,7 @@ void CliRunnable::run()
     ///- Display the list of available CLI functions then beep
     sLog.outString();
 
-    if (sFileConfig.GetBoolDefault("BeepAtStart", true))
+    if (sDBConfig.GetBoolDefault("BeepAtStart", true))
         printf("\a");                                       // \a = Alert
 
     // print this here the first time

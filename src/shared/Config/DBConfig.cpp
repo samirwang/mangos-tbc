@@ -21,6 +21,8 @@
 
 INSTANTIATE_SINGLETON_1(DBConfig);
 
+// #define DBCONF_INSERT
+
 bool DBConfig::SetSource(DatabaseType& DB)
 {
     m_Database = &DB;
@@ -63,7 +65,12 @@ bool DBConfig::FindEntry(const std::string name)
 std::string DBConfig::GetStringDefault(const std::string name, const std::string def)
 {
     if (!FindEntry(name))
+    {
+#ifdef DBCONF_INSERT
+        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', '%s')", name.c_str(), def.c_str());
+#endif
         return def;
+    }
 
     return m_ConfigEntries[name];
 }
@@ -71,7 +78,12 @@ std::string DBConfig::GetStringDefault(const std::string name, const std::string
 bool DBConfig::GetBoolDefault(const std::string name, const bool def /* = false */)
 {
     if (!FindEntry(name))
+    {
+#ifdef DBCONF_INSERT
+        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', '%s')", name.c_str(), (def ? "true" : "false"));
+#endif
         return def;
+    }
 
     std::string val = m_ConfigEntries[name];
 
@@ -87,7 +99,12 @@ bool DBConfig::GetBoolDefault(const std::string name, const bool def /* = false 
 int32 DBConfig::GetIntDefault(const std::string name, const int32 def)
 {
     if (!FindEntry(name))
+    {
+#ifdef DBCONF_INSERT
+        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', %i)", name.c_str(), def);
+#endif
         return def;
+    }
 
     int32 val = 0;
 
@@ -107,7 +124,12 @@ int32 DBConfig::GetIntDefault(const std::string name, const int32 def)
 float DBConfig::GetFloatDefault(const std::string name, const float def)
 {
     if (!FindEntry(name))
+    {
+#ifdef DBCONF_INSERT
+        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', %f)", name.c_str(), def);
+#endif
         return def;
+    }
 
     float val = 0;
 

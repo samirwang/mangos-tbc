@@ -226,9 +226,9 @@ int Master::Run()
     ACE_Based::Thread* cliThread = NULL;
 
 #ifdef WIN32
-    if (sFileConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
+    if (sDBConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
 #else
-    if (sFileConfig.GetBoolDefault("Console.Enable", true))
+    if (sDBConfig.GetBoolDefault("Console.Enable", true))
 #endif
     {
         ///- Launch CliRunnable thread
@@ -236,7 +236,7 @@ int Master::Run()
     }
 
     ACE_Based::Thread* rar_thread = NULL;
-    if (sFileConfig.GetBoolDefault("Ra.Enable", false))
+    if (sDBConfig.GetBoolDefault("Ra.Enable", false))
     {
         rar_thread = new ACE_Based::Thread(new RARunnable);
     }
@@ -246,7 +246,7 @@ int Master::Run()
     {
         HANDLE hProcess = GetCurrentProcess();
 
-        uint32 Aff = sFileConfig.GetIntDefault("UseProcessors", 0);
+        uint32 Aff = sDBConfig.GetIntDefault("UseProcessors", 0);
         if (Aff > 0)
         {
             ULONG_PTR appAff;
@@ -271,7 +271,7 @@ int Master::Run()
             sLog.outString();
         }
 
-        bool Prio = sFileConfig.GetBoolDefault("ProcessPriority", false);
+        bool Prio = sDBConfig.GetBoolDefault("ProcessPriority", false);
 
 //        if(Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
         if (Prio)
@@ -288,17 +288,17 @@ int Master::Run()
     ///- Start soap serving thread
     ACE_Based::Thread* soap_thread = NULL;
 
-    if (sFileConfig.GetBoolDefault("SOAP.Enabled", false))
+    if (sDBConfig.GetBoolDefault("SOAP.Enabled", false))
     {
         MaNGOSsoapRunnable* runnable = new MaNGOSsoapRunnable();
 
-        runnable->setListenArguments(sFileConfig.GetStringDefault("SOAP.IP", "127.0.0.1"), sFileConfig.GetIntDefault("SOAP.Port", 7878));
+        runnable->setListenArguments(sDBConfig.GetStringDefault("SOAP.IP", "127.0.0.1"), sDBConfig.GetIntDefault("SOAP.Port", 7878));
         soap_thread = new ACE_Based::Thread(runnable);
     }
 
     ///- Start up freeze catcher thread
     ACE_Based::Thread* freeze_thread = NULL;
-    if (uint32 freeze_delay = sFileConfig.GetIntDefault("MaxCoreStuckTime", 0))
+    if (uint32 freeze_delay = sDBConfig.GetIntDefault("MaxCoreStuckTime", 0))
     {
         FreezeDetectorRunnable* fdr = new FreezeDetectorRunnable();
         fdr->SetDelayTime(freeze_delay * 1000);
@@ -307,7 +307,7 @@ int Master::Run()
     }
 
     ///- Launch the world listener socket
-    uint16 wsport = sWorld.getConfig(CONFIG_UINT32_PORT_WORLD);
+    uint16 wsport = sFileConfig.GetIntDefault("WorldServerPort", DEFAULT_WORLDSERVER_PORT);
     std::string bind_ip = sFileConfig.GetStringDefault("BindIP", "0.0.0.0");
 
     if (sWorldSocketMgr->StartNetwork(wsport, bind_ip) == -1)

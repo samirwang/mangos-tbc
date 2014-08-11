@@ -5528,7 +5528,7 @@ bool ChatHandler::HandleServerPLimitCommand(char* args)
         else if (strncmp(param, "administrator", l) == 0)
             sWorld.SetPlayerLimit(-SEC_ADMINISTRATOR);
         else if (strncmp(param, "reset", l) == 0)
-            sWorld.SetPlayerLimit(sConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT));
+            sWorld.SetPlayerLimit(sDBConfig.GetIntDefault("PlayerLimit", DEFAULT_PLAYER_LIMIT));
         else if (ExtractInt32(&param, val))
         {
             if (val < -SEC_ADMINISTRATOR)
