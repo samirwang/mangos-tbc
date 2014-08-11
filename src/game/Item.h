@@ -257,7 +257,7 @@ struct ItemRequiredTarget
 
 bool ItemCanGoIntoBag(ItemPrototype const* proto, ItemPrototype const* pBagProto);
 
-class MANGOS_DLL_SPEC Item : public Object
+class Item : public Object
 {
 private:
     uint32 m_TransmogEntry;

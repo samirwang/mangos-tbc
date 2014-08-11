@@ -772,7 +772,7 @@ enum PlayerRestState
     REST_STATE_RAF_LINKED = 0x04                      // Exact use unknown
 };
 
-class MANGOS_DLL_SPEC PlayerTaxi
+class PlayerTaxi
 {
 public:
     PlayerTaxi();
@@ -902,7 +902,7 @@ private:                                                // fields
 
 class CPlayer;
 
-class MANGOS_DLL_SPEC Player : public Unit
+class Player : public Unit
 {
     friend class WorldSession;
     friend void Item::AddToUpdateQueueOf(Player* player);
