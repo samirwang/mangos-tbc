@@ -60,9 +60,8 @@ namespace Settings
 
 enum MessageTypes
 {
-    CHAT_BOX,
-    CHAT_WIDE,
-    CHAT_BOTH
+    CHAT_BOX = 0x1,
+    CHAT_WIDE = 0x2
 };
 
 struct MultiVendor

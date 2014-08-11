@@ -351,19 +351,17 @@ public:
         {
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send boxmessage", CHAT_BOX, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send widemessage", CHAT_WIDE, 1339);
-            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send bothmessage", CHAT_BOTH, 1339);
+            pCPlayer->AddGossipMenuItem(Icon::GEAR, "Send bothmessage", CHAT_BOX | CHAT_WIDE, 1339);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Show all icons", GOSSIP_SENDER_MAIN, 1340);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Transmog Mainhand", GOSSIP_SENDER_MAIN, 1341);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Detransmog Mainhand", GOSSIP_SENDER_MAIN, 1342);
         }
         else if (action == 1339)
         {
-            if (sender == CHAT_BOX)
+            if (sender & CHAT_BOX)
                 pCPlayer->BoxChat << "Boxchat" << std::endl;
-            else if (sender == CHAT_WIDE)
+            if (sender & CHAT_WIDE)
                 pCPlayer->WideChat << "WideChat" << std::endl;
-            else if (sender == CHAT_BOTH)
-                pCPlayer->BothChat << "BothChat" << std::endl;
         }
         else if (action == 1340)
         {

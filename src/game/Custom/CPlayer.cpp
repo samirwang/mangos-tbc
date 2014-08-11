@@ -69,9 +69,9 @@ void CPlayer::CUpdate(uint32 diff)
 {
     LearnGreenSpells();
 
-    SendSavedChat(CHAT_BOX, BoxChat);
-    SendSavedChat(CHAT_WIDE, WideChat);
-    SendSavedChat(CHAT_BOTH, BothChat);
+    SendSavedChat(MessageTypes(CHAT_BOX), BoxChat);
+    SendSavedChat(MessageTypes(CHAT_WIDE), WideChat);
+    SendSavedChat(MessageTypes(CHAT_BOX | CHAT_WIDE), BothChat);
 }
 
 void CPlayer::Sometimes()
@@ -224,9 +224,9 @@ void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
         {
             const char* msg = item.c_str();
 
-            if (type == CHAT_BOX || type == CHAT_BOTH)
+            if ((type & CHAT_BOX) != 0)
                 ChatHandler(GetSession()).SendSysMessage(msg);
-            if (type == CHAT_WIDE || type == CHAT_BOTH)
+            if ((type & CHAT_WIDE) != 0)
             {
                 WorldPacket data(SMSG_NOTIFICATION, (strlen(msg) + 1));
                 data << msg;
