@@ -265,11 +265,13 @@ void PathFinder::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
         }
 
         for (pathEndIndex = m_polyLength - 1; pathEndIndex > pathStartIndex; --pathEndIndex)
+        {
             if (m_pathPolyRefs[pathEndIndex] == endPoly)
             {
                 endPolyFound = true;
                 break;
             }
+        }
     }
 
     if (startPolyFound && endPolyFound)
