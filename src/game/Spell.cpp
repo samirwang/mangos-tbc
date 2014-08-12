@@ -4856,7 +4856,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
 
                     if (lenght >= srange->maxRange * 2)
-                        return SPELL_FAILED_OUT_OF_RANGE;
+                        return SPELL_FAILED_NOPATH;
                 }
 
                 break;
