@@ -100,17 +100,17 @@ void CPlayer::LoadCountryData()
     std::ostringstream ss;
 
     ss << " SELECT"
-        << " c.iso_code_2, c.iso_code_3, c.country"
-        << " FROM"
-        << " ip2nationcountries c,"
-        << " ip2nation i"
-        << " WHERE"
-        << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
-        << " AND"
-        << " c.code = i.country"
-        << " ORDER BY"
-        << " i.ip DESC"
-        << " LIMIT 1";
+       << " c.iso_code_2, c.iso_code_3, c.country"
+       << " FROM"
+       << " ip2nationcountries c,"
+       << " ip2nation i"
+       << " WHERE"
+       << " i.ip < INET_ATON('" << GetSession()->GetRemoteAddress() << "')"
+       << " AND"
+       << " c.code = i.country"
+       << " ORDER BY"
+       << " i.ip DESC"
+       << " LIMIT 1";
 
     if (QueryResult* result = LoginDatabase.PQuery("%s", ss.str().c_str()))
     {
@@ -208,10 +208,9 @@ std::string CPlayer::GetNameLink(bool applycolors)
 
 void CPlayer::SendWorldChatMsg(std::string msg)
 {
-    std::ostringstream ss;
-    ss << GetNameLink(true) << MSG_COLOR_WHITE << ": " << msg; // [Playername]: Message
+    std::string chatstring = GetNameLink(true) + MSG_COLOR_WHITE + ": " + msg;
 
-    sCustom.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(ss.str(), "|r", MSG_COLOR_WHITE));
+    sCustom.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(chatstring, "|r", MSG_COLOR_WHITE));
 }
 
 void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)

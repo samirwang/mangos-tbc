@@ -241,13 +241,13 @@ public:
         }
         else if (action == 304)
         {
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_WHITE   "Meta", GOSSIP_SENDER_MULTIVENDOR, 81028);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_RED     "Red", GOSSIP_SENDER_MULTIVENDOR, 81014);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_ORANGE  "Orange", GOSSIP_SENDER_MULTIVENDOR, 81009);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_YELLOW  "Yellow", GOSSIP_SENDER_MULTIVENDOR, 81012);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_GREEN   "Green", GOSSIP_SENDER_MULTIVENDOR, 81010);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_BLUE    "Blue ", GOSSIP_SENDER_MULTIVENDOR, 81013);
-            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_PURPLE  "Purple", GOSSIP_SENDER_MULTIVENDOR, 81011);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_WHITE  + "Meta", GOSSIP_SENDER_MULTIVENDOR, 81028);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_RED    + "Red", GOSSIP_SENDER_MULTIVENDOR, 81014);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_ORANGE + "Orange", GOSSIP_SENDER_MULTIVENDOR, 81009);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_YELLOW + "Yellow", GOSSIP_SENDER_MULTIVENDOR, 81012);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_GREEN  + "Green", GOSSIP_SENDER_MULTIVENDOR, 81010);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_BLUE   + "Blue ", GOSSIP_SENDER_MULTIVENDOR, 81013);
+            pCPlayer->AddGossipMenuItem(Icon::MONEY_BAG, MSG_COLOR_PURPLE + "Purple", GOSSIP_SENDER_MULTIVENDOR, 81011);
             pCPlayer->AddGossipMenuItem(Icon::GEAR, "Back", GOSSIP_SENDER_MAIN, 300);
         }
         else if (action == 305)

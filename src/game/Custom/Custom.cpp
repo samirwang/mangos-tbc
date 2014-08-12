@@ -139,9 +139,7 @@ const std::string Custom::m_SlotNames[] =
 
 std::string Custom::ChatNameWrapper(std::string cName)
 {
-    std::ostringstream ss;
-    ss << MSG_COLOR_WHITE << "[" << MSG_COLOR_MAGENTA << cName << MSG_COLOR_WHITE << "]:";
-    return ss.str().c_str();
+    return MSG_COLOR_WHITE + "[" + MSG_COLOR_MAGENTA + cName + MSG_COLOR_WHITE + "]:";
 }
 
 void Custom::LoadFakePlayerBytes()
