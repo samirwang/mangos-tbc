@@ -4839,18 +4839,18 @@ SpellCastResult Spell::CheckCast(bool strict)
                     float lenght = 0;
                     PathFinder path(m_caster);
                     path.calculate(x, y, z, true);
-                    for (auto itr = path.getPath().begin(); itr != path.getPath().end(); ++itr)
+                    for (auto itr = path.getPath().begin(); ; ++itr)
                     {
-                        auto jtr = itr;
-                        ++jtr;
+                        auto jtr = itr + 1;
 
                         if (jtr == path.getPath().end())
                             break;
 
-                        lenght += sqrt(
-                            pow(itr->x - jtr->x, 2) +
-                            pow(itr->y - jtr->y, 2) +
-                            pow(itr->z - jtr->z, 2));
+                        // http://demonstrations.wolfram.com/PythagoreanTheorem3D/
+                        float sqx = pow(itr->x - jtr->x, 2);
+                        float sqy = pow(itr->x - jtr->x, 2);
+                        float sqz = pow(itr->x - jtr->x, 2);
+                        lenght += sqrt(sqx + sqy + sqz);
                     }
 
                     SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(m_spellInfo->rangeIndex);
