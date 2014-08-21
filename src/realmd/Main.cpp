@@ -42,22 +42,6 @@
 #include <ace/Acceptor.h>
 #include <ace/SOCK_Acceptor.h>
 
-#ifdef WIN32
-#include "ServiceWin32.h"
-char serviceName[] = "realmd";
-char serviceLongName[] = "MaNGOS realmd service";
-char serviceDescription[] = "Massive Network Game Object Server";
-/*
- * -1 - not in service mode
- *  0 - stopped
- *  1 - running
- *  2 - paused
- */
-int m_ServiceStatus = -1;
-#else
-#include "PosixDaemon.h"
-#endif
-
 bool StartDB();
 void UnhookSignals();
 void HookSignals();
@@ -147,41 +131,12 @@ extern int main(int argc, char** argv)
         }
     }
 
-#ifdef WIN32                                                // windows service command need execute before config read
-    switch (serviceDaemonMode)
-    {
-        case 'i':
-            if (WinServiceInstall())
-                sLog.outString("Installing service");
-            return 1;
-        case 'u':
-            if (WinServiceUninstall())
-                sLog.outString("Uninstalling service");
-            return 1;
-        case 'r':
-            WinServiceRun();
-            break;
-    }
-#endif
-
     if (!sFileConfig.SetSource(cfg_file))
     {
         sLog.outError("Could not find configuration file %s.", cfg_file);
         Log::WaitBeforeContinueIfNeed();
         return 1;
     }
-
-#ifndef WIN32                                               // posix daemon commands need apply after config read
-    switch (serviceDaemonMode)
-    {
-        case 'r':
-            startDaemon();
-            break;
-        case 's':
-            stopDaemon();
-            break;
-    }
-#endif
 
     sLog.Initialize();
 
@@ -274,49 +229,6 @@ extern int main(int argc, char** argv)
     ///- Catch termination signals
     HookSignals();
 
-    ///- Handle affinity for multiple processors and process priority on Windows
-#ifdef WIN32
-    {
-        HANDLE hProcess = GetCurrentProcess();
-
-        uint32 Aff = sFileConfig.GetIntDefault("UseProcessors", 0);
-        if (Aff > 0)
-        {
-            ULONG_PTR appAff;
-            ULONG_PTR sysAff;
-
-            if (GetProcessAffinityMask(hProcess, &appAff, &sysAff))
-            {
-                ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
-
-                if (!curAff)
-                {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for realmd. Accessible processors bitmask (hex): %x", Aff, appAff);
-                }
-                else
-                {
-                    if (SetProcessAffinityMask(hProcess, curAff))
-                        sLog.outString("Using processors (bitmask, hex): %x", curAff);
-                    else
-                        sLog.outError("Can't set used processors (hex): %x", curAff);
-                }
-            }
-            sLog.outString();
-        }
-
-        bool Prio = sFileConfig.GetBoolDefault("ProcessPriority", false);
-
-        if (Prio)
-        {
-            if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
-                sLog.outString("realmd process priority class set to HIGH");
-            else
-                sLog.outError("Can't set realmd process priority class.");
-            sLog.outString();
-        }
-    }
-#endif
-
     // server has started up successfully => enable async DB requests
     LoginDatabase.AllowAsyncTransactions();
 
@@ -324,9 +236,6 @@ extern int main(int argc, char** argv)
     uint32 numLoops = (sFileConfig.GetIntDefault("MaxPingTime", 30) * (MINUTE * 1000000 / 100000));
     uint32 loopCounter = 0;
 
-#ifndef WIN32
-    detachDaemon();
-#endif
     ///- Wait for termination signal
     while (!stopEvent)
     {
@@ -342,10 +251,6 @@ extern int main(int argc, char** argv)
             DETAIL_LOG("Ping MySQL to keep connection alive");
             LoginDatabase.Ping();
         }
-#ifdef WIN32
-        if (m_ServiceStatus == 0) stopEvent = true;
-        while (m_ServiceStatus == 2) Sleep(1000);
-#endif
     }
 
     ///- Wait for the delay thread to exit

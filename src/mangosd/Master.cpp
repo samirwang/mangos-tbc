@@ -48,11 +48,6 @@
 #include <ace/TP_Reactor.h>
 #include <ace/Dev_Poll_Reactor.h>
 
-#ifdef WIN32
-#include "ServiceWin32.h"
-extern int m_ServiceStatus;
-#endif
-
 INSTANTIATE_SINGLETON_1(Master);
 
 volatile uint32 Master::m_masterLoopCounter = 0;
@@ -200,9 +195,6 @@ int Master::Run()
     ///- Initialize the World
     sWorld.SetInitialWorldSettings();
 
-#ifndef WIN32
-    detachDaemon();
-#endif
     // server loaded successfully => enable async DB requests
     // this is done to forbid any async transactions during server startup!
     CharacterDatabase.AllowAsyncTransactions();
@@ -225,11 +217,6 @@ int Master::Run()
 
     ACE_Based::Thread* cliThread = NULL;
 
-#ifdef WIN32
-    if (sDBConfig.GetBoolDefault("Console.Enable", true) && (m_ServiceStatus == -1)/* need disable console in service mode*/)
-#else
-    if (sDBConfig.GetBoolDefault("Console.Enable", true))
-#endif
     {
         ///- Launch CliRunnable thread
         cliThread = new ACE_Based::Thread(new CliRunnable);
@@ -240,50 +227,6 @@ int Master::Run()
     {
         rar_thread = new ACE_Based::Thread(new RARunnable);
     }
-
-    ///- Handle affinity for multiple processors and process priority on Windows
-#ifdef WIN32
-    {
-        HANDLE hProcess = GetCurrentProcess();
-
-        uint32 Aff = sDBConfig.GetIntDefault("UseProcessors", 0);
-        if (Aff > 0)
-        {
-            ULONG_PTR appAff;
-            ULONG_PTR sysAff;
-
-            if (GetProcessAffinityMask(hProcess, &appAff, &sysAff))
-            {
-                ULONG_PTR curAff = Aff & appAff;            // remove non accessible processors
-
-                if (!curAff)
-                {
-                    sLog.outError("Processors marked in UseProcessors bitmask (hex) %x not accessible for mangosd. Accessible processors bitmask (hex): %x", Aff, appAff);
-                }
-                else
-                {
-                    if (SetProcessAffinityMask(hProcess, curAff))
-                        sLog.outString("Using processors (bitmask, hex): %x", curAff);
-                    else
-                        sLog.outError("Can't set used processors (hex): %x", curAff);
-                }
-            }
-            sLog.outString();
-        }
-
-        bool Prio = sDBConfig.GetBoolDefault("ProcessPriority", false);
-
-//        if(Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
-        if (Prio)
-        {
-            if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
-                sLog.outString("mangosd process priority class set to HIGH");
-            else
-                sLog.outError("Can't set mangosd process priority class.");
-            sLog.outString();
-        }
-    }
-#endif
 
     ///- Start soap serving thread
     ACE_Based::Thread* soap_thread = NULL;

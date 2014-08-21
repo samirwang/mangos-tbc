@@ -146,14 +146,10 @@ if(WIN32)
       ${LIBRARY_SRCS}
       WheatyExceptionReport.cpp
       WheatyExceptionReport.h
-      ServiceWin32.cpp
-      ServiceWin32.h
      )
 else()
   set(LIBRARY_SRCS
       ${LIBRARY_SRCS}
-      PosixDaemon.cpp
-      PosixDaemon.h
      )
 endif()
 

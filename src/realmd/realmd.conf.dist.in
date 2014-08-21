@@ -71,16 +71,6 @@ ConfVersion=2010062001
 #        Default: "" - none colors
 #                 "13 7 11 9" - for example :)
 #
-#    UseProcessors
-#        Used processors mask for multi-processors system (Used only at Windows)
-#        Default: 0 (selected by OS)
-#                 number (bitmask value of selected processors)
-#
-#    ProcessPriority
-#        Process proirity setting (Used only at Windows)
-#        Default: 1 (HIGH)
-#                 0 (Normal)
-#
 #    WaitAtStartupError
 #        After startup error report wait <Enter> or some time before continue (and possible close console window)
 #                 -1 (wait until <Enter> press)
@@ -119,8 +109,6 @@ LogFile = "Realmd.log"
 LogTimestamp = 0
 LogFileLevel = 0
 LogColors = ""
-UseProcessors = 0
-ProcessPriority = 1
 WaitAtStartupError = 0
 RealmsStateUpdateDelay = 20
 WrongPass.MaxCount = 0
