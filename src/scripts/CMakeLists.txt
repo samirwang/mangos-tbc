@@ -32,7 +32,6 @@ set(LIBRARY_SRCS
     npc_teleporter.cpp
     npc_training_dummy.cpp
     pgossip_template.cpp
-    sc_default.cpp
 )
 
 add_library(${LIBRARY_NAME} STATIC

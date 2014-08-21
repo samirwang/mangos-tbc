@@ -23,7 +23,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Custom/Warden
   ${CMAKE_CURRENT_SOURCE_DIR}/Custom
   ${CMAKE_CURRENT_SOURCE_DIR}/vmap
-  ${CMAKE_CURRENT_SOURCE_DIR}/AuctionHouseBot
   ${CMAKE_CURRENT_SOURCE_DIR}/BattleGround
   ${CMAKE_CURRENT_SOURCE_DIR}/OutdoorPvP
   ${CMAKE_SOURCE_DIR}/dep/include/g3dlite
@@ -43,16 +42,16 @@ set(SRC_GRP_CUSTOM
     Custom/AntiCheat.h
     Custom/CChat.cpp
     Custom/CFBG.cpp
-    Custom/CFBG.h
     Custom/CPlayer.cpp
     Custom/CPlayer.h
     Custom/CPlusMgr.cpp
     Custom/CPlusMgr.h
+    Custom/CheatDetectors.cpp
     Custom/Custom.cpp
     Custom/Custom.h
     Custom/Misc.cpp
+    Custom/PvPReward.cpp
     Custom/Settings.cpp
-    Custom/Settings.h
 )
 
 set(SRC_GRP_WARDEN
@@ -66,11 +65,6 @@ set(SRC_GRP_WARDEN
     Custom/Warden/WardenModuleWin.h
     Custom/Warden/WardenWin.cpp
     Custom/Warden/WardenWin.h
-)
-
-set(SRC_GRP_AHBOT
-    AuctionHouseBot/AuctionHouseBot.cpp
-    AuctionHouseBot/AuctionHouseBot.h
 )
 
 set(SRC_GRP_BATTLEGROUND
@@ -152,8 +146,6 @@ set(SRC_GRP_OBJECT
     AggressorAI.h
     ArenaTeam.cpp
     ArenaTeam.h
-    AuctionHouseMgr.cpp
-    AuctionHouseMgr.h
     Bag.cpp
     Bag.h
     Camera.cpp
@@ -326,7 +318,6 @@ set(SRC_GRP_WORLD_HANDLERS
     AddonHandler.cpp
     AddonHandler.h
     ArenaTeamHandler.cpp
-    AuctionHouseHandler.cpp
     Cell.h
     CellImpl.h
     Channel.cpp
