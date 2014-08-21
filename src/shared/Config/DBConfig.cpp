@@ -21,11 +21,12 @@
 
 INSTANTIATE_SINGLETON_1(DBConfig);
 
-// #define DBCONF_INSERT
+#define DBCONF_INSERT
 
-bool DBConfig::SetSource(DatabaseType& DB)
+bool DBConfig::SetSource(DatabaseType& DB, uint32 realmID)
 {
     m_Database = &DB;
+    m_RealmID = realmID;
 
     return Reload();
 }
@@ -34,7 +35,9 @@ bool DBConfig::Reload()
 {
     if (!m_Database)
         return false;
-    auto result = m_Database->PQuery("SELECT name, value FROM config");
+
+    auto result = m_Database->PQuery("SELECT name, value FROM config WHERE realm = %u", m_RealmID);
+
     if (!result)
         return false;
 
@@ -49,41 +52,39 @@ bool DBConfig::Reload()
         m_ConfigEntries.insert(std::make_pair(name, val));
     } while (result->NextRow());
 
+    delete result;
+
     return true;
 }
 
-bool DBConfig::FindEntry(const std::string name)
+bool DBConfig::FindEntry(const std::string name, const std::string def)
 {
     bool found = m_ConfigEntries.find(name) != m_ConfigEntries.end();
 
     if (!found)
+    {
         sLog.outErrorDb("Could not find config entry by name %s, using default.", name.c_str());
+
+#ifdef DBCONF_INSERT
+        m_Database->PExecute("INSERT INTO config (realm, name, value) VALUES ('%u', '%s', '%s')", m_RealmID, name.c_str(), def.c_str());
+#endif
+    }
 
     return found;
 }
 
 std::string DBConfig::GetStringDefault(const std::string name, const std::string def)
 {
-    if (!FindEntry(name))
-    {
-#ifdef DBCONF_INSERT
-        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', '%s')", name.c_str(), def.c_str());
-#endif
+    if (!FindEntry(name, def))
         return def;
-    }
 
     return m_ConfigEntries[name];
 }
 
 bool DBConfig::GetBoolDefault(const std::string name, const bool def /* = false */)
 {
-    if (!FindEntry(name))
-    {
-#ifdef DBCONF_INSERT
-        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', '%s')", name.c_str(), (def ? "true" : "false"));
-#endif
+    if (!FindEntry(name, std::to_string(def)))
         return def;
-    }
 
     std::string val = m_ConfigEntries[name];
 
@@ -98,13 +99,8 @@ bool DBConfig::GetBoolDefault(const std::string name, const bool def /* = false 
 
 int32 DBConfig::GetIntDefault(const std::string name, const int32 def)
 {
-    if (!FindEntry(name))
-    {
-#ifdef DBCONF_INSERT
-        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', %i)", name.c_str(), def);
-#endif
+    if (!FindEntry(name, std::to_string(def)))
         return def;
-    }
 
     int32 val = 0;
 
@@ -123,13 +119,8 @@ int32 DBConfig::GetIntDefault(const std::string name, const int32 def)
 
 float DBConfig::GetFloatDefault(const std::string name, const float def)
 {
-    if (!FindEntry(name))
-    {
-#ifdef DBCONF_INSERT
-        WorldDatabase.PExecute("INSERT INTO config (name, value) VALUES ('%s', %f)", name.c_str(), def);
-#endif
+    if (!FindEntry(name, std::to_string(def)))
         return def;
-    }
 
     float val = 0;
 

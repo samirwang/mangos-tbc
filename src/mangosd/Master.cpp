@@ -525,7 +525,7 @@ bool Master::_StartDB()
 
     sLog.outString("Realm running as realm ID %d", realmID);
 
-    sDBConfig.SetSource(WorldDatabase);
+    sDBConfig.SetSource(LoginDatabase, realmID);
 
     ///- Clean the database before starting
     clearOnlineAccounts();

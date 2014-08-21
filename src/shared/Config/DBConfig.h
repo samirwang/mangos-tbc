@@ -30,14 +30,15 @@ public:
         m_Database = NULL;
     }
     ~DBConfig()
-    { }
+    {
+    }
 
     typedef std::unordered_map<std::string, std::string> ConfigEntries;
 
-    bool SetSource(DatabaseType& DB);
+    bool SetSource(DatabaseType& DB, uint32 realmID);
     bool Reload();
 
-    bool FindEntry(const std::string name);
+    bool FindEntry(const std::string name, const std::string def);
 
     std::string GetStringDefault(const std::string name, const std::string def);
     bool GetBoolDefault(const std::string name, const bool def = false);
@@ -46,6 +47,8 @@ public:
 
 private:
     DatabaseType* m_Database;
+    uint8 m_RealmID;
+
     ConfigEntries m_ConfigEntries;
 };
 

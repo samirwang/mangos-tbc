@@ -856,7 +856,7 @@ void World::LoadConfigSettings(bool reload)
 
     setConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK, "vmap.enableIndoorCheck", true);
     bool enableLOS = sDBConfig.GetBoolDefault("vmap.enableLOS", false);
-    bool enableHeight = sDBConfig.GetBoolDefault("vmap.enableHeight", false);
+    bool enableHeight = sDBConfig.GetBoolDefault("vmap.enableHeight", true);
     std::string ignoreSpellIds = sDBConfig.GetStringDefault("vmap.ignoreSpellIds", "");
 
     if (!enableHeight)
@@ -883,7 +883,7 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_UINT32_WARDEN_BAN_TIME, "Warden.BanLength", 900000);
 
     // CFBG
-    setConfig(CONFIG_BOOL_CFBG_ENABLED, "CrossBattlegrounds.Enabled", true);
+    setConfig(CONFIG_BOOL_CFBG_ENABLED, "CrossBattlegrounds.Enabled", false);
 
     // Saving
     setConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC, "PlayerSave.PerSecond", 2);

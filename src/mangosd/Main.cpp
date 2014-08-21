@@ -58,7 +58,7 @@ uint32 realmID;                                             ///< Id of the realm
 /// Print out the usage string for this program on the console.
 void usage(const char* prog)
 {
-    sLog.outString("Usage: \n %s [<options>]\n"
+    sLog.outString("Usage: \n%s [<options>]\n"
                    "    -v, --version            print version and exist\n\r"
                    "    -c config_file           use config_file as configuration file\n\r"
 #ifdef WIN32
