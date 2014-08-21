@@ -67,6 +67,7 @@ bool DBConfig::FindEntry(const std::string name, const std::string def)
 
 #ifdef DBCONF_INSERT
         m_Database->PExecute("INSERT INTO config (realm, name, value) VALUES ('%u', '%s', '%s')", m_RealmID, name.c_str(), def.c_str());
+        m_Database->PExecute("UPDATE config c, config_descriptions cd SET c.description = cd.description WHERE c.name = cd.name");
 #endif
     }
 
