@@ -266,8 +266,8 @@ void PlayerMenu::SendGossipMenu(std::string text, ObjectGuid objectGuid, uint32 
     for (auto i = 0; i < 8; ++i)
     {
         data << float(0);
-        data << text;
-        data << text;
+        data << text.c_str();
+        data << text.c_str();
         data << uint32(0);
         data << uint32(0);
         data << uint32(0);
