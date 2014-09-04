@@ -2953,6 +2953,7 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
     if (target->GetTypeId() == TYPEID_PLAYER)
         ((Player*)target)->InitDataForForm();
+
 }
 
 void Aura::HandleAuraTransform(bool apply, bool Real)
@@ -5720,6 +5721,9 @@ void Aura::HandleShapeshiftBoosts(bool apply)
                 ++itr;
         }
     }
+
+    if (target->GetTypeId() == TYPEID_PLAYER)
+        ((Player*)target)->AddAndRemoveAurasByFit();
 }
 
 void Aura::HandleAuraEmpathy(bool apply, bool /*Real*/)
