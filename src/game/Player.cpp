@@ -5851,11 +5851,23 @@ void Player::CheckAreaExploreAndOutdoor()
                 SetRestType(REST_TYPE_NO);
             }
         }
+        // Check if we need to reaply outdoor only passive spells
+        const PlayerSpellMap& sp_list = GetSpellMap();
+        for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
+        {
+            if (itr->second.state == PLAYERSPELL_REMOVED)
+                continue;
+            SpellEntry const* spellInfo = sSpellStore.LookupEntry(itr->first);
+            if (!spellInfo || !IsNeedCastSpellAtOutdoor(spellInfo) || HasAura(itr->first))
+                continue;
+            CastSpell(this, itr->first, true, NULL);
+        }
     }
     else if (sWorld.getConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK) && !isGameMaster())
+    {
+        RemoveAurasWithAttribute(SPELL_ATTR_OUTDOORS_ONLY);
         ToCPlayer()->SkipAntiCheat();
-
-    AddAndRemoveAurasByFit();
+    }
 
     if (areaFlag == 0xffff)
         return;
@@ -20648,59 +20660,3 @@ AreaLockStatus Player::GetAreaTriggerLockStatus(AreaTrigger const* at, uint32& m
 
     return AREA_LOCKSTATUS_OK;
 };
-
-void Player::AddAndRemoveAurasByFit()
-{
-    // Check if we need to reaply outdoor only passive spells
-    const PlayerSpellMap& sp_list = GetSpellMap();
-    for (PlayerSpellMap::const_iterator itr = sp_list.begin(); itr != sp_list.end(); ++itr)
-    {
-        if (itr->second.state == PLAYERSPELL_REMOVED)
-            continue;
-
-        SpellEntry const* spellInfo = sSpellStore.LookupEntry(itr->first);
-
-        if (!spellInfo || !spellInfo->HasAttribute(SPELL_ATTR_PASSIVE))
-            continue;
-
-        if (spellInfo->SpellFamilyName == SPELLFAMILY_GENERIC)
-            continue;
-
-        Spell* spell = new Spell(this, spellInfo, false);
-        bool cancast = spell->CheckCast(true) == SPELL_CAST_OK;
-        delete spell;
-
-        if (!cancast || HasAura(itr->first))
-            continue;
-
-        CastSpell(this, itr->first, true, NULL);
-    }
-
-    std::vector<SpellAuraHolder*> HoldersToErase;
-
-    for (auto& i : GetSpellAuraHolderMap())
-    {
-        if (i.second->GetCasterGuid() != GetObjectGuid())
-            continue;
-
-        SpellEntry const* spellInfo = i.second->GetSpellProto();
-
-        if (!spellInfo->HasAttribute(SPELL_ATTR_PASSIVE))
-            continue;
-
-        if (spellInfo->SpellFamilyName == SPELLFAMILY_GENERIC)
-            continue;
-
-        Spell* spell = new Spell(this, spellInfo, false);
-        bool cancast = spell->CheckCast(true) == SPELL_CAST_OK;
-        delete spell;
-
-        if (cancast)
-            continue;
-
-        HoldersToErase.push_back(i.second);
-    }
-
-    for (auto& i : HoldersToErase)
-        RemoveSpellAuraHolder(i, AURA_REMOVE_BY_DEFAULT);
-}

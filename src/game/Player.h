@@ -1438,7 +1438,6 @@ public:
     bool IsSpellFitByClassAndRace(uint32 spell_id, uint32* pReqlevel = NULL) const;
     bool IsNeedCastPassiveLikeSpellAtLearn(SpellEntry const* spellInfo) const;
     bool IsImmuneToSpellEffect(SpellEntry const* spellInfo, SpellEffectIndex index, bool castOnSelf) const override;
-    void AddAndRemoveAurasByFit();
 
     void KnockBackFrom(Unit* target, float horizontalSpeed, float verticalSpeed);
 
