@@ -122,7 +122,7 @@ public:
 
     void SetGMFly(bool value) { m_GmFly = value; }
     bool IsGMFly() { return m_GmFly; }
-    void SkipAntiCheat() { ++m_SkipAntiCheat; }
+    void SkipAntiCheat(uint32 times = 1) { m_SkipAntiCheat += times; }
     void DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode);
     void SetAntiCheatMoveInfo(MovementInfo& MoveInfo);
     bool SkipAC() { return m_SkipAntiCheat; }

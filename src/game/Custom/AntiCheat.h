@@ -16,8 +16,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _ANTICHEAT_H
-#define _ANTICHEAT_H
+#pragma once
 
 #include "CPlayer.h"
 
@@ -112,5 +111,3 @@ public:
     AntiCheat_climb(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::CLIMB; }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
 };
-
-#endif
