@@ -36,6 +36,7 @@ namespace Cheat
         JUMP,
         FLY,
         CLIMB,
+        TELEPORT,
     };
 }
 
@@ -109,5 +110,12 @@ class AntiCheat_climb : public AntiCheat
 {
 public:
     AntiCheat_climb(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::CLIMB; }
+    void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+};
+
+class AntiCheat_teleport : public AntiCheat
+{
+public:
+    AntiCheat_teleport(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::TELEPORT; }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
 };

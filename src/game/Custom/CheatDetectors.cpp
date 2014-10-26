@@ -137,7 +137,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
-    if (IsFlying(Cheat::BOTH) || IsFalling(Cheat::BOTH) || IsSwimming(Cheat::BOTH))
+    if (IsFlying(Cheat::BOTH) || IsFalling(Cheat::BOTH) || IsSwimming(Cheat::BOTH) || Skipping())
     {
         SetOldValues();
         return;
@@ -153,6 +153,48 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         std::ostringstream ss;
         ss << "Angle: " << angle;
         ReportCheat("Climb", ss.str());
+
+        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
+        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
+
+        m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
+    }
+
+    SetOldValues();
+}
+
+void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
+{
+    AntiCheat::DetectHack(MoveInfo, Opcode);
+
+    bool startcode = false;
+
+    switch (m_Opcode[Cheat::NEW])
+    {
+    case MSG_MOVE_START_FORWARD:
+    case MSG_MOVE_START_BACKWARD:
+    case MSG_MOVE_START_SWIM:
+    case MSG_MOVE_START_PITCH_UP:
+    case MSG_MOVE_START_PITCH_DOWN:
+    case MSG_MOVE_START_ASCEND:
+    case MSG_MOVE_START_DESCEND:
+        startcode = true;
+    default:
+        break;
+    }
+
+    if (!startcode || Skipping())
+    {
+        SetOldValues();
+        return;
+    }
+
+    if (GetDistance3D() > 0.f)
+    {
+        std::ostringstream ss;
+        ss << "Distance: " << GetDistance3D() << std::endl;
+
+        ReportCheat("Teleport", ss.str());
 
         m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
         auto pos = m_MoveInfo[Cheat::OLD].GetPos();
