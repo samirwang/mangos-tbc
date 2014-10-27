@@ -45,7 +45,7 @@ class AntiCheat
 public:
     AntiCheat(CPlayer* pPlayer);
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
-    void SetOldValues();
+    virtual void SetOldValues();
     void SetMoveInfo(MovementInfo& MoveInfo);
 
     void ReportCheat(std::string cheat, std::string info);
@@ -125,6 +125,7 @@ public:
             Moving[i] = false;
     }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+    void SetOldValues();
 private:
 
     std::map<Opcodes, bool> Moves;

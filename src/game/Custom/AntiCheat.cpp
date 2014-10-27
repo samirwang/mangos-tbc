@@ -24,7 +24,7 @@
 void CPlayer::DetectHacks(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     if (IsTaxiFlying() || GetTransport())
-        return;
+        ++m_SkipAntiCheat;
 
     for (auto& i : m_CheatDetectors)
         i->DetectHack(MoveInfo, Opcode);

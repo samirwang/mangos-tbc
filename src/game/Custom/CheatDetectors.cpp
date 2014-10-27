@@ -162,7 +162,6 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
-
     switch (Opcode)
     {
     case MSG_MOVE_START_FORWARD:
@@ -171,6 +170,7 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     case MSG_MOVE_START_STRAFE_RIGHT:
     case MSG_MOVE_JUMP:
     case MSG_MOVE_START_SWIM:
+    case MSG_MOVE_START_ASCEND:
         Moves[Opcode] = true;
         break;
 
@@ -178,18 +178,30 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         Moves[MSG_MOVE_START_FORWARD] = false;
         Moves[MSG_MOVE_START_BACKWARD] = false;
         break;
+
     case MSG_MOVE_STOP_STRAFE:
         Moves[MSG_MOVE_START_STRAFE_LEFT] = false;
         Moves[MSG_MOVE_START_STRAFE_RIGHT] = false;
         break;
+
     case MSG_MOVE_FALL_LAND:
         Moves[MSG_MOVE_JUMP] = false;
         break;
+
     case MSG_MOVE_STOP_SWIM:
         Moves[MSG_MOVE_START_SWIM] = false;
+        break;
+
+    case MSG_MOVE_STOP_ASCEND:
+        Moves[MSG_MOVE_START_ASCEND] = false;
+        break;
+
     default:
         break;
     }
+
+    if (IsFalling(Cheat::NEW))
+        Moves[MSG_MOVE_JUMP] = true;
 
     bool MovingNow = false;
 
@@ -199,12 +211,31 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     Moving[Cheat::NEW] = MovingNow;
 
+    if (Skipping())
+    {
+        SetOldValues();
+        return;
+    }
+
+//     for (auto& i : Moves)
+//         m_Player->BoxChat << LookupOpcodeName(i.first) << " " << (i.second ? "true" : "false") << std::endl;
+// 
+//     m_Player->BoxChat << "Oldmove: " << uint32(Moving[Cheat::OLD]) << " NewMove: " << uint32(Moving[Cheat::OLD]) << std::endl;
+
     if (!Moving[Cheat::OLD] && GetDistance3D() > 0.f)
     {
-        ReportCheat("Teleport", "");
+        std::ostringstream ss;
+        ss << "Distance: " << GetDistance3D() << std::endl;
+
+        ReportCheat("Teleport", ss.str());
         TeleportBack();
     }
 
     SetOldValues();
+}
+
+void AntiCheat_teleport::SetOldValues()
+{
+    AntiCheat::SetOldValues();
     Moving[Cheat::OLD] = Moving[Cheat::NEW];
 }
