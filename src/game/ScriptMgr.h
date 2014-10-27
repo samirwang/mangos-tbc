@@ -499,12 +499,6 @@ class ScriptMgr
         void LoadScripts(ScriptMapMapName& scripts, const char* tablename);
         void CheckScriptTexts(ScriptMapMapName const& scripts, std::set<int32>& ids);
 
-        template<class T>
-        void GetScriptHookPtr(T& ptr, const char* name)
-        {
-            ptr = (T)MANGOS_GET_PROC_ADDR(m_hScriptLib, name);
-        }
-
         typedef std::vector<std::string> ScriptNameMap;
         typedef UNORDERED_MAP<uint32, uint32> AreaTriggerScriptMap;
         typedef UNORDERED_MAP<uint32, uint32> EventIdScriptMap;

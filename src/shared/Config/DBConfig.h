@@ -22,6 +22,8 @@
 #include <Policies/Singleton.h>
 #include "Database/DatabaseEnv.h"
 
+#include <unordered_map>
+
 class DBConfig
 {
 public:

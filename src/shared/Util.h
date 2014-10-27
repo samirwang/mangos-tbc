@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 template <typename T1>
 void UNUSED(T1 &&) {}
