@@ -7576,7 +7576,9 @@ void Unit::SetSpeedRate(UnitMoveType mtype, float rate, bool forced)
             // and do it only for real sent packets and use run for run/mounted as client expected
             ++((Player*)this)->m_forced_speed_changes[mtype];
 
-            WorldPacket data(Opcodes(SetSpeed2Opc_table[mtype][0]), 18);
+            auto code = Opcodes(SetSpeed2Opc_table[mtype][0]);
+
+            WorldPacket data(code, 18);
             data << GetPackGUID();
             data << (uint32)0;                              // moveEvent, NUM_PMOVE_EVTS = 0x39
             if (mtype == MOVE_RUN)
@@ -7584,7 +7586,10 @@ void Unit::SetSpeedRate(UnitMoveType mtype, float rate, bool forced)
             data << float(GetSpeed(mtype));
             ((Player*)this)->GetSession()->SendPacket(&data);
         }
-        WorldPacket data(Opcodes(SetSpeed2Opc_table[mtype][1]), 12);
+
+        auto code = Opcodes(SetSpeed2Opc_table[mtype][1]);
+
+        WorldPacket data(code, 12);
         data << GetPackGUID();
         data << float(GetSpeed(mtype));
         SendMessageToSet(&data, false);
