@@ -482,7 +482,7 @@ class ScriptMgr
         bool IsScriptScheduled() const { return m_scheduledScripts > 0; }
         static bool CanSpellEffectStartDBScript(SpellEntry const* spellinfo, SpellEffectIndex effIdx);
 
-        InstanceData* CreateInstanceData(Map* pMap) { return NULL; };
+        InstanceData* CreateInstanceData(Map* /*pMap*/) { return NULL; };
 
         char const* GetScriptLibraryVersion() const { return ""; };
         
