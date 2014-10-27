@@ -148,6 +148,8 @@ set(SRC_GRP_OBJECT
     AggressorAI.h
     ArenaTeam.cpp
     ArenaTeam.h
+    AuctionHouseMgr.cpp
+    AuctionHouseMgr.h
     Bag.cpp
     Bag.h
     Camera.cpp
@@ -320,6 +322,7 @@ set(SRC_GRP_WORLD_HANDLERS
     AddonHandler.cpp
     AddonHandler.h
     ArenaTeamHandler.cpp
+    AuctionHouseHandler.cpp
     Cell.h
     CellImpl.h
     Channel.cpp

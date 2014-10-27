@@ -486,13 +486,13 @@ class ScriptMgr
 
         char const* GetScriptLibraryVersion() const { return ""; };
         
-        bool OnAreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry) { return false; }
-        bool OnProcessEvent(uint32 eventId, Object* pSource, Object* pTarget, bool isStart) { return false; }
-        bool OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid) { return false; }
-        bool OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, GameObject* pTarget, ObjectGuid originalCasterGuid) { return false; }
-        bool OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Item* pTarget, ObjectGuid originalCasterGuid) { return false; }
-        bool OnEffectScriptEffect(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid) { return false; }
-        bool OnAuraDummy(Aura const* pAura, bool apply) { return false; }
+        bool OnAreaTrigger(Player* /*pPlayer*/, AreaTriggerEntry const* /*atEntry*/) { return false; }
+        bool OnProcessEvent(uint32 /*eventId*/, Object* /*pSource*/, Object* /*pTarget*/, bool /*isStart*/) { return false; }
+        bool OnEffectDummy(Unit* /*pCaster*/, uint32 /*spellId*/, SpellEffectIndex /*effIndex*/, Creature* /*pTarget*/, ObjectGuid /*originalCasterGuid*/) { return false; }
+        bool OnEffectDummy(Unit* /*pCaster*/, uint32 /*spellId*/, SpellEffectIndex /*effIndex*/, GameObject* /*pTarget*/, ObjectGuid /*originalCasterGuid*/) { return false; }
+        bool OnEffectDummy(Unit* /*pCaster*/, uint32 /*spellId*/, SpellEffectIndex /*effIndex*/, Item* /*pTarget*/, ObjectGuid /*originalCasterGuid*/) { return false; }
+        bool OnEffectScriptEffect(Unit* /*pCaster*/, uint32 /*spellId*/, SpellEffectIndex /*effIndex*/, Creature* /*pTarget*/, ObjectGuid /*originalCasterGuid*/) { return false; }
+        bool OnAuraDummy(Aura const* /*pAura*/, bool /*apply*/) { return false; }
 
     private:
         void CollectPossibleEventIds(std::set<uint32>& eventIds);
