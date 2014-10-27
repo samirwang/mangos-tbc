@@ -18,7 +18,6 @@ INSERT INTO `config_descriptions` VALUES ('AllowTwoSide.Interaction.Guild', 'All
 INSERT INTO `config_descriptions` VALUES ('AllowTwoSide.Interaction.Mail', 'Allow mailing between horde and alliance\r\nDefault: 0 (Not allowed)\r\n         1 (Allowed)');
 INSERT INTO `config_descriptions` VALUES ('AllowTwoSide.WhoList', 'Enable horde and alliance to see eachother on who list\r\nDefault: 0 (Disabled)\r\n         1 (Enabled)');
 INSERT INTO `config_descriptions` VALUES ('AlwaysMaxSkillForLevel', 'Players will automatically gain max level dependent (weapon/defense) skill when logging in, leveling up etc\r\nDefault: 0 (false)\r\n         1 (true)');
-INSERT INTO `config_descriptions` VALUES ('AntiCheat.SpeedCheckInterval', 'How often in milliseconds to check for speedcheat lower gives less slightly higher failrate\r\nDefault: 500 - Wait 500 server milliseconds between checks\r\n         0   - Check every packet');
 INSERT INTO `config_descriptions` VALUES ('AntiCheat.SpeedCheckTolerance', 'How many % overtravel is allowed\r\nDefault: 1   - 1% overtravel allowed\r\n         0   - Will fail a lot');
 INSERT INTO `config_descriptions` VALUES ('Arena.ArenaSeason.ID', 'Current area season id, used for selection some rated arena settings.\r\nDefault: 1');
 INSERT INTO `config_descriptions` VALUES ('Arena.AutoDistributeInterval', 'How often should the distribution take place\nIf automatic distribution is enabled in days\nDefault: 7 (weekly)');

@@ -73,9 +73,18 @@ void AntiCheat::SetMoveInfo(MovementInfo& MoveInfo)
 void AntiCheat::ReportCheat(std::string cheat, std::string info)
 {
     std::ostringstream ss;
-    ss << "Name: " << m_Player->GetName() << " Cheat: " << cheat << " Info: " << (info.empty() ? "No info available" : info) << std::endl;
+    ss << "Name: " << m_Player->GetNameLink(true) << "|r Cheat: " << cheat << std::endl;
+    ss << "Info: " << (info.empty() ? "No info available" : info) << std::endl;
 
     sCustom.SendGMMessage(ss.str());
+}
+
+void AntiCheat::TeleportBack()
+{
+    m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
+    auto pos = m_MoveInfo[Cheat::OLD].GetPos();
+
+    m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
 }
 
 float AntiCheat::GetCurSpeed()
@@ -112,7 +121,11 @@ float AntiCheat::GetSpeedRate()
 float AntiCheat::GetClientDiff(bool limit)
 {
     auto diff = m_MoveInfo[Cheat::NEW].GetTime() - m_MoveInfo[Cheat::OLD].GetTime();
-    return diff > 2500 ? 2500 : diff;
+
+    if (limit)
+        return diff > 2500 ? 2500 : diff;
+
+    return diff;
 }
 
 float AntiCheat::GetServerDiff()

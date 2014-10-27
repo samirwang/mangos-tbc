@@ -21,18 +21,15 @@
 
 void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
-    if (WorldTimer::getMSTimeDiff(m_LastSpeedCheck, WorldTimer::getMSTime()) < sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL) && GetDistance(IsFlying(Cheat::BOTH)) < GetCurSpeed())
-        return;
-
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
-    std::ostringstream ss;
+    if (GetDistance(IsFlying(Cheat::BOTH)) < GetCurSpeed())
+        return;
+
     auto Traveled = GetDistance(IsFlying(Cheat::BOTH));
-    auto Allowed = GetSpeedRate() * 1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100.f);
+    auto Allowed = GetSpeedRate() * (1.f + (float(sWorld.getConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE)) / 100.f));
 
     auto TooFast = Traveled > Allowed;
-
-    ss << "Diff: " << Traveled - Allowed << " Traveled: " << Traveled << " Allowed: " << Allowed;
 
     auto Sliding = false;
 
@@ -48,12 +45,13 @@ void AntiCheat_speed::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 
     if (TooFast && !Sliding && !Skipping())
     {
+        std::ostringstream ss;
+        ss << "Traveled: " << Traveled << " Allowed: " << Allowed << std::endl;
+        ss << "InCombat: " << (m_Player->isInCombat() ? "Yes" : "No") << std::endl;
+
         ReportCheat("Speed", ss.str());
 
-        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
-        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
-
-        m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
+        TeleportBack();
     }
 
     SetOldValues();
@@ -87,7 +85,7 @@ void AntiCheat_jump::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         if (Map* pMap = m_Player->GetMap())
             groundZ = pMap->GetHeight(pos->x, pos->y, pos->z);
 
-        if (pos->z - groundZ > 1)
+        if (pos->z - groundZ > 1.f)
         {
             Detected = true;
             ss << "Height";
@@ -143,7 +141,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         return;
     }
 
-    if (GetDistance3D() < 1)
+    if (GetDistance3D() < 1.f)
         return;
 
     auto angle = std::atan2(GetDistanceZ(), GetDistance2D()) * 180.f / M_PI_F;
@@ -154,10 +152,7 @@ void AntiCheat_climb::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         ss << "Angle: " << angle;
         ReportCheat("Climb", ss.str());
 
-        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
-        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
-
-        m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
+        TeleportBack();
     }
 
     SetOldValues();
@@ -173,9 +168,9 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
     {
     case MSG_MOVE_START_FORWARD:
     case MSG_MOVE_START_BACKWARD:
+    case MSG_MOVE_START_STRAFE_LEFT:
+    case MSG_MOVE_START_STRAFE_RIGHT:
     case MSG_MOVE_START_SWIM:
-    case MSG_MOVE_START_PITCH_UP:
-    case MSG_MOVE_START_PITCH_DOWN:
     case MSG_MOVE_START_ASCEND:
     case MSG_MOVE_START_DESCEND:
         startcode = true;
@@ -189,17 +184,52 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         return;
     }
 
-    if (GetDistance3D() > 0.f)
+    bool cheat = false;
+
+    if (GetDistance3D() > GetCurSpeed())
+        cheat = true;
+
+    auto opos = m_MoveInfo[Cheat::OLD].GetPos();
+    auto npos = m_MoveInfo[Cheat::NEW].GetPos();
+
+    if (!cheat && m_Player->GetMap()->IsInLineOfSight(npos->x, npos->y, npos->z + 2.0f, opos->x, opos->y, opos->z + 2.0f))
+        cheat = true;
+
+    if (cheat)
     {
+        MapEntry const* mapEntry = sMapStore.LookupEntry(m_Player->GetMapId());
+        uint32 ZoneID[2];
+        uint32 AreaID[2];
+        AreaTableEntry const* ZoneEntry[2];
+        AreaTableEntry const* AreaEntry[2];
+
+        m_Player->GetTerrain()->GetZoneAndAreaId(ZoneID[Cheat::OLD], AreaID[Cheat::OLD], opos->x, opos->y, opos->z);
+        m_Player->GetTerrain()->GetZoneAndAreaId(ZoneID[Cheat::NEW], AreaID[Cheat::NEW], npos->x, npos->y, npos->z);
+
+        for (uint8 i = 0; i < 2; ++i)
+        {
+            ZoneEntry[i] = GetAreaEntryByAreaID(ZoneID[i]);
+            AreaEntry[i] = GetAreaEntryByAreaID(AreaID[i]);
+        }
+
+        auto locale = m_Player->GetSession()->GetSessionDbcLocale();
+
         std::ostringstream ss;
-        ss << "Distance: " << GetDistance3D() << std::endl;
+        ss << "Distance: " << GetDistance3D() << " Map: " << mapEntry->name[locale] << std::endl;
+        ss << "Old Position: ";
+        ss << "X: " << opos->x << " Y: " << opos->y << " Z: " << opos->z << std::endl;
+        ss << "Zone: " << ZoneEntry[Cheat::OLD]->area_name[locale] << " (" << ZoneEntry[Cheat::OLD]->ID << ") ";
+        ss << "Area: " << AreaEntry[Cheat::OLD]->area_name[locale] << " (" << AreaEntry[Cheat::OLD]->ID << ") " << std::endl;
+        ss << "New Position: ";
+        ss << "X: " << npos->x << " Y: " << npos->y << " Z: " << npos->z << std::endl;
+        if (ZoneEntry[Cheat::OLD] != ZoneEntry[Cheat::NEW])
+            ss << "Zone: " << ZoneEntry[Cheat::NEW]->area_name[locale] << " (" << ZoneEntry[Cheat::NEW]->ID << ") ";
+        if (AreaEntry[Cheat::OLD] != AreaEntry[Cheat::NEW])
+            ss << "Area: " << AreaEntry[Cheat::NEW]->area_name[locale] << " (" << AreaEntry[Cheat::NEW]->ID << ") " << std::endl;
 
         ReportCheat("Teleport", ss.str());
 
-        m_Player->SetAntiCheatMoveInfo(m_MoveInfo[Cheat::OLD]);
-        auto pos = m_MoveInfo[Cheat::OLD].GetPos();
-
-        m_Player->TeleportTo(m_Player->GetMapId(), pos->x, pos->y, pos->z, pos->o, 0, 0, true);
+        TeleportBack();
     }
 
     SetOldValues();

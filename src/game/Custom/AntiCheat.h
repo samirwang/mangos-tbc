@@ -49,6 +49,7 @@ public:
     void SetMoveInfo(MovementInfo& MoveInfo);
 
     void ReportCheat(std::string cheat, std::string info);
+    void TeleportBack();
 
     float GetCurSpeed();
     float GetSpeedRate();

@@ -889,7 +889,6 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_UINT32_INTERVAL_SAVEPERSEC, "PlayerSave.PerSecond", 2);
     
     // Anticheat
-    setConfig(CONFIG_UINT32_SPEEDCHEAT_INTERVAL, "AntiCheat.SpeedCheckInterval", 500);
     setConfig(CONFIG_UINT32_SPEEDCHEAT_TOLERANCE, "AntiCheat.SpeedCheckTolerance", 1);
 }
 
