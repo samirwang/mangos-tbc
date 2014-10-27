@@ -855,7 +855,7 @@ void World::LoadConfigSettings(bool reload)
     }
 
     setConfig(CONFIG_BOOL_VMAP_INDOOR_CHECK, "vmap.enableIndoorCheck", true);
-    bool enableLOS = sDBConfig.GetBoolDefault("vmap.enableLOS", false);
+    bool enableLOS = sDBConfig.GetBoolDefault("vmap.enableLOS", true);
     bool enableHeight = sDBConfig.GetBoolDefault("vmap.enableHeight", true);
     std::string ignoreSpellIds = sDBConfig.GetStringDefault("vmap.ignoreSpellIds", "");
 
