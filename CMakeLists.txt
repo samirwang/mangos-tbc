@@ -92,8 +92,6 @@ if(WIN32)
   endif()
 endif()
 
-add_definitions("-std=c++11")
-
 # find Git: used to get the revision number
 find_package(Git)
 
@@ -195,6 +193,9 @@ if(UNIX)
 
   find_package(OpenSSL REQUIRED)
   find_package(ZLIB REQUIRED)
+  
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	message(STATUS "GCC: Enabled c++11 support")
 endif()
 
 # Add uninstall script and target
