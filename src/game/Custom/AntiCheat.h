@@ -44,6 +44,8 @@ class AntiCheat
 {
 public:
     AntiCheat(CPlayer* pPlayer);
+    virtual ~AntiCheat() {}
+
     virtual void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
     virtual void SetOldValues();
     void SetMoveInfo(MovementInfo& MoveInfo);
