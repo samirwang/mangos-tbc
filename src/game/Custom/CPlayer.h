@@ -85,7 +85,7 @@ struct Country
 
 class AntiCheat;
 
-typedef std::unordered_map<ObjectGuid, float> DMGHEALMap;
+typedef std::map<ObjectGuid, float> DMGHEALMap;
 typedef std::vector<std::string> RewardMap;
 
 class CPlayer : public Player
