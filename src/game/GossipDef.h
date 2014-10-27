@@ -144,6 +144,8 @@ enum Poi_Icon
     ICON_POI_REDHORSE           =   40                      // Red Horse
 };
 
+typedef std::vector<uint32> GossipActionList;
+
 struct GossipMenuItem
 {
     uint8       m_gIcon;
@@ -151,6 +153,7 @@ struct GossipMenuItem
     std::string m_gMessage;
     uint32      m_gSender;
     uint32      m_gOptionId;
+    GossipActionList m_gOptionIds;
     std::string m_gBoxMessage;
     uint32      m_gBoxMoney;
 };
@@ -186,6 +189,7 @@ class GossipMenu
         // for using from scripts, don't must be inlined
         void AddMenuItem(uint8 Icon, char const* Message, bool Coded = false);
         void AddMenuItem(uint8 Icon, char const* Message, uint32 dtSender, uint32 dtAction, char const* BoxMessage, uint32 BoxMoney, bool Coded = false);
+        void AddMenuItem(uint8 Icon, char const* Message, GossipActionList dtActionList, char const* BoxMessage, uint32 BoxMoney, bool Coded = false);
 
         void AddMenuItem(uint8 Icon, int32 itemText, uint32 dtSender, uint32 dtAction, int32 boxText, uint32 BoxMoney, bool Coded = false);
 
@@ -216,6 +220,7 @@ class GossipMenu
 
         uint32 MenuItemSender(unsigned int ItemId);
         uint32 MenuItemAction(unsigned int ItemId);
+        GossipActionList MenuItemActionList(unsigned int ItemId);
         bool MenuItemCoded(unsigned int ItemId);
 
         void ClearMenu();
@@ -282,6 +287,7 @@ class PlayerMenu
         void ClearMenus();
         uint32 GossipOptionSender(unsigned int Selection);
         uint32 GossipOptionAction(unsigned int Selection);
+        GossipActionList GossipOptionActionList(unsigned int Selection);
         bool GossipOptionCoded(unsigned int Selection);
 
         void SendGossipMenu(uint32 titleTextId, ObjectGuid objectGuid);

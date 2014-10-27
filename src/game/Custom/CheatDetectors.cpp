@@ -217,11 +217,6 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
         return;
     }
 
-//     for (auto& i : Moves)
-//         m_Player->BoxChat << LookupOpcodeName(i.first) << " " << (i.second ? "true" : "false") << std::endl;
-// 
-//     m_Player->BoxChat << "Oldmove: " << uint32(Moving[Cheat::OLD]) << " NewMove: " << uint32(Moving[Cheat::OLD]) << std::endl;
-
     if (!Moving[Cheat::OLD] && GetDistance3D() > 0.f)
     {
         std::ostringstream ss;

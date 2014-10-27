@@ -246,6 +246,11 @@ public:
         PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), sender, action, "", 0);
     }
 
+    void AddGossipMenuItem(Icon::Icon icon, std::string message, GossipActionList actionlist)
+    {
+        PlayerTalkClass->GetGossipMenu().AddMenuItem(icon, message.c_str(), actionlist, "", 0);
+    }
+
     void SetLastGossipGuid(ObjectGuid guid) { m_LastGossipGuid = guid; }
     ObjectGuid GetLastGossipGuid() { return m_LastGossipGuid; }
 

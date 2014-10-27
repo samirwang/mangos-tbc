@@ -54,6 +54,16 @@ bool CPlusMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sende
     return false;
 }
 
+bool CPlusMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, GossipActionList actionlist, std::string code)
+{
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))
+        return script->GossipSelect(pPlayer, pCreature, actionlist, code);
+
+    return false;
+}
+
 bool CPlusMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     if (CreatureScript* script = m_CreatureScripts.GetScript(pCreature->GetEntry()))

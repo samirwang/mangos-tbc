@@ -358,6 +358,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
 
     uint32 sender = _player->PlayerTalkClass->GossipOptionSender(gossipListId);
     uint32 action = _player->PlayerTalkClass->GossipOptionAction(gossipListId);
+    GossipActionList actionlist = _player->PlayerTalkClass->GossipOptionActionList(gossipListId);
 
     if (guid.IsAnyTypeCreature())
     {
@@ -369,7 +370,8 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sCPlusMgr.OnGossipSelect(_player, pCreature, sender, action, code))
+        if (!sCPlusMgr.OnGossipSelect(_player, pCreature, sender, action, code) &&
+            !sCPlusMgr.OnGossipSelect(_player, pCreature, actionlist, code))
             _player->OnGossipSelect(pCreature, gossipListId, menuId);
     }
     else if (guid.IsGameObject())

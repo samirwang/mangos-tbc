@@ -148,6 +148,7 @@ public:
     CreatureAI* GetCreatureAI(Creature* pCreature);
     bool OnGossipHello(Player* pPlayer, Creature* pCreature);
     bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, std::string code);
+    bool OnGossipSelect(Player* pPlayer, Creature* pCreature, GossipActionList actionlist, std::string code);
     bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
     bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
     uint32 GetDialogStatus(Player* pPlayer, Creature* pCreature);
@@ -197,6 +198,7 @@ public:
     virtual CreatureAI* GetCreatureAI(Creature* /*pCreature*/) { return nullptr; }
     virtual bool GossipHello(Player* /*pPlayer*/, Creature* /*pCreature*/) { return false; }
     virtual bool GossipSelect(Player* /*pPlayer*/, Creature* /*pCreature*/, uint32 /*sender*/, uint32 /*action*/, std::string /*code*/) { return false; }
+    virtual bool GossipSelect(Player* /*pPlayer*/, Creature* /*pCreature*/, GossipActionList /*actionlist*/, std::string /*code*/) { return false; }
     virtual bool QuestAccept(Player* /*pPlayer*/, Creature* /*pCreature*/, Quest const* /*pQuest*/) { return false; }
     virtual bool QuestRewarded(Player* /*pPlayer*/, Creature* /*pCreature*/, Quest const* /*pQuest*/) { return false; }
     virtual uint32 GetDialogStatus(Player* /*pPlayer*/, Creature* /*pCreature*/) { return 0; }
