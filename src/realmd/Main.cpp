@@ -56,16 +56,6 @@ void usage(const char* prog)
     sLog.outString("Usage: \n %s [<options>]\n"
                    "    -v, --version            print version and exist\n\r"
                    "    -c config_file           use config_file as configuration file\n\r"
-#ifdef WIN32
-                   "    Running as service functions:\n\r"
-                   "    -s run                   run as service\n\r"
-                   "    -s install               install service\n\r"
-                   "    -s uninstall             uninstall service\n\r"
-#else
-                   "    Running as daemon functions:\n\r"
-                   "    -s run                   run as daemon\n\r"
-                   "    -s stop                  stop daemon\n\r"
-#endif
                    , prog);
 }
 
@@ -80,8 +70,6 @@ extern int main(int argc, char** argv)
     ACE_Get_Opt cmd_opts(argc, argv, options);
     cmd_opts.long_option("version", 'v');
 
-    char serviceDaemonMode = '\0';
-
     int option;
     while ((option = cmd_opts()) != EOF)
     {
@@ -93,31 +81,6 @@ extern int main(int argc, char** argv)
             case 'v':
                 printf("%s\n", _FULLVERSION(REVISION_DATE, REVISION_TIME, REVISION_NR, REVISION_ID));
                 return 0;
-
-            case 's':
-            {
-                const char* mode = cmd_opts.opt_arg();
-
-                if (!strcmp(mode, "run"))
-                    serviceDaemonMode = 'r';
-#ifdef WIN32
-                else if (!strcmp(mode, "install"))
-                    serviceDaemonMode = 'i';
-                else if (!strcmp(mode, "uninstall"))
-                    serviceDaemonMode = 'u';
-#else
-                else if (!strcmp(mode, "stop"))
-                    serviceDaemonMode = 's';
-#endif
-                else
-                {
-                    sLog.outError("Runtime-Error: -%c unsupported argument %s", cmd_opts.opt_opt(), mode);
-                    usage(argv[0]);
-                    Log::WaitBeforeContinueIfNeed();
-                    return 1;
-                }
-                break;
-            }
             case ':':
                 sLog.outError("Runtime-Error: -%c option requires an input argument", cmd_opts.opt_opt());
                 usage(argv[0]);

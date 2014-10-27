@@ -20,10 +20,6 @@
     \ingroup mangosd
 */
 
-#ifndef WIN32
-#include "PosixDaemon.h"
-#endif
-
 #include "WorldSocketMgr.h"
 #include "Common.h"
 #include "Master.h"
