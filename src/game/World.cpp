@@ -410,13 +410,19 @@ void World::LoadConfigSettings(bool reload)
     {
         if (!sDBConfig.Reload())
         {
-            sLog.outError("World settings reload fail: can't read settings!");
+            sLog.outError("(DB) World settings reload fail: can't read settings!");
+            return;
+        }
+
+        if (!sFileConfig.Reload())
+        {
+            sLog.outError("(File) World settings reload fail: can't read settings!");
             return;
         }
     }
 
     ///- Read the version of the configuration file and warn the user in case of emptiness or mismatch
-    uint32 confVersion = sDBConfig.GetIntDefault("ConfVersion", 0);
+    uint32 confVersion = sFileConfig.GetIntDefault("ConfVersion", 0);
     if (!confVersion)
     {
         sLog.outError("*****************************************************************************");
