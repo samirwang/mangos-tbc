@@ -117,6 +117,16 @@ public:
 class AntiCheat_teleport : public AntiCheat
 {
 public:
-    AntiCheat_teleport(CPlayer* pPlayer) : AntiCheat(pPlayer) { m_Detector = Cheat::TELEPORT; }
+    AntiCheat_teleport(CPlayer* pPlayer) : AntiCheat(pPlayer)
+    {
+        m_Detector = Cheat::TELEPORT;
+
+        for (uint8 i = 0; i < 2; ++i)
+            Moving[i] = false;
+    }
     void DetectHack(MovementInfo& MoveInfo, Opcodes Opcode);
+private:
+
+    std::map<Opcodes, bool> Moves;
+    bool Moving[2];
 };

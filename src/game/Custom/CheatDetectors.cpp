@@ -162,75 +162,49 @@ void AntiCheat_teleport::DetectHack(MovementInfo& MoveInfo, Opcodes Opcode)
 {
     AntiCheat::DetectHack(MoveInfo, Opcode);
 
-    bool startcode = false;
 
-    switch (m_Opcode[Cheat::NEW])
+    switch (Opcode)
     {
     case MSG_MOVE_START_FORWARD:
     case MSG_MOVE_START_BACKWARD:
     case MSG_MOVE_START_STRAFE_LEFT:
     case MSG_MOVE_START_STRAFE_RIGHT:
+    case MSG_MOVE_JUMP:
     case MSG_MOVE_START_SWIM:
-    case MSG_MOVE_START_ASCEND:
-    case MSG_MOVE_START_DESCEND:
-        startcode = true;
+        Moves[Opcode] = true;
+        break;
+
+    case MSG_MOVE_STOP:
+        Moves[MSG_MOVE_START_FORWARD] = false;
+        Moves[MSG_MOVE_START_BACKWARD] = false;
+        break;
+    case MSG_MOVE_STOP_STRAFE:
+        Moves[MSG_MOVE_START_STRAFE_LEFT] = false;
+        Moves[MSG_MOVE_START_STRAFE_RIGHT] = false;
+        break;
+    case MSG_MOVE_FALL_LAND:
+        Moves[MSG_MOVE_JUMP] = false;
+        break;
+    case MSG_MOVE_STOP_SWIM:
+        Moves[MSG_MOVE_START_SWIM] = false;
     default:
         break;
     }
 
-    if (!startcode || Skipping())
+    bool MovingNow = false;
+
+    for (auto& i : Moves)
+        if (i.second)
+            MovingNow = true;
+
+    Moving[Cheat::NEW] = MovingNow;
+
+    if (!Moving[Cheat::OLD] && GetDistance3D() > 0.f)
     {
-        SetOldValues();
-        return;
-    }
-
-    bool cheat = false;
-
-    if (GetDistance3D() > GetCurSpeed())
-        cheat = true;
-
-    auto opos = m_MoveInfo[Cheat::OLD].GetPos();
-    auto npos = m_MoveInfo[Cheat::NEW].GetPos();
-
-    if (!cheat && m_Player->GetMap()->IsInLineOfSight(npos->x, npos->y, npos->z + 2.0f, opos->x, opos->y, opos->z + 2.0f))
-        cheat = true;
-
-    if (cheat)
-    {
-        MapEntry const* mapEntry = sMapStore.LookupEntry(m_Player->GetMapId());
-        uint32 ZoneID[2];
-        uint32 AreaID[2];
-        AreaTableEntry const* ZoneEntry[2];
-        AreaTableEntry const* AreaEntry[2];
-
-        m_Player->GetTerrain()->GetZoneAndAreaId(ZoneID[Cheat::OLD], AreaID[Cheat::OLD], opos->x, opos->y, opos->z);
-        m_Player->GetTerrain()->GetZoneAndAreaId(ZoneID[Cheat::NEW], AreaID[Cheat::NEW], npos->x, npos->y, npos->z);
-
-        for (uint8 i = 0; i < 2; ++i)
-        {
-            ZoneEntry[i] = GetAreaEntryByAreaID(ZoneID[i]);
-            AreaEntry[i] = GetAreaEntryByAreaID(AreaID[i]);
-        }
-
-        auto locale = m_Player->GetSession()->GetSessionDbcLocale();
-
-        std::ostringstream ss;
-        ss << "Distance: " << GetDistance3D() << " Map: " << mapEntry->name[locale] << std::endl;
-        ss << "Old Position: ";
-        ss << "X: " << opos->x << " Y: " << opos->y << " Z: " << opos->z << std::endl;
-        ss << "Zone: " << ZoneEntry[Cheat::OLD]->area_name[locale] << " (" << ZoneEntry[Cheat::OLD]->ID << ") ";
-        ss << "Area: " << AreaEntry[Cheat::OLD]->area_name[locale] << " (" << AreaEntry[Cheat::OLD]->ID << ") " << std::endl;
-        ss << "New Position: ";
-        ss << "X: " << npos->x << " Y: " << npos->y << " Z: " << npos->z << std::endl;
-        if (ZoneEntry[Cheat::OLD] != ZoneEntry[Cheat::NEW])
-            ss << "Zone: " << ZoneEntry[Cheat::NEW]->area_name[locale] << " (" << ZoneEntry[Cheat::NEW]->ID << ") ";
-        if (AreaEntry[Cheat::OLD] != AreaEntry[Cheat::NEW])
-            ss << "Area: " << AreaEntry[Cheat::NEW]->area_name[locale] << " (" << AreaEntry[Cheat::NEW]->ID << ") " << std::endl;
-
-        ReportCheat("Teleport", ss.str());
-
+        ReportCheat("Teleport", "");
         TeleportBack();
     }
 
     SetOldValues();
+    Moving[Cheat::OLD] = Moving[Cheat::NEW];
 }
