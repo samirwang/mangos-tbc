@@ -911,8 +911,6 @@ public:
     explicit Player(WorldSession* session);
     ~Player();
 
-    CPlayer* ToCPlayer() { return reinterpret_cast<CPlayer*>(this); }
-
     void CleanupsBeforeDelete() override;
 
     static UpdateMask updateVisualBits;
