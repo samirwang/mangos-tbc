@@ -21,5 +21,6 @@
     <ClCompile Include="..\..\src\scripts\npc_enchant.cpp" />
     <ClCompile Include="..\..\src\scripts\npc_training_dummy.cpp" />
     <ClCompile Include="..\..\src\scripts\pgossip_template.cpp" />
+    <ClCompile Include="..\..\src\scripts\npc_teleporter_old.cpp" />
   </ItemGroup>
 </Project>

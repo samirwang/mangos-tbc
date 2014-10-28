@@ -30,6 +30,7 @@ set(LIBRARY_SRCS
     npc_enchant.cpp
     npc_spirit_guide.cpp
     npc_teleporter.cpp
+    npc_teleporter_old.cpp
     npc_training_dummy.cpp
     pgossip_template.cpp
 )
