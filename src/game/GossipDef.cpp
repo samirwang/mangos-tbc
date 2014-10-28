@@ -192,8 +192,6 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
     data << uint32(mGossipMenu.MenuItemCount());            // max count 0x20
 
 
-    bool ActionListMisMatch = false;
-
     for (uint32 iI = 0; iI < mGossipMenu.MenuItemCount(); ++iI)
     {
         if (iI >= MAX_GOSSIP_ITEMS)
@@ -210,35 +208,12 @@ void PlayerMenu::SendGossipMenu(uint32 TitleTextId, ObjectGuid objectGuid)
         }
 
         GossipMenuItem const& gItem = mGossipMenu.GetItem(iI);
-
-        if (iI > 0 && gItem.m_gOptionIds.size() != mGossipMenu.GetItem(iI).m_gOptionIds.size())
-            ActionListMisMatch = true;
-
         data << uint32(iI);
         data << uint8(gItem.m_gIcon);
         data << uint8(gItem.m_gCoded);                      // makes pop up box password
         data << uint32(gItem.m_gBoxMoney);                  // money required to open menu, 2.0.3
         data << gItem.m_gMessage;                           // text for gossip item, max 0x800
         data << gItem.m_gBoxMessage;                        // accept text (related to money) pop up box, 2.0.3, max 0x800
-    }
-
-    if (ActionListMisMatch)
-    {
-        std::ostringstream ss;
-        ss << "Gossip actionlist mismatch!" << std::endl;
-        ss << "Guid: " << objectGuid.GetCounter() << " Type: " << objectGuid.GetTypeName() << std::endl;
-
-        for (uint32 iI = 0; iI < mGossipMenu.MenuItemCount(); ++iI)
-        {
-            GossipMenuItem const& gItem = mGossipMenu.GetItem(iI);
-
-            ss << "MSG: " << gItem.m_gMessage << " Size: " << gItem.m_gOptionIds.size() << std::endl;
-        }
-
-        sLog.outError("%s", ss.str().c_str());
-
-        ss << "Please report this to server staff!" << std::endl;
-        GetMenuSession()->GetPlayer()->ToCPlayer()->BothChat << "|cffffffff" << ss.str();
     }
 
     data << uint32(mQuestMenu.MenuItemCount());             // max count 0x20
