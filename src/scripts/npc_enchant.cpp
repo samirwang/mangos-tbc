@@ -275,7 +275,9 @@ public:
             uint32 itemPOS = actionlist[1];
             uint32 spellID = actionlist[2];
 
-            pCPlayer->EnchantItem(spellID, itemPOS, cName);
+            if (pCPlayer->EnchantItem(spellID, itemPOS))
+                pCPlayer->BoxChat << "Your item was successfully enchanted" << std::endl;
+
             GossipHello(pPlayer, pCreature);
         }
 

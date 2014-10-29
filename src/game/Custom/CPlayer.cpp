@@ -420,44 +420,41 @@ void CPlayer::CreatePet(uint32 entry, bool classcheck)
     delete pCreature;
 }
 
-void CPlayer::EnchantItem(uint32 spellid, uint8 slot, std::string sendername)
+bool CPlayer::EnchantItem(uint32 spellid, uint8 slot)
 {
     Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
     if (!pItem)
     {
-        if (sendername != "")
-            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, there are no item equipped in the specified slot." << std::endl;
+        BoxChat << "Your item could not be enchanted, there are no item equipped in the specified slot." << std::endl;
 
-        return;
+        return false;
     }
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellid);
     if (!spellInfo)
     {
         BoxChat << "Invalid spellid " << spellid << " report to devs" << std::endl;
-        return;
+        return false;
     }
     uint32 enchantid = spellInfo->EffectMiscValue[0];
     if (!enchantid)
     {
         BoxChat << "Invalid enchantid " << enchantid << " report to devs" << std::endl;
-        return;
+        return false;
     }
 
     if (!((1 << pItem->GetProto()->SubClass) & spellInfo->EquippedItemSubClassMask) &&
         !((1 << pItem->GetProto()->InventoryType) & spellInfo->EquippedItemInventoryTypeMask))
     {
-        if (sendername != "")
-            BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item could not be enchanted, wrong item type equipped" << std::endl;
+        BoxChat << "Your item could not be enchanted, wrong item type equipped" << std::endl;
 
-        return;
+        return false;
     }
 
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, false);
     pItem->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
     ApplyEnchantment(pItem, PERM_ENCHANTMENT_SLOT, true);
 
-    if (sendername != "")
-        BoxChat << sCustom.ChatNameWrapper(sendername) << " Your item was enchanted successfully!" << std::endl;
+    return true;
 }
 
 void CPlayer::SendMultiVendorInventory(uint32 cEntry, ObjectGuid guid)
@@ -946,7 +943,7 @@ void CPlayer::ApplyEnchantTemplate(uint8 spec)
 {
     for (auto& itr : sCustom.GetEnchantContainer())
     if (itr->ClassId == getClass() && itr->SpecId == spec)
-        EnchantItem(itr->SpellId, itr->SlotId, "");
+        EnchantItem(itr->SpellId, itr->SlotId);
 }
 
 uint32 CPlayer::GetAVGILevel(bool levelasmin)
