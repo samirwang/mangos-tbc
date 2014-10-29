@@ -70,9 +70,9 @@ void CPlayer::CUpdate(uint32 diff)
 {
     LearnGreenSpells();
 
-    SendSavedChat(MessageTypes(CHAT_BOX), BoxChat);
-    SendSavedChat(MessageTypes(CHAT_WIDE), WideChat);
-    SendSavedChat(MessageTypes(CHAT_BOX | CHAT_WIDE), BothChat);
+    SendSteamMessages(MessageTypes(CHAT_BOX), BoxChat);
+    SendSteamMessages(MessageTypes(CHAT_WIDE), WideChat);
+    SendSteamMessages(MessageTypes(CHAT_BOX | CHAT_WIDE), BothChat);
 }
 
 void CPlayer::Sometimes()
@@ -214,7 +214,7 @@ void CPlayer::SendWorldChatMsg(std::string msg)
     sCustom.SendWorldChat(GetObjectGuid(), sCustom.stringReplace(chatstring, "|r", MSG_COLOR_WHITE));
 }
 
-void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
+void CPlayer::SendSteamMessages(MessageTypes type, std::stringstream &ss)
 {
     if (!ss.str().empty())
     {
@@ -222,6 +222,7 @@ void CPlayer::SendSavedChat(MessageTypes type, std::stringstream &ss)
 
         while (std::getline(ss, item))
         {
+            item = MSG_COLOR_WHITE + item + "|r"; // Default chat to white.
             const char* msg = item.c_str();
 
             if ((type & CHAT_BOX) != 0)

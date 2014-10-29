@@ -234,7 +234,7 @@ public:
     void SetWChat(bool value) { m_wChatOn = value; }
     void ToggleWChat() { m_wChatOn = !m_wChatOn; }
 
-    void SendSavedChat(MessageTypes type, std::stringstream &ss);
+    void SendSteamMessages(MessageTypes type, std::stringstream &ss);
     void FillGreenSpellList();
     void LearnGreenSpells();
 
