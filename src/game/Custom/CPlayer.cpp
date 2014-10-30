@@ -144,9 +144,6 @@ void CPlayer::OnLogin()
     if (!NativeTeam())
         SetFakeOnNextTick();
 
-    if (!GetSetting(Settings::SETTING_UINT_HIDETEMPLATEMENU))
-        sCPlusMgr.OnGossipHello(ToPlayer(), 1);
-
     if (GetTotalPlayedTime() < 1)
     {
         m_Played_time[PLAYED_TIME_TOTAL] += 1;

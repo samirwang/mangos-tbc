@@ -98,7 +98,7 @@ class npc_spirit_guide : public CreatureScript
 public:
     npc_spirit_guide() : CreatureScript("npc_spirit_guide") {}
 
-    CreatureAI* GetCreatureAI(Creature* pCreature) override
+    CreatureAI* GetAI(Creature* pCreature) override
     {
         return new npc_spirit_guideAI(pCreature);
     }

@@ -30,7 +30,7 @@ public:
 
     void Reset() {}
 
-    void DamageTaken(Unit* pDealer, uint32& uiDamage)
+    void DamageTaken(Unit* pDealer, uint32& uiDamage) override
     {
         if (pDealer->GetTypeId() == TYPEID_PLAYER)
             m_AttackerMap[pDealer->GetObjectGuid()] = 5000;
@@ -39,7 +39,7 @@ public:
         //m_creature->SetTargetGuid(m_creature->GetObjectGuid());
     }
 
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 diff) override
     {
         for (AttackerMap::iterator itr = m_AttackerMap.begin(); itr != m_AttackerMap.end();)
         {
@@ -75,7 +75,7 @@ class npc_training_dummy : public CreatureScript
 public:
     npc_training_dummy() : CreatureScript("npc_training_dummy") {}
 
-    CreatureAI* GetCreatureAI(Creature* pCreature) override
+    CreatureAI* GetAI(Creature* pCreature) override
     {
         return new npc_training_dummyAI(pCreature);
     }

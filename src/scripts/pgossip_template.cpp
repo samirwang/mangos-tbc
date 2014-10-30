@@ -18,7 +18,7 @@
 
 #include "Precompiled.h"
 #include "CPlayer.h"
-
+#ifdef GOBROKEN
 class pgossip_templatesystem : public PlayerScript
 {
 public:
@@ -249,8 +249,8 @@ public:
         return true;
     }
 };
-
+#endif
 void AddSC_pgossip_template()
 {
-    new pgossip_templatesystem;
+    //new pgossip_templatesystem;
 }

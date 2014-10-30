@@ -596,7 +596,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket& recv_data)
     if (!unit->isSpiritService())                           // it's not spirit service
         return;
 
-    sCPlusMgr.OnGossipHello(GetPlayer(), unit);
+    sCPlusMgr.GossipHello(GetPlayer(), unit);
 }
 
 void WorldSession::HandleBattlemasterJoinArena(WorldPacket& recv_data)

@@ -367,6 +367,7 @@ public:
         void AddToClientUpdateList() override;
         void RemoveFromClientUpdateList() override;
         void BuildUpdateData(UpdateDataMapType& update_players) override;
+        uint32 GetScriptId() const { return GetProto()->ScriptId; }
     private:
         uint8 m_slot;
         Bag* m_container;

@@ -12820,14 +12820,14 @@ void Player::AddQuest(Quest const* pQuest, Object* questGiver)
         switch (questGiver->GetTypeId())
         {
             case TYPEID_UNIT:
-                sCPlusMgr.OnQuestAccept(this, (Creature*)questGiver, pQuest);
+                sCPlusMgr.QuestAccept(this, (Creature*)questGiver, pQuest);
                 break;
             case TYPEID_ITEM:
             case TYPEID_CONTAINER:
-                sCPlusMgr.OnQuestAccept(this, (Item*)questGiver, pQuest);
+                sCPlusMgr.QuestAccept(this, (Item*)questGiver, pQuest);
                 break;
             case TYPEID_GAMEOBJECT:
-                sCPlusMgr.OnQuestAccept(this, (GameObject*)questGiver, pQuest);
+                sCPlusMgr.QuestAccept(this, (GameObject*)questGiver, pQuest);
                 break;
         }
 
@@ -13019,10 +13019,10 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, Object* questGiver,
     switch (questGiver->GetTypeId())
     {
         case TYPEID_UNIT:
-            handled = sCPlusMgr.OnQuestRewarded(this, (Creature*)questGiver, pQuest);
+            handled = sCPlusMgr.QuestRewarded(this, (Creature*)questGiver, pQuest);
             break;
         case TYPEID_GAMEOBJECT:
-            handled = sCPlusMgr.OnQuestRewarded(this, (GameObject*)questGiver, pQuest);
+            handled = sCPlusMgr.QuestRewarded(this, (GameObject*)questGiver, pQuest);
             break;
     }
 

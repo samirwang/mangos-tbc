@@ -687,6 +687,7 @@ class GameObject : public WorldObject
         void SetLootRecipient(Unit* pUnit);
         Player* GetOriginalLootRecipient() const;           // ignore group changes/etc, not for looting
 
+        virtual uint32 GetScriptId() const { return GetGOInfo()->ScriptId; }
         bool HasQuest(uint32 quest_id) const override;
         bool HasInvolvedQuest(uint32 quest_id) const override;
         bool ActivateToQuest(Player* pTarget) const;

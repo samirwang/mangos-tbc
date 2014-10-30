@@ -34,49 +34,49 @@ public:
         }
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_HEAD))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Head", {CAT_MENU, 0, SLOT_HEAD});
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Head", {CAT_MENU, 2, SLOT_HEAD});
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_SHOULDERS))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Shoulders", { CAT_MENU, 0, SLOT_SHOULDERS });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Shoulders", { CAT_MENU, 3, SLOT_SHOULDERS });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_BACK))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Back", { CAT_MENU, 0, SLOT_BACK });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Back", { CAT_MENU, 4, SLOT_BACK });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_CHEST))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Chest", { CAT_MENU, 0, SLOT_CHEST });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Chest", { CAT_MENU, 5, SLOT_CHEST });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_WRISTS))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Wrists", { CAT_MENU, 0, SLOT_WRISTS });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Wrists", { CAT_MENU, 6, SLOT_WRISTS });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_HANDS))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Hands", { CAT_MENU, 0, SLOT_HANDS });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Hands", { CAT_MENU, 7, SLOT_HANDS });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_LEGS))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Legs", { CAT_MENU, 0, SLOT_LEGS });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Legs", { CAT_MENU, 8, SLOT_LEGS });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_FEET))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Feet", { CAT_MENU, 0, SLOT_FEET });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Feet", { CAT_MENU, 9, SLOT_FEET });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_FINGER1))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Finger one", { CAT_MENU, 0, SLOT_FINGER1 });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Finger one", { CAT_MENU, 10, SLOT_FINGER1 });
 
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_FINGER2))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Finger two", { CAT_MENU, 0, SLOT_FINGER2 });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Finger two", { CAT_MENU, 10, SLOT_FINGER2 });
 
         if (Item* item = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_MAIN_HAND))
         {
             if (item->GetProto()->InventoryType == INVTYPE_2HWEAPON)
-                pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Two hand", { CAT_MENU, 0, SLOT_MAIN_HAND });
+                pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Two hand", { CAT_MENU, 11, SLOT_MAIN_HAND });
             else
-                pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Main hand", { CAT_MENU, 0, SLOT_MAIN_HAND });
+                pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Main hand", { CAT_MENU, 12, SLOT_MAIN_HAND });
         }
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_OFF_HAND))
         {
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Offhand", { CAT_MENU, 0, SLOT_OFF_HAND });
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Shield", { CAT_MENU, 0, SLOT_OFF_HAND });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Offhand", { CAT_MENU, 13, SLOT_OFF_HAND });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Shield", { CAT_MENU, 14, SLOT_OFF_HAND });
         }
         if (pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, SLOT_RANGED))
-            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Ranged", { CAT_MENU, 0, SLOT_RANGED });
+            pCPlayer->AddGossipMenuItem(Icon::SWORDS, "Enchant Ranged", { CAT_MENU, 15, SLOT_RANGED });
 
         if (!pPlayer->PlayerTalkClass->GetGossipMenu().Empty())
             pPlayer->PlayerTalkClass->SendGossipMenu("Don't you feel enchanted a day like this?", pCreature->GetObjectGuid());

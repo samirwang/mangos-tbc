@@ -325,7 +325,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket& recv_data)
     if (pCreature->isSpiritGuide())
         pCreature->SendAreaSpiritHealerQueryOpcode(_player);
 
-    if (!sCPlusMgr.OnGossipHello(_player, pCreature))
+    if (!sCPlusMgr.GossipHello(_player, pCreature))
     {
         _player->PrepareGossipMenu(pCreature, pCreature->GetCreatureInfo()->GossipMenuId);
         _player->SendPreparedGossip(pCreature);
@@ -370,8 +370,8 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sCPlusMgr.OnGossipSelect(_player, pCreature, sender, action, code) &&
-            !sCPlusMgr.OnGossipSelect(_player, pCreature, actionlist, code))
+        if (!sCPlusMgr.GossipSelect(_player, pCreature, sender, action, code) &&
+            !sCPlusMgr.GossipSelect(_player, pCreature, actionlist, code))
             _player->OnGossipSelect(pCreature, gossipListId, menuId);
     }
     else if (guid.IsGameObject())
@@ -384,7 +384,8 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        if (!sCPlusMgr.OnGossipSelect(_player, pGo, sender, action, code))
+        if (!sCPlusMgr.GossipSelect(_player, pGo, sender, action, code) &&
+            !sCPlusMgr.GossipSelect(_player, pGo, actionlist, code))
             _player->OnGossipSelect(pGo, gossipListId, menuId);
     }
     else if (guid.IsItem())
@@ -397,10 +398,9 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket& recv_data)
             return;
         }
 
-        sCPlusMgr.OnGossipSelect(_player, pItem, sender, action, code);
+        if (!sCPlusMgr.GossipSelect(_player, pItem, sender, action, code))
+            sCPlusMgr.GossipSelect(_player, pItem, actionlist, code);
     }
-    else if (guid.IsPlayer())
-        sCPlusMgr.OnGossipSelect(_player, sender, action, code);
 }
 
 void WorldSession::HandleSpiritHealerActivateOpcode(WorldPacket& recv_data)

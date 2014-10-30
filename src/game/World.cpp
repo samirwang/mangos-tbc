@@ -1301,7 +1301,7 @@ void World::SetInitialWorldSettings()
     sCustom.LoadEnchantContainer();
 
     sLog.outString("Loading CPlus Scripts...");
-    sCPlusMgr.LoadScripts();
+    sCPlusMgr.Load();
 
     ///- Initialize game time and timers
     sLog.outString("DEBUG:: Initialize game time and timers");
