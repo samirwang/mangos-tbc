@@ -52,6 +52,7 @@
 #include "Util.h"
 #include "TemporarySummon.h"
 #include "ScriptMgr.h"
+#include "G3D/Vector3.h"
 #include "CPlayer.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
@@ -197,7 +198,7 @@ pEffect SpellEffects[TOTAL_SPELL_EFFECTS] =
     &Spell::EffectLeapBack,                                 //138 SPELL_EFFECT_LEAP_BACK                Leap back
     &Spell::EffectUnused,                                   //139 SPELL_EFFECT_CLEAR_QUEST              (misc - is quest ID), unused
     &Spell::EffectForceCast,                                //140 SPELL_EFFECT_FORCE_CAST
-    &Spell::EffectNULL,                                     //141 SPELL_EFFECT_141                      damage and reduce speed?
+    &Spell::EffectForceCast,                                //141 SPELL_EFFECT_FORCE_CAST_WITH_VALUE
     &Spell::EffectTriggerSpellWithValue,                    //142 SPELL_EFFECT_TRIGGER_SPELL_WITH_VALUE
     &Spell::EffectApplyAreaAura,                            //143 SPELL_EFFECT_APPLY_AREA_AURA_OWNER
     &Spell::EffectKnockBackFromPosition,                    //144 SPELL_EFFECT_KNOCKBACK_FROM_POSITION
@@ -857,6 +858,14 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                     const uint32 spell_list[6] = {17863, 17939, 17943, 17944, 17946, 17948};
 
                     m_caster->CastSpell(unitTarget, spell_list[urand(0, 5)], true);
+                    return;
+                }
+                case 19395:                                 // Gordunni Trap
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    unitTarget->CastSpell(unitTarget, urand(0, 1) ? 19394 : 11756, true);
                     return;
                 }
                 case 19411:                                 // Lava Bomb
@@ -1687,6 +1696,28 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
 
                     return;
                 }
+                case 46292:                                 // Cataclysm Breath
+                {
+                    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
+                        return;
+
+                    uint32 spellId = 0;
+
+                    switch (urand(0, 7))
+                    {
+                        case 0: spellId = 46293; break;     // Corrosive Poison
+                        case 1: spellId = 46294; break;     // Fevered Fatigue
+                        case 2: spellId = 46295; break;     // Hex
+                        case 3: spellId = 46296; break;     // Necrotic Poison
+                        case 4: spellId = 46297; break;     // Piercing Shadow
+                        case 5: spellId = 46298; break;     // Shrink
+                        case 6: spellId = 46299; break;     // Wavering Will
+                        case 7: spellId = 46300; break;     // Withered Touch
+                    }
+
+                    m_caster->CastSpell(unitTarget, spellId, true);
+                    return;
+                }
                 case 46372:                                 // Ice Spear Target Picker
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
@@ -2481,7 +2512,13 @@ void Spell::EffectForceCast(SpellEffectIndex eff_idx)
         return;
     }
 
-    unitTarget->CastSpell(unitTarget, spellInfo, true, NULL, NULL, m_originalCasterGUID);
+    int32 basePoints = damage;
+
+    // spell effect 141 needs to be cast as custom with basePoints
+    if (m_spellInfo->Effect[eff_idx] == SPELL_EFFECT_FORCE_CAST_WITH_VALUE)
+        unitTarget->CastCustomSpell(unitTarget, spellInfo, &basePoints, &basePoints, &basePoints, true, NULL , NULL, m_originalCasterGUID, m_spellInfo);
+    else
+        unitTarget->CastSpell(unitTarget, spellInfo, true, NULL, NULL, m_originalCasterGUID, m_spellInfo);
 }
 
 void Spell::EffectTriggerSpell(SpellEffectIndex effIndex)
@@ -5498,11 +5535,11 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                 case 37345:                                 // Karazhan - Chess NPC Action: Melee Attack: Orc Warlock
                 case 37348:                                 // Karazhan - Chess NPC Action: Melee Attack: Warchief Blackhand
                 {
-                        if (!unitTarget)
-                            return;
-
-                        m_caster->CastSpell(unitTarget, 32247, true);
+                    if (!unitTarget)
                         return;
+
+                    m_caster->CastSpell(unitTarget, 32247, true);
+                    return;
                 }
                 case 32301:                                 // Ping Shirrak
                 {
@@ -5605,6 +5642,14 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                         unitTarget->CastSpell(m_caster, m_spellInfo->CalculateSimpleValue(eff_idx), true);
                     }
 
+                    return;
+                }
+                case 41072:                                 // Bloodbolt
+                {
+                    if (!unitTarget)
+                        return;
+
+                    m_caster->CastSpell(unitTarget, m_spellInfo->CalculateSimpleValue(eff_idx), true);
                     return;
                 }
                 case 41126:                                 // Flame Crash
@@ -6621,24 +6666,160 @@ void Spell::EffectBlock(SpellEffectIndex /*eff_idx*/)
 
 void Spell::EffectLeapForward(SpellEffectIndex eff_idx)
 {
-    if (unitTarget->IsTaxiFlying())
-        return;
+    float dist = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[eff_idx]));
+    const float IN_OR_UNDER_LIQUID_RANGE = 0.8f;                // range to make player under liquid or on liquid surface from liquid level
 
-    if (m_spellInfo->rangeIndex == SPELL_RANGE_IDX_SELF_ONLY)
+    G3D::Vector3 prevPos, nextPos;
+    float orientation = unitTarget->GetOrientation();
+
+    prevPos.x = unitTarget->GetPositionX();
+    prevPos.y = unitTarget->GetPositionY();
+    prevPos.z = unitTarget->GetPositionZ();
+
+    float groundZ = prevPos.z;
+    bool isPrevInLiquid = false;
+
+    // falling case
+    if (!unitTarget->GetMap()->GetHeightInRange(prevPos.x, prevPos.y, groundZ, 3.0f) && unitTarget->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLING))
     {
-        float dis = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[eff_idx]));
+        nextPos.x = prevPos.x + dist * cos(orientation);
+        nextPos.y = prevPos.y + dist * sin(orientation);
+        nextPos.z = prevPos.z - 2.0f; // little hack to avoid the impression to go up when teleporting instead of continue to fall. This value may need some tweak
 
-        // before caster
-        float fx, fy, fz;
-        unitTarget->GetClosePoint(fx, fy, fz, unitTarget->GetObjectBoundingRadius(), dis);
-        float ox, oy, oz;
-        unitTarget->GetPosition(ox, oy, oz);
+        //
+        GridMapLiquidData liquidData;
+        if (unitTarget->GetMap()->GetTerrain()->IsInWater(nextPos.x, nextPos.y, nextPos.z, &liquidData))
+        {
+            if (fabs(nextPos.z - liquidData.level) < 10.0f)
+                nextPos.z = liquidData.level - IN_OR_UNDER_LIQUID_RANGE;
+        }
+        else
+        {
+            // fix z to ground if near of it
+            unitTarget->GetMap()->GetHeightInRange(nextPos.x, nextPos.y, nextPos.z, 10.0f);
+        }
 
-        if (unitTarget->GetMap()->GetHitPosition(ox, oy, oz + 0.5f, fx, fy, fz, -0.5f))
-            unitTarget->UpdateAllowedPositionZ(fx, fy, fz);
+        // check any obstacle and fix coords
+        unitTarget->GetMap()->GetHitPosition(prevPos.x, prevPos.y, prevPos.z + 0.5f, nextPos.x, nextPos.y, nextPos.z, -0.5f);
 
-        unitTarget->NearTeleportTo(fx, fy, fz, unitTarget->GetOrientation(), unitTarget == m_caster);
+        // teleport
+        unitTarget->NearTeleportTo(nextPos.x, nextPos.y, nextPos.z, orientation, unitTarget == m_caster);
+
+        //sLog.outString("Falling BLINK!");
+        return;
     }
+
+    // fix origin position if player was jumping and near of the ground but not in ground
+    if (fabs(prevPos.z - groundZ) > 0.5f)
+        prevPos.z = groundZ;
+
+    //check if in liquid
+    isPrevInLiquid = unitTarget->GetMap()->GetTerrain()->IsInWater(prevPos.x, prevPos.y, prevPos.z);
+
+    const float step = 2.0f;                                    // step length before next check slope/edge/water
+    const float maxSlope = 50.0f;                               // 50(degree) max seem best value for walkable slope
+    const float MAX_SLOPE_IN_RADIAN = maxSlope / 180.0f * M_PI_F;
+    float nextZPointEstimation = 1.0f;
+    float destx = prevPos.x + dist * cos(orientation);
+    float desty = prevPos.y + dist * sin(orientation);
+    const uint32 numChecks = ceil(fabs(dist / step));
+    const float DELTA_X = (destx - prevPos.x) / numChecks;
+    const float DELTA_Y = (desty - prevPos.y) / numChecks;
+
+    for (uint32 i = 1; i < numChecks + 1; ++i)
+    {
+        // compute next point average position
+        nextPos.x = prevPos.x + DELTA_X;
+        nextPos.y = prevPos.y + DELTA_Y;
+        nextPos.z = prevPos.z + nextZPointEstimation;
+
+        bool isInLiquid = false;
+        bool isInLiquidTested = false;
+        bool isOnGround = false;
+        GridMapLiquidData liquidData;
+
+        // try fix height for next position
+        if (!unitTarget->GetMap()->GetHeightInRange(nextPos.x, nextPos.y, nextPos.z))
+        {
+            // we cant so test if we are on water
+            if (!unitTarget->GetMap()->GetTerrain()->IsInWater(nextPos.x, nextPos.y, nextPos.z, &liquidData))
+            {
+                // not in water and cannot get correct height, maybe flying?
+                //sLog.outString("Can't get height of point %u, point value %s", i, nextPos.toString().c_str());
+                nextPos = prevPos;
+                break;
+            }
+            else
+            {
+                isInLiquid = true;
+                isInLiquidTested = true;
+            }
+        }
+        else
+            isOnGround = true;                                  // player is on ground
+
+        if (isInLiquid || (!isInLiquidTested && unitTarget->GetMap()->GetTerrain()->IsInWater(nextPos.x, nextPos.y, nextPos.z, &liquidData)))
+        {
+            if (!isPrevInLiquid && fabs(liquidData.level - prevPos.z) > 2.0f)
+            {
+                // on edge of water with difference a bit to high to continue
+                //sLog.outString("Ground vs liquid edge detected!");
+                nextPos = prevPos;
+                break;
+            }
+
+            if ((liquidData.level - IN_OR_UNDER_LIQUID_RANGE) > nextPos.z)
+                nextPos.z = prevPos.z;                                      // we are under water so next z equal prev z
+            else
+                nextPos.z = liquidData.level - IN_OR_UNDER_LIQUID_RANGE;    // we are on water surface, so next z equal liquid level
+
+            isInLiquid = true;
+
+            float ground = nextPos.z;
+            if (unitTarget->GetMap()->GetHeightInRange(nextPos.x, nextPos.y, ground))
+            {
+                if (nextPos.z < ground)
+                {
+                    nextPos.z = ground;
+                    isOnGround = true;                          // player is on ground of the water
+                }
+            }
+        }
+
+        //unitTarget->SummonCreature(VISUAL_WAYPOINT, nextPos.x, nextPos.y, nextPos.z, 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
+        float hitZ = nextPos.z + 1.5f;
+        if (unitTarget->GetMap()->GetHitPosition(prevPos.x, prevPos.y, prevPos.z + 1.5f, nextPos.x, nextPos.y, hitZ, -1.0f))
+        {
+            //sLog.outString("Blink collision detected!");
+            nextPos = prevPos;
+            break;
+        }
+
+        if (isOnGround)
+        {
+            // project vector to get only positive value
+            float ac = fabs(prevPos.z - nextPos.z);
+
+            // compute slope (in radian)
+            float slope = atan(ac / step);
+
+            // check slope value
+            if (slope > MAX_SLOPE_IN_RADIAN)
+            {
+                //sLog.outString("bad slope detected! %4.2f max %4.2f, ac(%4.2f)", slope * 180 / M_PI_F, maxSlope, ac);
+                nextPos = prevPos;
+                break;
+            }
+            //sLog.outString("slope is ok! %4.2f max %4.2f, ac(%4.2f)", slope * 180 / M_PI_F, maxSlope, ac);
+        }
+
+        //sLog.outString("point %u is ok, coords %s", i, nextPos.toString().c_str());
+        nextZPointEstimation = (nextPos.z - prevPos.z) / 2.0f;
+        isPrevInLiquid = isInLiquid;
+        prevPos = nextPos;
+    }
+
+    unitTarget->NearTeleportTo(nextPos.x, nextPos.y, nextPos.z, orientation, unitTarget == m_caster);
 }
 
 void Spell::EffectLeapBack(SpellEffectIndex eff_idx)
@@ -7323,9 +7504,7 @@ void Spell::EffectPlayMusic(SpellEffectIndex eff_idx)
         return;
     }
 
-    WorldPacket data(SMSG_PLAY_MUSIC, 4);
-    data << uint32(soundId);
-    ((Player*)unitTarget)->GetSession()->SendPacket(&data);
+    m_caster->PlayMusic(soundId, (Player*)unitTarget);
 }
 
 void Spell::EffectBind(SpellEffectIndex eff_idx)

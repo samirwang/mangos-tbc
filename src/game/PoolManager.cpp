@@ -992,6 +992,8 @@ void PoolManager::LoadFromDB()
             }
         }
     }
+
+    sLog.outString();
 }
 
 // The initialize method will spawn all pools not in an event and not in another pool

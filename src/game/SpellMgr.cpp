@@ -689,6 +689,7 @@ bool IsPositiveEffect(SpellEntry const* spellproto, SpellEffectIndex effIndex)
             // some explicitly required script effect sets
             switch (spellproto->Id)
             {
+                case 42436:                                 // Drink!
                 case 46650:                                 // Open Brutallus Back Door
                     return true;
                 default:
@@ -1036,8 +1037,8 @@ void SpellMgr::LoadSpellTargetPositions()
     QueryResult* result = WorldDatabase.Query("SELECT id, target_map, target_position_x, target_position_y, target_position_z, target_orientation FROM spell_target_position");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u spell target destination coordinates", count);
+        sLog.outString();
         return;
     }
 
@@ -1097,8 +1098,8 @@ void SpellMgr::LoadSpellTargetPositions()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell target destination coordinates", count);
+    sLog.outString();
 }
 
 template <typename EntryType, typename WorkerType, typename StorageType>
@@ -1272,7 +1273,7 @@ struct DoSpellProcEvent
             ++count;
     }
 
-    bool HasEntry(uint32 spellId) { return spe_map.count(spellId) > 0; }
+    bool HasEntry(uint32 spellId) { return spe_map.find(spellId) != spe_map.end(); }
     bool SetStateToEntry(uint32 spellId) { return (state = spe_map.find(spellId)) != spe_map.end(); }
     SpellProcEventMap& spe_map;
     SpellProcEventMap::const_iterator state;
@@ -1324,8 +1325,8 @@ void SpellMgr::LoadSpellProcEvents()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u extra spell proc event conditions +%u custom proc (inc. +%u custom ranks)",  rankHelper.worker.count, rankHelper.worker.customProc, rankHelper.customRank);
+    sLog.outString();
 }
 
 struct DoSpellProcItemEnchant
@@ -1347,8 +1348,8 @@ void SpellMgr::LoadSpellProcItemEnchant()
     QueryResult* result = WorldDatabase.Query("SELECT entry, ppmRate FROM spell_proc_item_enchant");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u proc item enchant definitions", count);
+        sLog.outString();
         return;
     }
 
@@ -1388,8 +1389,8 @@ void SpellMgr::LoadSpellProcItemEnchant()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u proc item enchant definitions", count);
+    sLog.outString();
 }
 
 struct DoSpellBonuses
@@ -1409,8 +1410,8 @@ void SpellMgr::LoadSpellBonuses()
     QueryResult* result = WorldDatabase.Query("SELECT entry, direct_bonus, dot_bonus, ap_bonus, ap_dot_bonus FROM spell_bonus_data");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u spell bonus data", count);
+        sLog.outString();
         return;
     }
 
@@ -1529,8 +1530,8 @@ void SpellMgr::LoadSpellBonuses()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u extra spell bonus data",  count);
+    sLog.outString();
 }
 
 bool SpellMgr::IsSpellProcEventCanTriggeredBy(SpellProcEventEntry const* spellProcEvent, uint32 EventProcFlag, SpellEntry const* procSpell, uint32 procFlags, uint32 procExtra)
@@ -1603,8 +1604,8 @@ void SpellMgr::LoadSpellElixirs()
     QueryResult* result = WorldDatabase.Query("SELECT entry, mask FROM spell_elixir");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u spell elixir definitions", count);
+        sLog.outString();
         return;
     }
 
@@ -1631,8 +1632,8 @@ void SpellMgr::LoadSpellElixirs()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell elixir definitions", count);
+    sLog.outString();
 }
 
 struct DoSpellThreat
@@ -1696,8 +1697,8 @@ void SpellMgr::LoadSpellThreats()
     QueryResult* result = WorldDatabase.Query("SELECT entry, Threat, multiplier, ap_bonus FROM spell_threat");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> No spell threat entries loaded.");
+        sLog.outString();
         return;
     }
 
@@ -1722,8 +1723,8 @@ void SpellMgr::LoadSpellThreats()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell threat entries", rankHelper.worker.count);
+    sLog.outString();
 }
 
 bool SpellMgr::IsRankSpellDueToSpell(SpellEntry const* spellInfo_1, uint32 spellId_2) const
@@ -1888,6 +1889,11 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2) cons
                     // Karazhan - Chess: Is Square OCCUPIED aura Karazhan - Chess: Create Move Marker
                     if ((spellInfo_1->Id == 39400 && spellInfo_2->Id == 32261) ||
                             (spellInfo_2->Id == 39400 && spellInfo_1->Id == 32261))
+                        return false;
+
+                    // Spectral Realm (reaction) and Spectral Realm (invisibility)
+                    if ((spellInfo_1->Id == 44852 && spellInfo_2->Id == 46021) ||
+                            (spellInfo_2->Id == 44852 && spellInfo_1->Id == 46021))
                         return false;
                     break;
                 }
@@ -2323,7 +2329,7 @@ SpellEntry const* SpellMgr::SelectAuraRankForLevel(SpellEntry const* spellInfo, 
             break;
 
         // if found appropriate level
-        if (level + 10 >= spellInfo->spellLevel)
+        if (level + 10 >= nextSpellInfo->spellLevel)
             return nextSpellInfo;
 
         // one rank less then
@@ -2523,9 +2529,9 @@ void SpellMgr::LoadSpellChains()
     QueryResult* result = WorldDatabase.Query("SELECT spell_id, prev_spell, first_spell, rank, req_spell FROM spell_chain");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded 0 spell chain records");
         sLog.outErrorDb("`spell_chains` table is empty!");
+        sLog.outString();
         return;
     }
 
@@ -2738,8 +2744,8 @@ void SpellMgr::LoadSpellChains()
         }
     }
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell chain records (%u from DBC data with %u req field updates, and %u loaded from table)", dbc_count + new_count, dbc_count, req_count, new_count);
+    sLog.outString();
 }
 
 void SpellMgr::LoadSpellLearnSkills()
@@ -2775,8 +2781,8 @@ void SpellMgr::LoadSpellLearnSkills()
         }
     }
 
-    sLog.outString();
     sLog.outString(">> Loaded %u Spell Learn Skills from DBC", dbc_count);
+    sLog.outString();
 }
 
 void SpellMgr::LoadSpellLearnSpells()
@@ -2881,8 +2887,8 @@ void SpellMgr::LoadSpellLearnSpells()
         }
     }
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell learn spells + %u found in DBC", count, dbc_count);
+    sLog.outString();
 }
 
 void SpellMgr::LoadSpellScriptTarget()
@@ -2916,7 +2922,9 @@ void SpellMgr::LoadSpellScriptTarget()
                     spellProto->EffectImplicitTargetA[i] == TARGET_AREAEFFECT_GO_AROUND_SOURCE ||
                     spellProto->EffectImplicitTargetB[i] == TARGET_AREAEFFECT_GO_AROUND_SOURCE ||
                     spellProto->EffectImplicitTargetA[i] == TARGET_AREAEFFECT_GO_AROUND_DEST ||
-                    spellProto->EffectImplicitTargetB[i] == TARGET_AREAEFFECT_GO_AROUND_DEST)
+                    spellProto->EffectImplicitTargetB[i] == TARGET_AREAEFFECT_GO_AROUND_DEST ||
+                    spellProto->EffectImplicitTargetA[i] == TARGET_NARROW_FRONTAL_CONE ||
+                    spellProto->EffectImplicitTargetB[i] == TARGET_NARROW_FRONTAL_CONE)
             {
                 targetfound = true;
                 break;
@@ -2963,7 +2971,7 @@ void SpellMgr::LoadSpellScriptTarget()
                 {
                     if (itr->spellId == 30427 && !cInfo->SkinningLootId)
                     {
-                        sLog.outErrorDb("Table `spell_script_target` has creature %u as a target of spellid 30427, but this creature has no skinlootid. Gas extraction will not work!", cInfo->Entry);
+                        sLog.outErrorDb("Table `spell_script_target` has creature %u as a target of spellid 30427, but this creature has no SkinningLootId. Gas extraction will not work!", cInfo->Entry);
                         sSpellScriptTargetStorage.EraseEntry(itr->spellId);
                         continue;
                     }
@@ -3002,6 +3010,9 @@ void SpellMgr::LoadSpellScriptTarget()
             }
         }
     }
+
+    sLog.outString(">> Loaded %u spell_script_target definitions", sSpellScriptTargetStorage.GetRecordCount());
+    sLog.outString();
 }
 
 void SpellMgr::LoadSpellPetAuras()
@@ -3014,8 +3025,8 @@ void SpellMgr::LoadSpellPetAuras()
     QueryResult* result = WorldDatabase.Query("SELECT spell, pet, aura FROM spell_pet_auras");
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u spell pet auras", count);
+        sLog.outString();
         return;
     }
 
@@ -3070,8 +3081,8 @@ void SpellMgr::LoadSpellPetAuras()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell pet auras", count);
+    sLog.outString();
 }
 
 /// Some checks for spells, to prevent adding deprecated/broken spells for trainers, spell book, etc
@@ -3161,8 +3172,8 @@ void SpellMgr::LoadSpellAreas()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u spell area requirements", count);
+        sLog.outString();
         return;
     }
 
@@ -3345,8 +3356,8 @@ void SpellMgr::LoadSpellAreas()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u spell area requirements", count);
+    sLog.outString();
 }
 
 SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spellInfo, uint32 map_id, uint32 zone_id, uint32 area_id, Player const* player)
@@ -3478,8 +3489,8 @@ void SpellMgr::LoadSkillLineAbilityMap()
         ++count;
     }
 
-    sLog.outString();
     sLog.outString(">> Loaded %u SkillLineAbility MultiMap Data", count);
+    sLog.outString();
 }
 
 void SpellMgr::LoadSkillRaceClassInfoMap()
@@ -3503,8 +3514,8 @@ void SpellMgr::LoadSkillRaceClassInfoMap()
         ++count;
     }
 
-    sLog.outString();
     sLog.outString(">> Loaded %u SkillRaceClassInfo MultiMap Data", count);
+    sLog.outString();
 }
 
 void SpellMgr::CheckUsedSpells(char const* table)

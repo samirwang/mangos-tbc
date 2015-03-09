@@ -335,6 +335,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "loadedtiles",    SEC_GAMEMASTER,     false, &ChatHandler::HandleMmapLoadedTilesCommand,     "", NULL },
         { "stats",          SEC_GAMEMASTER,     false, &ChatHandler::HandleMmapStatsCommand,           "", NULL },
         { "testarea",       SEC_GAMEMASTER,     false, &ChatHandler::HandleMmapTestArea,               "", NULL },
+        { "testheight",     SEC_GAMEMASTER,     false, &ChatHandler::HandleMmapTestHeight,             "", NULL },
         { "",               SEC_ADMINISTRATOR,  false, &ChatHandler::HandleMmap,                       "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
@@ -369,7 +370,6 @@ ChatCommand* ChatHandler::getCommandTable()
     {
         { "add",            SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcAddCommand,              "", NULL },
         { "additem",        SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcAddVendorItemCommand,    "", NULL },
-        { "addmove",        SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcAddMoveCommand,          "", NULL },
         { "aiinfo",         SEC_GAMEMASTER,     false, &ChatHandler::HandleNpcAIInfoCommand,           "", NULL },
         { "allowmove",      SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNpcAllowMovementCommand,    "", NULL },
         { "changeentry",    SEC_ADMINISTRATOR,  false, &ChatHandler::HandleNpcChangeEntryCommand,      "", NULL },
@@ -597,11 +597,12 @@ ChatCommand* ChatHandler::getCommandTable()
         { "corpses",        SEC_GAMEMASTER,     true,  &ChatHandler::HandleServerCorpsesCommand,       "", NULL },
         { "exit",           SEC_CONSOLE,        true,  &ChatHandler::HandleServerExitCommand,          "", NULL },
         { "idlerestart",    SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverIdleRestartCommandTable },
-        { "idleshutdown",   SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverShutdownCommandTable },
+        { "idleshutdown",   SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverIdleShutdownCommandTable },
         { "info",           SEC_PLAYER,         true,  &ChatHandler::HandleServerInfoCommand,          "", NULL },
         { "log",            SEC_CONSOLE,        true,  NULL,                                           "", serverLogCommandTable },
         { "motd",           SEC_PLAYER,         true,  &ChatHandler::HandleServerMotdCommand,          "", NULL },
         { "plimit",         SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleServerPLimitCommand,        "", NULL },
+        { "resetallraid",   SEC_ADMINISTRATOR,  true,  &ChatHandler::HandleServerResetAllRaidCommand,  "", NULL },
         { "restart",        SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverRestartCommandTable },
         { "shutdown",       SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverShutdownCommandTable },
         { "set",            SEC_ADMINISTRATOR,  true,  NULL,                                           "", serverSetCommandTable },
@@ -649,7 +650,6 @@ ChatCommand* ChatHandler::getCommandTable()
         { "add",            SEC_GAMEMASTER,     false, &ChatHandler::HandleWpAddCommand,               "", NULL },
         { "modify",         SEC_GAMEMASTER,     false, &ChatHandler::HandleWpModifyCommand,            "", NULL },
         { "export",         SEC_ADMINISTRATOR,  false, &ChatHandler::HandleWpExportCommand,            "", NULL },
-        { "import",         SEC_ADMINISTRATOR,  false, &ChatHandler::HandleWpImportCommand,            "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
@@ -918,10 +918,11 @@ void ChatHandler::SendGlobalSysMessage(const char* str)
     // need copy to prevent corruption by strtok call in LineFromMessage original string
     char* buf = mangos_strdup(str);
     char* pos = buf;
+    ObjectGuid guid = m_session ? m_session->GetPlayer()->GetObjectGuid() : ObjectGuid();
 
     while (char* line = LineFromMessage(pos))
     {
-        ChatHandler::BuildChatPacket(data, CHAT_MSG_SYSTEM, line, LANG_UNIVERSAL, CHAT_TAG_NONE, m_session->GetPlayer()->GetObjectGuid());
+        ChatHandler::BuildChatPacket(data, CHAT_MSG_SYSTEM, line, LANG_UNIVERSAL, CHAT_TAG_NONE, guid);
         sWorld.SendGlobalMessage(&data);
     }
 
@@ -2359,9 +2360,7 @@ char* ChatHandler::ExtractLinkArg(char** args, char const* const* linkTypes /*= 
     if (*tail == ':' && somethingPair)                      // optional data extraction
     {
         // :something...|h[name]|h|r
-
-        if (*tail == ':')
-            ++tail;
+        ++tail;
 
         // something|h[name]|h|r or something:something2...|h[name]|h|r
 

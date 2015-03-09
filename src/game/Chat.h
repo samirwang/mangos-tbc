@@ -99,7 +99,7 @@ class ChatHandler
         *
         * Method:    BuildChatPacket build message chat packet generic way
         * FullName:  ChatHandler::BuildChatPacket
-        * Access:    public static 
+        * Access:    public static
         * Returns:   void
         *
         * \param WorldPacket& data             : Provided packet will be filled with requested info
@@ -336,7 +336,6 @@ class ChatHandler
 
         //-----------------------Npc Commands-----------------------
         bool HandleNpcAddCommand(char* args);
-        bool HandleNpcAddMoveCommand(char* args);
         bool HandleNpcAddVendorItemCommand(char* args);
         bool HandleNpcAIInfoCommand(char* args);
         bool HandleNpcAllowMovementCommand(char* args);
@@ -494,6 +493,7 @@ class ChatHandler
         bool HandleServerLogLevelCommand(char* args);
         bool HandleServerMotdCommand(char* args);
         bool HandleServerPLimitCommand(char* args);
+        bool HandleServerResetAllRaidCommand(char* args);
         bool HandleServerRestartCommand(char* args);
         bool HandleServerSetMotdCommand(char* args);
         bool HandleServerShutDownCommand(char* args);
@@ -522,7 +522,6 @@ class ChatHandler
         bool HandleWpModifyCommand(char* args);
         bool HandleWpShowCommand(char* args);
         bool HandleWpExportCommand(char* args);
-        bool HandleWpImportCommand(char* args);
 
         bool HandleHelpCommand(char* args);
         bool HandleCommandsCommand(char* args);
@@ -592,6 +591,7 @@ class ChatHandler
         bool HandleMmapStatsCommand(char* args);
         bool HandleMmap(char* args);
         bool HandleMmapTestArea(char* args);
+        bool HandleMmapTestHeight(char* args);
 
         //! Development Commands
         bool HandleSaveAllCommand(char* args);

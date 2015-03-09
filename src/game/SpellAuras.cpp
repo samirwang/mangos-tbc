@@ -299,7 +299,7 @@ pAuraHandler AuraHandler[TOTAL_AURAS] =
     &Aura::HandleAuraModExpertise,                          //240 SPELL_AURA_MOD_EXPERTISE
     &Aura::HandleForceMoveForward,                          //241 Forces the caster to move forward
     &Aura::HandleUnused,                                    //242 unused
-    &Aura::HandleUnused,                                    //243 used by two test spells
+    &Aura::HandleFactionOverride,                           //243 SPELL_AURA_FACTION_OVERRIDE
     &Aura::HandleComprehendLanguage,                        //244 SPELL_AURA_COMPREHEND_LANGUAGE
     &Aura::HandleUnused,                                    //245 unused
     &Aura::HandleUnused,                                    //246 unused
@@ -389,7 +389,8 @@ Aura::~Aura()
 }
 
 AreaAura::AreaAura(SpellEntry const* spellproto, SpellEffectIndex eff, int32* currentBasePoints, SpellAuraHolder* holder, Unit* target,
-                   Unit* caster, Item* castItem) : Aura(spellproto, eff, currentBasePoints, holder, target, caster, castItem)
+                   Unit* caster, Item* castItem, uint32 originalRankSpellId)
+                   : Aura(spellproto, eff, currentBasePoints, holder, target, caster, castItem), m_originalRankSpellId(originalRankSpellId)
 {
     m_isAreaAura = true;
 
@@ -584,12 +585,20 @@ void AreaAura::Update(uint32 diff)
 
             for (Spell::UnitList::iterator tIter = targets.begin(); tIter != targets.end(); ++tIter)
             {
-                // flag for seelction is need apply aura to current iteration target
+                // flag for selection is need apply aura to current iteration target
                 bool apply = true;
 
+                SpellEntry const* actualSpellInfo;
+                if (GetCasterGuid() == (*tIter)->GetObjectGuid()) // if caster is same as target then no need to change rank of the spell
+                    actualSpellInfo = GetSpellProto();
+                else
+                    actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(GetSpellProto(), (*tIter)->getLevel()); // use spell id according level of the target
+                if (!actualSpellInfo)
+                    continue;
+
+                Unit::SpellAuraHolderBounds spair = (*tIter)->GetSpellAuraHolderBounds(actualSpellInfo->Id);
                 // we need ignore present caster self applied are auras sometime
                 // in cases if this only auras applied for spell effect
-                Unit::SpellAuraHolderBounds spair = (*tIter)->GetSpellAuraHolderBounds(GetId());
                 for (Unit::SpellAuraHolderMap::const_iterator i = spair.first; i != spair.second; ++i)
                 {
                     if (i->second->IsDeleted())
@@ -621,40 +630,38 @@ void AreaAura::Update(uint32 diff)
                     continue;
 
                 // Skip some targets (TODO: Might require better checks, also unclear how the actual caster must/can be handled)
-                if (GetSpellProto()->HasAttribute(SPELL_ATTR_EX3_TARGET_ONLY_PLAYER) && (*tIter)->GetTypeId() != TYPEID_PLAYER)
+                if (actualSpellInfo->HasAttribute(SPELL_ATTR_EX3_TARGET_ONLY_PLAYER) && (*tIter)->GetTypeId() != TYPEID_PLAYER)
                     continue;
 
-                if (SpellEntry const* actualSpellInfo = sSpellMgr.SelectAuraRankForLevel(GetSpellProto(), (*tIter)->getLevel()))
+                int32 actualBasePoints = m_currentBasePoints;
+                // recalculate basepoints for lower rank (all AreaAura spell not use custom basepoints?)
+                if (actualSpellInfo != GetSpellProto())
+                    actualBasePoints = actualSpellInfo->CalculateSimpleValue(m_effIndex);
+
+                SpellAuraHolder* holder = (*tIter)->GetSpellAuraHolder(actualSpellInfo->Id, GetCasterGuid());
+
+                bool addedToExisting = true;
+                if (!holder)
                 {
-                    int32 actualBasePoints = m_currentBasePoints;
-                    // recalculate basepoints for lower rank (all AreaAura spell not use custom basepoints?)
-                    if (actualSpellInfo != GetSpellProto())
-                        actualBasePoints = actualSpellInfo->CalculateSimpleValue(m_effIndex);
-
-                    SpellAuraHolder* holder = (*tIter)->GetSpellAuraHolder(actualSpellInfo->Id, GetCasterGuid());
-
-                    bool addedToExisting = true;
-                    if (!holder)
-                    {
-                        holder = CreateSpellAuraHolder(actualSpellInfo, (*tIter), caster);
-                        addedToExisting = false;
-                    }
-
-                    holder->SetAuraDuration(GetAuraDuration());
-
-                    AreaAura* aur = new AreaAura(actualSpellInfo, m_effIndex, &actualBasePoints, holder, (*tIter), caster, NULL);
-                    holder->AddAura(aur, m_effIndex);
-
-                    if (addedToExisting)
-                    {
-                        (*tIter)->AddAuraToModList(aur);
-                        holder->SetInUse(true);
-                        aur->ApplyModifier(true, true);
-                        holder->SetInUse(false);
-                    }
-                    else
-                        (*tIter)->AddSpellAuraHolder(holder);
+                    holder = CreateSpellAuraHolder(actualSpellInfo, (*tIter), caster);
+                    addedToExisting = false;
                 }
+
+                holder->SetAuraDuration(GetAuraDuration());
+
+                AreaAura* aur = new AreaAura(actualSpellInfo, m_effIndex, &actualBasePoints, holder, (*tIter), caster, NULL, GetSpellProto()->Id);
+                holder->AddAura(aur, m_effIndex);
+
+                if (addedToExisting)
+                {
+                    (*tIter)->AddAuraToModList(aur);
+                    holder->SetInUse(true);
+                    aur->ApplyModifier(true, true);
+                    holder->SetInUse(false);
+                }
+                else
+                    (*tIter)->AddSpellAuraHolder(holder);
+
             }
         }
         Aura::Update(diff);
@@ -663,6 +670,7 @@ void AreaAura::Update(uint32 diff)
     {
         Unit* caster = GetCaster();
         Unit* target = GetTarget();
+        uint32 originalRankSpellId = m_originalRankSpellId ? m_originalRankSpellId : GetId(); // caster may have different spell id if target has lower level
 
         Aura::Update(diff);
 
@@ -670,10 +678,11 @@ void AreaAura::Update(uint32 diff)
         // or caster is isolated or caster no longer has the aura
         // or caster is (no longer) friendly
         bool needFriendly = (m_areaAuraType == AREA_AURA_ENEMY ? false : true);
-        if (!caster || caster->hasUnitState(UNIT_STAT_ISOLATED) ||
-                !caster->IsWithinDistInMap(target, m_radius)        ||
-                !caster->HasAura(GetId(), GetEffIndex())            ||
-                caster->IsFriendlyTo(target) != needFriendly
+        if (!caster || 
+            caster->hasUnitState(UNIT_STAT_ISOLATED)               ||
+            !caster->HasAura(originalRankSpellId, GetEffIndex())   ||
+            !caster->IsWithinDistInMap(target, m_radius)           ||
+            caster->IsFriendlyTo(target) != needFriendly
            )
         {
             target->RemoveSingleAuraFromSpellAuraHolder(GetId(), GetEffIndex(), GetCasterGuid());
@@ -2005,6 +2014,9 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                     case 43873:                             // Headless Horseman Laugh
                         target->PlayDistanceSound(11965);
                         return;
+                    case 46637:                             // Break Ice
+                        target->CastSpell(target, 46638, true, NULL, this);
+                        return;
                     case 46699:                             // Requires No Ammo
                         if (target->GetTypeId() == TYPEID_PLAYER)
                             // not use ammo and not allow use
@@ -2298,7 +2310,7 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
             }
             case 46637:                                     // Break Ice
             {
-                target->CastSpell(target, 46638, true);
+                target->CastSpell(target, 47030, true, NULL, this);
                 return;
             }
         }
@@ -2686,19 +2698,8 @@ void Aura::HandleAuraFeatherFall(bool apply, bool Real)
     // only at real add/remove aura
     if (!Real)
         return;
-    Unit* target = GetTarget();
-    WorldPacket data;
-    if (apply)
-        data.Initialize(SMSG_MOVE_FEATHER_FALL, 8 + 4);
-    else
-        data.Initialize(SMSG_MOVE_NORMAL_FALL, 8 + 4);
-    data << target->GetPackGUID();
-    data << uint32(0);
-    target->SendMessageToSet(&data, true);
 
-    // start fall from current height
-    if (!apply && target->GetTypeId() == TYPEID_PLAYER)
-        ((Player*)target)->SetFallInformation(0, target->GetPositionZ());
+    GetTarget()->SetFeatherFall(apply);
 }
 
 void Aura::HandleAuraHover(bool apply, bool Real)
@@ -2707,14 +2708,7 @@ void Aura::HandleAuraHover(bool apply, bool Real)
     if (!Real)
         return;
 
-    WorldPacket data;
-    if (apply)
-        data.Initialize(SMSG_MOVE_SET_HOVER, 8 + 4);
-    else
-        data.Initialize(SMSG_MOVE_UNSET_HOVER, 8 + 4);
-    data << GetTarget()->GetPackGUID();
-    data << uint32(0);
-    GetTarget()->SendMessageToSet(&data, true);
+    GetTarget()->SetHover(apply);
 }
 
 void Aura::HandleWaterBreathing(bool /*apply*/, bool /*Real*/)
@@ -2739,8 +2733,10 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
     }
 
     uint32 modelid = 0;
-    Powers PowerType = POWER_MANA;
     Unit* target = GetTarget();
+
+    // remove SPELL_AURA_EMPATHY
+    target->RemoveSpellsCausingAura(SPELL_AURA_EMPATHY);
 
     if (ssEntry->modelID_A)
     {
@@ -2813,6 +2809,8 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
 
     if (apply)
     {
+        Powers PowerType = POWER_MANA;
+
         // remove other shapeshift before applying a new one
         target->RemoveSpellsCausingAura(SPELL_AURA_MOD_SHAPESHIFT, GetHolder());
 
@@ -3532,9 +3530,9 @@ void Aura::HandleModCharm(bool apply, bool Real)
                     if (target->GetByteValue(UNIT_FIELD_BYTES_0, 1) == 0)
                     {
                         if (cinfo->UnitClass == 0)
-                            sLog.outErrorDb("Creature (Entry: %u) have unit_class = 0 but used in charmed spell, that will be result client crash.", cinfo->Entry);
+                            sLog.outErrorDb("Creature (Entry: %u) have UnitClass = 0 but used in charmed spell, that will be result client crash.", cinfo->Entry);
                         else
-                            sLog.outError("Creature (Entry: %u) have unit_class = %u but at charming have class 0!!! that will be result client crash.", cinfo->Entry, cinfo->UnitClass);
+                            sLog.outError("Creature (Entry: %u) have UnitClass = %u but at charming have class 0!!! that will be result client crash.", cinfo->Entry, cinfo->UnitClass);
 
                         target->SetByteValue(UNIT_FIELD_BYTES_0, 1, CLASS_MAGE);
                     }
@@ -4208,19 +4206,12 @@ void Aura::HandleAuraModIncreaseFlightSpeed(bool apply, bool Real)
     // Enable Fly mode for flying mounts
     if (m_modifier.m_auraname == SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED)
     {
-        WorldPacket data;
-        if (apply)
-            data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
-        else
+        target->SetCanFly(apply);
         {
-            data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
 
             if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
                 ((Player*)GetTarget())->ToCPlayer()->SetGMFly(false);
         }
-        data << target->GetPackGUID();
-        data << uint32(0);                                  // unknown
-        target->SendMessageToSet(&data, true);
 
         // Players on flying mounts must be immune to polymorph
         if (target->GetTypeId() == TYPEID_PLAYER)
@@ -5724,12 +5715,12 @@ void Aura::HandleShapeshiftBoosts(bool apply)
 
 void Aura::HandleAuraEmpathy(bool apply, bool /*Real*/)
 {
-    if (GetTarget()->GetTypeId() != TYPEID_UNIT)
-        return;
+    Unit* target = GetTarget();
 
-    CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(GetTarget()->GetEntry());
-    if (ci && ci->CreatureType == CREATURE_TYPE_BEAST)
-        GetTarget()->ApplyModUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_SPECIALINFO, apply);
+    // This aura is expected to only work with CREATURE_TYPE_BEAST or players
+    CreatureInfo const* ci = ObjectMgr::GetCreatureTemplate(target->GetEntry());
+    if (target->GetTypeId() == TYPEID_PLAYER || (target->GetTypeId() == TYPEID_UNIT && ci && ci->CreatureType == CREATURE_TYPE_BEAST))
+        target->ApplyModUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_SPECIALINFO, apply);
 }
 
 void Aura::HandleAuraUntrackable(bool apply, bool /*Real*/)
@@ -5775,20 +5766,12 @@ void Aura::HandleAuraAllowFlight(bool apply, bool Real)
     if (!Real)
         return;
 
-    // allow fly
-    WorldPacket data;
-    if (apply)
-        data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
-    else
+    GetTarget()->SetCanFly(apply);
     {
-        data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
 
         if (GetTarget()->GetObjectGuid().GetTypeId() == TYPEID_PLAYER)
             ((Player*)GetTarget())->ToCPlayer()->SetGMFly(false);
     }
-    data << GetTarget()->GetPackGUID();
-    data << uint32(0);                                      // unk
-    GetTarget()->SendMessageToSet(&data, true);
 }
 
 void Aura::HandleModRating(bool apply, bool Real)
@@ -6900,6 +6883,21 @@ void Aura::HandleAuraSafeFall(bool Apply, bool Real)
     // only special case
     if (Apply && Real && GetId() == 32474 && GetTarget()->GetTypeId() == TYPEID_PLAYER)
         ((Player*)GetTarget())->ActivateTaxiPathTo(506, GetId());
+}
+
+void Aura::HandleFactionOverride(bool apply, bool Real)
+{
+    if (!Real)
+        return;
+
+    Unit* target = GetTarget();
+    if (!target || !sFactionTemplateStore.LookupEntry(GetMiscValue()))
+        return;
+
+    if (apply)
+        target->setFaction(GetMiscValue());
+    else
+        target->RestoreOriginalFaction();
 }
 
 bool Aura::IsLastAuraOnHolder()

@@ -1018,6 +1018,15 @@ public:
     float GetRestBonus() const { return m_rest_bonus; }
     void SetRestBonus(float rest_bonus_new);
 
+        /**
+        * \brief: compute rest bonus
+        * \param: time_t timePassed > time from last check
+        * \param: bool offline      > is the player was offline?
+        * \param: bool inRestPlace  > if it was offline, is the player was in city/tavern/inn?
+        * \returns: float
+        **/
+        float ComputeRest(time_t timePassed, bool offline = false, bool inRestPlace = false);
+
     RestType GetRestType() const { return rest_type; }
     void SetRestType(RestType n_r_type, uint32 areaTriggerId = 0);
 
@@ -1718,6 +1727,10 @@ public:
         StopMirrorTimer(FIRE_TIMER);
     }
 
+        void SetLevitate(bool enable) override;
+        void SetCanFly(bool enable) override;
+        void SetFeatherFall(bool enable) override;
+        void SetHover(bool enable) override;
     void SetRoot(bool enable) override;
     void SetWaterWalk(bool enable) override;
 
@@ -2008,6 +2021,7 @@ public:
     bool isMoving() const { return m_movementInfo.HasMovementFlag(movementFlagsMask); }
     bool isMovingOrTurning() const { return m_movementInfo.HasMovementFlag(movementOrTurningFlagsMask); }
 
+        bool CanSwim() const { return true; }
     bool CanFly() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_CAN_FLY); }
     bool IsFlying() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_FLYING); }
     bool IsFreeFlying() const { return HasAuraType(SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED) || HasAuraType(SPELL_AURA_FLY); }

@@ -172,7 +172,7 @@ enum UnitStandFlags
 enum UnitBytes1_Flags
 {
     UNIT_BYTE1_FLAG_ALWAYS_STAND = 0x01,
-    UNIT_BYTE1_FLAG_UNK_2        = 0x02,
+    UNIT_BYTE1_FLAG_FLY_ANIM     = 0x02,                    // Creature that can fly and are not on the ground appear to have this flag. If they are on the ground, flag is not present.
     UNIT_BYTE1_FLAG_UNTRACKABLE  = 0x04,
     UNIT_BYTE1_FLAG_ALL          = 0xFF
 };
@@ -528,7 +528,7 @@ enum UnitFlags
     UNIT_FLAG_PVP                   = 0x00001000,
     UNIT_FLAG_SILENCED              = 0x00002000,           // silenced, 2.1.1
     UNIT_FLAG_UNK_14                = 0x00004000,           // 2.0.8
-    UNIT_FLAG_UNK_15                = 0x00008000,
+    UNIT_FLAG_UNK_15                = 0x00008000,           // related to jerky movement in water?
     UNIT_FLAG_UNK_16                = 0x00010000,           // removes attackable icon
     UNIT_FLAG_PACIFIED              = 0x00020000,
     UNIT_FLAG_STUNNED               = 0x00040000,           // stunned, 2.1.1
@@ -1348,6 +1348,7 @@ class Unit : public WorldObject
         uint32 getFaction() const { return GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE); }
         void setFaction(uint32 faction) { SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction); }
         FactionTemplateEntry const* getFactionTemplateEntry() const;
+        void RestoreOriginalFaction();
         bool IsHostileTo(Unit const* unit) const override;
         bool IsHostileToPlayers() const;
         bool IsFriendlyTo(Unit const* unit) const override;
@@ -1485,8 +1486,6 @@ class Unit : public WorldObject
 
         bool isFrozen() const;
 
-        void RemoveSpellbyDamageTaken(AuraType auraType, uint32 damage);
-
         bool isTargetableForAttack(bool inversAlive = false) const;
         bool isPassiveToHostile() { return HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE); }
 
@@ -1523,6 +1522,12 @@ class Unit : public WorldObject
         bool IsLevitating() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_LEVITATING); }
         bool IsWalking() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE); }
         bool IsRooted() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_ROOT); }
+
+        virtual void SetLevitate(bool /*enabled*/) {}
+        virtual void SetSwim(bool /*enabled*/) {}
+        virtual void SetCanFly(bool /*enabled*/) {}
+        virtual void SetFeatherFall(bool /*enabled*/) {}
+        virtual void SetHover(bool /*enabled*/) {}
         virtual void SetRoot(bool /*enabled*/) {}
         virtual void SetWaterWalk(bool /*enabled*/) {}
 
@@ -1872,6 +1877,8 @@ class Unit : public WorldObject
         SpellAuraProcResult HandleManaShieldAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
         SpellAuraProcResult HandleAttackPowerAttackerBonusAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
         SpellAuraProcResult HandleModResistanceAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
+        SpellAuraProcResult HandleRemoveByDamageChanceProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
+        SpellAuraProcResult HandleInvisibilityAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 procFlag, uint32 procEx, uint32 cooldown);
         SpellAuraProcResult HandleNULLProc(Unit* /*pVictim*/, uint32 /*damage*/, Aura* /*triggeredByAura*/, SpellEntry const* /*procSpell*/, uint32 /*procFlag*/, uint32 /*procEx*/, uint32 /*cooldown*/)
         {
             // no proc handler for this aura type
@@ -1967,6 +1974,9 @@ class Unit : public WorldObject
         void OnRelocated();
 
         bool IsLinkingEventTrigger() { return m_isCreatureLinkingTrigger; }
+
+        virtual bool CanSwim() const = 0;
+        virtual bool CanFly() const = 0;
 
     protected:
         explicit Unit();

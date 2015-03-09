@@ -3,7 +3,7 @@
 #####################################
 
 [MangosdConf]
-ConfVersion=2013012201
+ConfVersion=2014110301
 
 ###################################################################################################################
 # CONNECTIONS
@@ -60,6 +60,12 @@ CharacterDatabaseConnections = 1
 #
 #    RealmID
 #        RealmID must match the realmlist inside the realmd database
+#    LoadAllGridsOnMaps
+#        Load grids of maps at server startup (if you have lot memory you can try it to have a living world always loaded)
+#        This also allow ALL creatures on the given maps to update their grid without any player around.
+#        Default: "" (don't load all grids at startup)
+#                 "mapId1[,mapId2[..]]" (DO load all grids on the given maps- Experimental and very resource consumming)
+#
 #
 #    PidFile
 #        World daemon PID file
@@ -83,6 +89,7 @@ RealmID = 1
 PidFile = ""
 DataDir = ""
 WaitAtStartupError = 0
+LoadAllGridsOnMaps = ""
 
 ###################################################################################################################
 # LOGGING
@@ -157,3 +164,9 @@ GmLogPerAccount = 0
 GmLogFile       = ""
 GmLogTimestamp  = 0
 CharLogDump     = 0
+#    Battleground.ScoreStatistics
+#        Enable Battleground scores storage in database.
+#        Default: 0 - (Disabled)
+#                 1 - (Enabled)
+#
+Battleground.ScoreStatistics = 0

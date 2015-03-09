@@ -304,6 +304,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petentry, uint32 petnumber, bool c
     {
         LearnPetPassives();
         CastPetAuras(current);
+        CastOwnerTalentAuras();
     }
 
     Powers powerType = GetPowerType();
@@ -553,6 +554,7 @@ void Pet::SetDeathState(DeathState s)                       // overwrite virtual
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
         CastPetAuras(true);
     }
+    CastOwnerTalentAuras();
 }
 
 void Pet::Update(uint32 update_diff, uint32 diff)
@@ -1880,6 +1882,7 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
         return;
 
     PetSpellMap::iterator itr = m_spells.find(spellid);
+    PetSpell &petSpell = itr->second;
 
     uint32 i;
 
@@ -1892,11 +1895,11 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
         {
             m_autospells.push_back(spellid);
 
-            if (itr->second.active != ACT_ENABLED)
+            if (petSpell.active != ACT_ENABLED)
             {
-                itr->second.active = ACT_ENABLED;
-                if (itr->second.state != PETSPELL_NEW)
-                    itr->second.state = PETSPELL_CHANGED;
+                petSpell.active = ACT_ENABLED;
+                if (petSpell.state != PETSPELL_NEW)
+                    petSpell.state = PETSPELL_CHANGED;
             }
         }
     }
@@ -1909,11 +1912,11 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
         if (i < m_autospells.size())
         {
             m_autospells.erase(itr2);
-            if (itr->second.active != ACT_DISABLED)
+            if (petSpell.active != ACT_DISABLED)
             {
-                itr->second.active = ACT_DISABLED;
-                if (itr->second.state != PETSPELL_NEW)
-                    itr->second.state = PETSPELL_CHANGED;
+                petSpell.active = ACT_DISABLED;
+                if (petSpell.state != PETSPELL_NEW)
+                    petSpell.state = PETSPELL_CHANGED;
             }
         }
     }
@@ -2009,6 +2012,38 @@ void Pet::CastPetAuras(bool current)
         else
             CastPetAura(pa);
     }
+}
+
+void Pet::CastOwnerTalentAuras()
+{
+    if (!GetOwner() || GetOwner()->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    Player* pOwner = static_cast<Player *>(GetOwner());
+
+    // Handle Ferocious Inspiration Talent
+    if (pOwner && pOwner->getClass() == CLASS_HUNTER)
+    {
+        // clear any existing Ferocious Inspiration auras
+        if (HasAura(34455))
+            RemoveAurasDueToSpell(34455);
+        if (HasAura(34459))
+            RemoveAurasDueToSpell(34459);
+        if (HasAura(34460))
+            RemoveAurasDueToSpell(34460);
+
+        if (isAlive())
+        {
+            if (pOwner->HasSpell(34455)) // Ferocious Inspiration Rank 1
+                CastSpell(this, 34457, true); // Ferocious Inspiration 1%
+
+            if (pOwner->HasSpell(34459)) // Ferocious Inspiration Rank 2
+                CastSpell(this, 34457, true); // Ferocious Inspiration 2%
+
+            if (pOwner->HasSpell(34460)) // Ferocious Inspiration Rank 3
+                CastSpell(this, 34457, true); // Ferocious Inspiration 3%
+        }
+    } // End Ferocious Inspiration Talent
 }
 
 void Pet::CastPetAura(PetAura const* aura)

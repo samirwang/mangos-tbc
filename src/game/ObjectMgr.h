@@ -121,7 +121,7 @@ struct MangosStringLocale
     uint32 Emote;
 };
 
-typedef UNORDERED_MAP<uint32, CreatureData> CreatureDataMap;
+typedef UNORDERED_MAP<uint32 /*guid*/, CreatureData> CreatureDataMap;
 typedef CreatureDataMap::value_type CreatureDataPair;
 
 class FindCreatureData
@@ -279,19 +279,6 @@ typedef std::pair<GossipMenuItemsMap::const_iterator, GossipMenuItemsMap::const_
 struct PetCreateSpellEntry
 {
     uint32 spellid[4];
-};
-
-#define WEATHER_SEASONS 4
-struct WeatherSeasonChances
-{
-    uint32 rainChance;
-    uint32 snowChance;
-    uint32 stormChance;
-};
-
-struct WeatherZoneChances
-{
-    WeatherSeasonChances data[WEATHER_SEASONS];
 };
 
 struct GraveYardData
@@ -472,7 +459,6 @@ class ObjectMgr
 
         typedef UNORDERED_MAP<uint32, PointOfInterest> PointOfInterestMap;
 
-        typedef UNORDERED_MAP<uint32, WeatherZoneChances> WeatherZoneMap;
 
         typedef UNORDERED_MAP<uint32, PetCreateSpellEntry> PetCreateSpellMap;
 
@@ -691,7 +677,6 @@ class ObjectMgr
         void LoadSpellTemplate();
         void LoadCreatureTemplateSpells();
 
-        void LoadWeatherZoneChances();
         void LoadGameTele();
 
         void LoadNpcGossips();
@@ -702,6 +687,9 @@ class ObjectMgr
         void LoadVendors() { LoadVendors("npc_vendor", false); }
         void LoadTrainerTemplates();
         void LoadTrainers() { LoadTrainers("npc_trainer", false); }
+
+        /// @param _map Map* of the map for which to load active entities. If NULL active entities on continents are loaded
+        void LoadActiveEntities(Map* _map);
 
         std::string GeneratePetName(uint32 entry);
         uint32 GetBaseXP(uint32 level) const;
@@ -760,15 +748,6 @@ class ObjectMgr
                     return &*set_itr;
 
             return NULL;
-        }
-
-        WeatherZoneChances const* GetWeatherChances(uint32 zone_id) const
-        {
-            WeatherZoneMap::const_iterator itr = mWeatherZoneMap.find(zone_id);
-            if (itr != mWeatherZoneMap.end())
-                return &itr->second;
-            else
-                return NULL;
         }
 
         CreatureDataPair const* GetCreatureDataPair(uint32 guid) const
@@ -928,7 +907,7 @@ class ObjectMgr
         static PetNameInvalidReason CheckPetName(const std::string& name);
         static bool IsValidCharterName(const std::string& name);
 
-        static bool CheckDeclinedNames(std::wstring mainpart, DeclinedName const& names);
+        static bool CheckDeclinedNames(const std::wstring &mainpart, DeclinedName const& names);
 
         int GetIndexForLocale(LocaleConstant loc);
         LocaleConstant GetLocaleForIndex(int i);
@@ -1109,8 +1088,6 @@ class ObjectMgr
         GossipMenuItemsMap  m_mGossipMenuItemsMap;
         PointOfInterestMap  mPointsOfInterest;
 
-        WeatherZoneMap      mWeatherZoneMap;
-
         PetCreateSpellMap   mPetCreateSpell;
 
         // character reserved names
@@ -1169,10 +1146,13 @@ class ObjectMgr
         HalfNameMap PetHalfName0;
         HalfNameMap PetHalfName1;
 
+        typedef std::multimap<uint32 /*mapId*/, uint32 /*guid*/> ActiveCreatureGuidsOnMap;
+
         // Array to store creature stats, Max creature level + 1 (for data alignement with in game level)
         CreatureClassLvlStats m_creatureClassLvlStats[DEFAULT_MAX_CREATURE_LEVEL + 1][MAX_CREATURE_CLASS][MAX_EXPANSION + 1];
 
         MapObjectGuids mMapObjectGuids;
+        ActiveCreatureGuidsOnMap m_activeCreatures;
         CreatureDataMap mCreatureDataMap;
         CreatureLocaleMap mCreatureLocaleMap;
         GameObjectDataMap mGameObjectDataMap;

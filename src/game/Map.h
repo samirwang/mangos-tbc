@@ -56,6 +56,7 @@ struct ScriptInfo;
 class BattleGround;
 class GridMap;
 class GameObjectModel;
+class WeatherSystem;
 
 // GCC have alternative #pragma pack(N) syntax and old gcc version not support pack(push,N), also any gcc version not support it at some platform
 #if defined( __GNUC__ )
@@ -153,7 +154,7 @@ class Map : public GridRefManager<NGridType>
 
         bool GetUnloadLock(const GridPair& p) const { return getNGrid(p.x_coord, p.y_coord)->getUnloadLock(); }
         void SetUnloadLock(const GridPair& p, bool on) { getNGrid(p.x_coord, p.y_coord)->setUnloadExplicitLock(on); }
-        void LoadGrid(const Cell& cell, bool no_unload = false);
+        void ForceLoadGrid(float x, float y);
         bool UnloadGrid(const uint32& x, const uint32& y, bool pForce);
         virtual void UnloadAll(bool pForce);
 
@@ -188,13 +189,13 @@ class Map : public GridRefManager<NGridType>
         uint32 GetMaxResetDelay() const;
 
         bool Instanceable() const { return i_mapEntry && i_mapEntry->Instanceable(); }
-        // NOTE: this duplicate of Instanceable(), but Instanceable() can be changed when BG also will be instanceable
         bool IsDungeon() const { return i_mapEntry && i_mapEntry->IsDungeon(); }
         bool IsRaid() const { return i_mapEntry && i_mapEntry->IsRaid(); }
         bool IsRaidOrHeroicDungeon() const { return IsRaid() || GetDifficulty() > DUNGEON_DIFFICULTY_NORMAL; }
         bool IsBattleGround() const { return i_mapEntry && i_mapEntry->IsBattleGround(); }
         bool IsBattleArena() const { return i_mapEntry && i_mapEntry->IsBattleArena(); }
         bool IsBattleGroundOrArena() const { return i_mapEntry && i_mapEntry->IsBattleGroundOrArena(); }
+        bool IsContinent() const { return i_mapEntry && i_mapEntry->IsContinent(); }
 
         // can't be NULL for loaded map
         MapPersistentState* GetPersistentState() const { return m_persistentState; }
@@ -211,7 +212,10 @@ class Map : public GridRefManager<NGridType>
         uint32 GetPlayersCountExceptGMs() const;
         bool ActiveObjectsNearGrid(uint32 x, uint32 y) const;
 
+        /// Send a Packet to all players on a map
         void SendToPlayers(WorldPacket const* data) const;
+        /// Send a Packet to all players in a zone. Return false if no player found
+        bool SendToPlayersInZone(WorldPacket const* data, uint32 zoneId) const;
 
         typedef MapRefManager PlayerList;
         PlayerList const& GetPlayers() const { return m_mapRefManager; }
@@ -271,6 +275,7 @@ class Map : public GridRefManager<NGridType>
 
         // Dynamic VMaps
         float GetHeight(float x, float y, float z) const;
+        bool GetHeightInRange(float x, float y, float &z, float maxSearchDist = 4.0f) const;
         bool IsInLineOfSight(float x1, float y1, float z1, float x2, float y2, float z2) const;
         bool GetHitPosition(float srcX, float srcY, float srcZ, float& destX, float& destY, float& destZ, float modifyDist) const;
 
@@ -282,6 +287,25 @@ class Map : public GridRefManager<NGridType>
         // Get Holder for Creature Linking
         CreatureLinkingHolder* GetCreatureLinkingHolder() { return &m_creatureLinkingHolder; }
 
+        // Teleport all players in that map to choosed location
+        void TeleportAllPlayersTo(TeleportLocation loc);
+
+        // WeatherSystem
+        WeatherSystem* GetWeatherSystem() const { return m_weatherSystem; }
+        /** Set the weather in a zone on this map
+         * @param zoneId set the weather for which zone
+         * @param type What weather to set
+         * @param grade how strong the weather should be
+         * @param permanently set the weather permanently?
+         */
+        void SetWeather(uint32 zoneId, WeatherType type, float grade, bool permanently);
+
+        // Random on map generation
+        bool GetReachableRandomPosition(Unit* unit, float& x, float& y, float& z, float radius);
+        bool GetReachableRandomPointOnGround(float& x, float& y, float& z, float radius);
+        bool GetRandomPointInTheAir(float& x, float& y, float& z, float radius);
+        bool GetRandomPointUnderWater(float& x, float& y, float& z, float radius, GridMapLiquidData& liquid_status);
+
     private:
         void LoadMapAndVMap(int gx, int gy);
 
@@ -292,7 +316,7 @@ class Map : public GridRefManager<NGridType>
         void SendInitTransports(Player* player);
         void SendRemoveTransports(Player* player);
 
-        bool CreatureCellRelocation(Creature* creature, Cell new_cell);
+        bool CreatureCellRelocation(Creature* creature, const Cell &new_cell);
 
         bool loaded(const GridPair&) const;
         void EnsureGridCreated(const GridPair&);
@@ -368,12 +392,14 @@ class Map : public GridRefManager<NGridType>
 
         template<class T>
         void RemoveFromGrid(T*, NGridType*, Cell const&);
-
         // Holder for information about linked mobs
         CreatureLinkingHolder m_creatureLinkingHolder;
 
         // Dynamic Map tree object
         DynamicMapTree m_dyn_tree;
+
+        // WeatherSystem
+        WeatherSystem* m_weatherSystem;
 };
 
 class WorldMap : public Map

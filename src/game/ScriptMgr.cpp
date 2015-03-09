@@ -101,8 +101,6 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
     if (IsScriptScheduled())                                // function don't must be called in time scripts use.
         return;
 
-    sLog.outString("%s :", tablename);
-
     scripts.first = tablename;
     scripts.second.clear();                                 // need for reload support
 
@@ -114,7 +112,6 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
     if (!result)
     {
         sLog.outString();
-        sLog.outString(">> Loaded %u script definitions", count);
         return;
     }
 
@@ -354,8 +351,7 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
                 if (info->type == GAMEOBJECT_TYPE_FISHINGNODE ||
                         info->type == GAMEOBJECT_TYPE_FISHINGHOLE ||
                         info->type == GAMEOBJECT_TYPE_DOOR        ||
-                        info->type == GAMEOBJECT_TYPE_BUTTON      ||
-                        info->type == GAMEOBJECT_TYPE_TRAP)
+                        info->type == GAMEOBJECT_TYPE_BUTTON)
                 {
                     sLog.outErrorDb("Table `%s` have gameobject type (%u) unsupported by command SCRIPT_COMMAND_RESPAWN_GAMEOBJECT for script id %u", tablename, info->type, tmp.id);
                     continue;
@@ -437,6 +433,18 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
                                     tablename, tmp.castSpell.spellId, tmp.id);
                     continue;
                 }
+                bool hasErrored = false;
+                for (uint8 i = 0; i < MAX_TEXT_ID; ++i)
+                {
+                    if (tmp.textId[i] && !sSpellStore.LookupEntry(uint32(tmp.textId[i])))
+                    {
+                        sLog.outErrorDb("Table `%s` using nonexistent spell (id: %u) in SCRIPT_COMMAND_CAST_SPELL for script id %u, dataint%u",
+                            tablename, uint32(tmp.textId[i]), tmp.id, i + 1);
+                        hasErrored = true;
+                    }
+                }
+                if (hasErrored)
+                    continue;
                 break;
             }
             case SCRIPT_COMMAND_PLAY_SOUND:                 // 16
@@ -644,6 +652,15 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
                 }
                 break;
             }
+            case SCRIPT_COMMAND_SET_FACING:                 // 36
+                break;
+            case SCRIPT_COMMAND_MOVE_DYNAMIC:               // 37
+                if (tmp.moveDynamic.maxDist < tmp.moveDynamic.minDist)
+                {
+                    sLog.outErrorDb("Table `%s` has invalid min-dist (datalong2 = %u) less than max-dist (datalon = %u) in SCRIPT_COMMAND_MOVE_DYNAMIC for script id %u", tablename, tmp.moveDynamic.minDist, tmp.moveDynamic.maxDist, tmp.id);
+                    continue;
+                }
+                break;
             default:
             {
                 sLog.outErrorDb("Table `%s` unknown command %u, skipping.", tablename, tmp.command);
@@ -664,8 +681,8 @@ void ScriptMgr::LoadScripts(ScriptMapMapName& scripts, const char* tablename)
 
     delete result;
 
+    sLog.outString(">> Loaded %u script definitions from table %s", count, tablename);
     sLog.outString();
-    sLog.outString(">> Loaded %u script definitions", count);
 }
 
 void ScriptMgr::LoadGameObjectScripts()
@@ -1290,8 +1307,7 @@ bool ScriptAction::HandleScriptStep()
 
             if (pGo->GetGoType() == GAMEOBJECT_TYPE_FISHINGNODE ||
                     pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR        ||
-                    pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON      ||
-                    pGo->GetGoType() == GAMEOBJECT_TYPE_TRAP)
+                    pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
             {
                 sLog.outErrorDb(" DB-SCRIPTS: Process table `%s` id %u, command %u can not be used with gameobject of type %u (guid: %u, buddyEntry: %u).", m_table, m_script->id, m_script->command, uint32(pGo->GetGoType()), m_script->respawnGo.goGuid, m_script->buddyEntry);
                 break;
@@ -1396,16 +1412,25 @@ bool ScriptAction::HandleScriptStep()
             if (LogIfNotUnit(pTarget))                      // TODO - Change when support for casting without victim will be supported
                 break;
 
+            // Select Spell
+            uint32 spell = m_script->castSpell.spellId;
+            uint32 i = 0;
+            while (i < MAX_TEXT_ID && m_script->textId[i])  // Count which dataint fields are filled
+                ++i;
+            if (i > 0)
+                if (uint32 rnd = urand(0, i))               // Random selection resulted in one of the dataint fields
+                    spell = m_script->textId[rnd - 1];
+
             // TODO: when GO cast implemented, code below must be updated accordingly to also allow GO spell cast
             if (pSource && pSource->GetTypeId() == TYPEID_GAMEOBJECT)
             {
-                ((Unit*)pTarget)->CastSpell(((Unit*)pTarget), m_script->castSpell.spellId, true, NULL, NULL, pSource->GetObjectGuid());
+                ((Unit*)pTarget)->CastSpell(((Unit*)pTarget), spell, true, NULL, NULL, pSource->GetObjectGuid());
                 break;
             }
 
             if (LogIfNotUnit(pSource))
                 break;
-            ((Unit*)pSource)->CastSpell(((Unit*)pTarget), m_script->castSpell.spellId, (m_script->data_flags & SCRIPT_FLAG_COMMAND_ADDITIONAL) != 0);
+            ((Unit*)pSource)->CastSpell(((Unit*)pTarget), spell, (m_script->data_flags & SCRIPT_FLAG_COMMAND_ADDITIONAL) != 0);
 
             break;
         }
@@ -1426,13 +1451,17 @@ bool ScriptAction::HandleScriptStep()
                     break;
             }
 
-            if (m_script->playSound.flags & 2)
-                pSource->PlayDistanceSound(m_script->playSound.soundId, pSoundTarget);
-            else if (m_script->playSound.flags & (4 | 8))
-                m_map->PlayDirectSoundToMap(m_script->playSound.soundId, m_script->playSound.flags & 8 ? pSource->GetZoneId() : 0);
+            if (m_script->data_flags & SCRIPT_FLAG_COMMAND_ADDITIONAL)
+                pSource->PlayMusic(m_script->playSound.soundId, pSoundTarget);
             else
-                pSource->PlayDirectSound(m_script->playSound.soundId, pSoundTarget);
-
+            {
+                if (m_script->playSound.flags & 2)
+                    pSource->PlayDistanceSound(m_script->playSound.soundId, pSoundTarget);
+                else if (m_script->playSound.flags & (4 | 8))
+                    m_map->PlayDirectSoundToMap(m_script->playSound.soundId, m_script->playSound.flags & 8 ? pSource->GetZoneId() : 0);
+                else
+                    pSource->PlayDirectSound(m_script->playSound.soundId, pSoundTarget);
+            }
             break;
         }
         case SCRIPT_COMMAND_CREATE_ITEM:                    // 17
@@ -1758,6 +1787,54 @@ bool ScriptAction::HandleScriptStep()
             ((Creature*)pSource)->AI()->SendAIEventAround(AIEventType(m_script->sendAIEvent.eventType), (Unit*)pTarget, 0, float(m_script->sendAIEvent.radius));
             break;
         }
+        case SCRIPT_COMMAND_SET_FACING:                     // 36
+        {
+            if (LogIfNotCreature(pSource))
+                return false;
+            Creature* pCSource = static_cast<Creature*>(pSource);
+            if (!pTarget)
+            {
+                sLog.outErrorDb(" DB-SCRIPTS: Process table `%s` id %u, command _SET_FACING (%u): No target found.", m_table, m_script->id, m_script->command);
+                return false;
+            }
+            if (m_script->setFacing.resetFacing)
+            {
+                float x,y,z,o;
+                if (pCSource->GetMotionMaster()->empty() || !pCSource->GetMotionMaster()->top()->GetResetPosition(*pCSource, x, y, z, o))
+                    pCSource->GetRespawnCoord(x, y, z, &o);
+                pCSource->SetFacingTo(o);
+
+                if (m_script->data_flags & SCRIPT_FLAG_COMMAND_ADDITIONAL && !pCSource->isInCombat())
+                    pCSource->SetTargetGuid(ObjectGuid());
+            }
+            else
+            {
+                pCSource->SetFacingToObject(pTarget);
+                if (m_script->data_flags & SCRIPT_FLAG_COMMAND_ADDITIONAL && !LogIfNotUnit(pTarget) && !pCSource->isInCombat())
+                    pCSource->SetTargetGuid(pTarget->GetObjectGuid());
+            }
+            break;
+        }
+        case SCRIPT_COMMAND_MOVE_DYNAMIC:                   // 37
+        {
+            if (LogIfNotCreature(pSource))
+                return false;
+            if (LogIfNotUnit(pTarget))
+                return false;
+
+            float x,y,z;
+            if (m_script->moveDynamic.maxDist == 0)         // Move to pTarget
+                pTarget->GetContactPoint(pSource, x, y, z);
+            else                                            // Calculate position
+            {
+                pSource->GetRandomPoint(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), m_script->moveDynamic.maxDist, x, y, z,
+                                        m_script->moveDynamic.minDist, (m_script->o == 0.0f ? NULL : &m_script->o));
+                z = std::max(z, pTarget->GetPositionZ());
+                pSource->UpdateAllowedPositionZ(x, y, z);
+            }
+            ((Creature*)pSource)->GetMotionMaster()->MovePoint(1, x, y, z);
+            break;
+        }
         default:
             sLog.outErrorDb(" DB-SCRIPTS: Process table `%s` id %u, command %u unknown command used.", m_table, m_script->id, m_script->command);
             break;
@@ -1779,8 +1856,8 @@ void ScriptMgr::LoadAreaTriggerScripts()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u scripted areatrigger", count);
+        sLog.outString();
         return;
     }
 
@@ -1805,8 +1882,9 @@ void ScriptMgr::LoadAreaTriggerScripts()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u areatrigger scripts", count);
+    sLog.outString();
+
 }
 
 void ScriptMgr::LoadEventIdScripts()
@@ -1818,8 +1896,8 @@ void ScriptMgr::LoadEventIdScripts()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outString(">> Loaded %u scripted event id", count);
+        sLog.outString();
         return;
     }
 
@@ -1845,8 +1923,8 @@ void ScriptMgr::LoadEventIdScripts()
 
     delete result;
 
-    sLog.outString();
     sLog.outString(">> Loaded %u scripted event id", count);
+    sLog.outString();
 }
 
 void ScriptMgr::LoadScriptNames()
@@ -1869,8 +1947,8 @@ void ScriptMgr::LoadScriptNames()
 
     if (!result)
     {
-        sLog.outString();
         sLog.outErrorDb(">> Loaded empty set of Script Names!");
+        sLog.outString();
         return;
     }
 
@@ -1885,8 +1963,9 @@ void ScriptMgr::LoadScriptNames()
     delete result;
 
     std::sort(m_scriptNames.begin(), m_scriptNames.end());
-    sLog.outString();
+
     sLog.outString(">> Loaded %d Script Names", count);
+    sLog.outString();
 }
 
 uint32 ScriptMgr::GetScriptId(const char* name) const
