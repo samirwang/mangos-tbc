@@ -27,7 +27,6 @@
 #include "WorldPacket.h"
 #include "Log.h"
 #include "Util.h"
-#include "ProgressBar.h"
 
 /// Create the Weather object
 Weather::Weather(uint32 zone, WeatherZoneChances const* weatherChances) :
@@ -386,19 +385,14 @@ void WeatherMgr::LoadWeatherZoneChances()
 
     if (!result)
     {
-        BarGoLink bar(1);
-        bar.step();
         sLog.outErrorDb(">> Loaded 0 weather definitions. DB table `game_weather` is empty.");
         sLog.outString();
         return;
     }
 
-    BarGoLink bar(result->GetRowCount());
-
     do
     {
         Field* fields = result->Fetch();
-        bar.step();
 
         uint32 zone_id = fields[0].GetUInt32();
 
