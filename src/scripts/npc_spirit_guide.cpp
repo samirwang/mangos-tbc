@@ -24,6 +24,7 @@ EndScriptData */
 #include "Precompiled.h"
 #include "CPlusMgr.h"
 #include "CreatureAI.h"
+#include "GridNotifiers.h"
 
 /**** Script Info ****
 Spiritguides in battlegrounds resurrecting many players at once
@@ -74,10 +75,16 @@ public:
         if (!pMap || !pMap->IsBattleGround())
             return;
 
-        for (auto& itr : pMap->GetPlayers())
+        std::list<Player*> nearPlayers;
+        MaNGOS::AnyPlayerInObjectRangeCheck rangeChecker(m_creature, 20.0f);
+        MaNGOS::PlayerListSearcher<MaNGOS::AnyPlayerInObjectRangeCheck> searcher(nearPlayers, rangeChecker);
+        Cell::VisitGridObjects(m_creature, searcher, 20.0f);
+
+        for (auto& i : nearPlayers)
         {
-            Player* pPlayer = itr.getSource();
-            if (!pPlayer || !pPlayer->IsWithinDistInMap(m_creature, 20.0f) || !pPlayer->HasAura(SPELL_WAITING_TO_RESURRECT))
+            Player* pPlayer = i;
+
+            if (!pPlayer || !pPlayer->HasAura(SPELL_WAITING_TO_RESURRECT))
                 continue;
 
             // repop player again - now this node won't be counted and another node is searched
