@@ -25,6 +25,8 @@ EndScriptData */
 #include "CPlusMgr.h"
 #include "CreatureAI.h"
 #include "GridNotifiers.h"
+#include "GridNotifiersImpl.h"
+#include "CellImpl.h"
 
 /**** Script Info ****
 Spiritguides in battlegrounds resurrecting many players at once
