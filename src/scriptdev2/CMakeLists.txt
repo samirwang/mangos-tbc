@@ -20,6 +20,8 @@
 # revision.h: FORCE
 #   $(top_builddir)/src/tools/genrevision/genrevision $(srcdir)
 
+set(LIBRARY_NAME mangosscript)
+
 file(GLOB_RECURSE mangosscript_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h)
 
 source_group("Other"
@@ -54,18 +56,15 @@ if(PCH)
   )
 endif()
 
-add_library(mangosscript SHARED
+add_library(${LIBRARY_NAME} STATIC
   ${mangosscript_SRCS}
 )
 
 if(WIN32)
-  target_link_libraries(mangosscript
-    mangosd # FIXME: could this be done for unix? because unix won't generate exe.libs
-    debug ${WIN_DEBUGLIBS}
-  )
+  target_link_libraries(mangosscript game)
 endif()
 
-add_dependencies(mangosscript mangosd)
+add_dependencies(mangosscript game)
 
 if(UNIX)
   set(mangosscript_LINK_FLAGS "-pthread")
@@ -121,9 +120,3 @@ endif()
 if(PCH)
   cotire(mangosscript)
 endif()
-
-# LIBRARY = dyld / so, RUNTIME = dll
-install(TARGETS mangosscript
-  LIBRARY DESTINATION ${LIBS_DIR}
-  RUNTIME DESTINATION ${LIBS_DIR}
-)
