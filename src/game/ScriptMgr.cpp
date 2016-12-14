@@ -31,6 +31,8 @@
 #include "OutdoorPvP/OutdoorPvP.h"
 #include "WaypointMovementGenerator.h"
 #include "Mail.h"
+#include "Player.h"
+#include "GossipDef.h"
 
 ScriptMapMapName sQuestEndScripts;
 ScriptMapMapName sQuestStartScripts;
@@ -42,39 +44,15 @@ ScriptMapMapName sGossipScripts;
 ScriptMapMapName sCreatureDeathScripts;
 ScriptMapMapName sCreatureMovementScripts;
 
+typedef std::vector<Script*> SDScriptVec;
+int num_sc_scripts;
+SDScriptVec m_scripts;
+
+void FillSpellSummary();
+
 INSTANTIATE_SINGLETON_1(ScriptMgr);
 
-ScriptMgr::ScriptMgr() :
-    m_hScriptLib(nullptr),
-
-    m_pOnInitScriptLibrary(nullptr),
-    m_pOnFreeScriptLibrary(nullptr),
-
-    m_pGetCreatureAI(nullptr),
-    m_pCreateInstanceData(nullptr),
-
-    m_pOnGossipHello(nullptr),
-    m_pOnGOGossipHello(nullptr),
-    m_pOnGossipSelect(nullptr),
-    m_pOnGOGossipSelect(nullptr),
-    m_pOnGossipSelectWithCode(nullptr),
-    m_pOnGOGossipSelectWithCode(nullptr),
-    m_pOnQuestAccept(nullptr),
-    m_pOnGOQuestAccept(nullptr),
-    m_pOnItemQuestAccept(nullptr),
-    m_pOnQuestRewarded(nullptr),
-    m_pOnGOQuestRewarded(nullptr),
-    m_pGetNPCDialogStatus(nullptr),
-    m_pGetGODialogStatus(nullptr),
-    m_pOnGOUse(nullptr),
-    m_pOnItemUse(nullptr),
-    m_pOnAreaTrigger(nullptr),
-    m_pOnProcessEvent(nullptr),
-    m_pOnEffectDummyCreature(nullptr),
-    m_pOnEffectDummyGO(nullptr),
-    m_pOnEffectDummyItem(nullptr),
-    m_pOnEffectScriptEffectCreature(nullptr),
-    m_pOnAuraDummy(nullptr)
+ScriptMgr::ScriptMgr()
 {
     m_scheduledScripts = 0;
 }
@@ -2245,231 +2223,368 @@ uint32 ScriptMgr::GetEventIdScriptId(uint32 eventId) const
     return 0;
 }
 
-CreatureAI* ScriptMgr::GetCreatureAI(Creature* pCreature)
-{
-    if (!m_pGetCreatureAI)
-        return nullptr;
-
-    return m_pGetCreatureAI(pCreature);
-}
-
-InstanceData* ScriptMgr::CreateInstanceData(Map* pMap)
-{
-    if (!m_pCreateInstanceData)
-        return nullptr;
-
-    return m_pCreateInstanceData(pMap);
-}
+//********************************
+//*** Functions to be Exported ***
 
 bool ScriptMgr::OnGossipHello(Player* pPlayer, Creature* pCreature)
 {
-    return m_pOnGossipHello != nullptr && m_pOnGossipHello(pPlayer, pCreature);
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pGossipHello)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pGossipHello(pPlayer, pCreature);
 }
 
-bool ScriptMgr::OnGossipHello(Player* pPlayer, GameObject* pGameObject)
+bool ScriptMgr::OnGossipHello(Player* pPlayer, GameObject* pGo)
 {
-    return m_pOnGOGossipHello != nullptr && m_pOnGOGossipHello(pPlayer, pGameObject);
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pGossipHelloGO)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pGossipHelloGO(pPlayer, pGo);
 }
 
-bool ScriptMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, const char* code)
+bool ScriptMgr::OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
-    if (code)
-        return m_pOnGossipSelectWithCode != nullptr && m_pOnGossipSelectWithCode(pPlayer, pCreature, sender, action, code);
-    else
-        return m_pOnGossipSelect != nullptr && m_pOnGossipSelect(pPlayer, pCreature, sender, action);
+    debug_log("SD2: Gossip selection with code, sender: %u, action: %u", uiSender, uiAction);
+
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pGossipSelectWithCode)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+	if (sCode)
+		return pTempScript->pGossipSelectWithCode(pPlayer, pCreature, uiSender, uiAction, sCode);
+
+	return pTempScript->pGossipSelect(pPlayer, pCreature, uiSender, uiAction);
 }
 
-bool ScriptMgr::OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, const char* code)
+bool ScriptMgr::OnGossipSelect(Player* pPlayer, GameObject* pGo, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
-    if (code)
-        return m_pOnGOGossipSelectWithCode != nullptr && m_pOnGOGossipSelectWithCode(pPlayer, pGameObject, sender, action, code);
-    else
-        return m_pOnGOGossipSelect != nullptr && m_pOnGOGossipSelect(pPlayer, pGameObject, sender, action);
+    debug_log("SD2: GO Gossip selection with code, sender: %u, action: %u", uiSender, uiAction);
+
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pGossipSelectGOWithCode)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+	if (sCode)
+		return pTempScript->pGossipSelectGOWithCode(pPlayer, pGo, uiSender, uiAction, sCode);
+
+	return pTempScript->pGossipSelectGO(pPlayer, pGo, uiSender, uiAction);
 }
 
-bool ScriptMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
+bool ScriptMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
-    return m_pOnQuestAccept != nullptr && m_pOnQuestAccept(pPlayer, pCreature, pQuest);
-}
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
 
-bool ScriptMgr::OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
-{
-    return m_pOnGOQuestAccept != nullptr && m_pOnGOQuestAccept(pPlayer, pGameObject, pQuest);
-}
+    if (!pTempScript || !pTempScript->pQuestAcceptNPC)
+        return false;
 
-bool ScriptMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
-{
-    return m_pOnItemQuestAccept != nullptr && m_pOnItemQuestAccept(pPlayer, pItem, pQuest);
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pQuestAcceptNPC(pPlayer, pCreature, pQuest);
 }
 
 bool ScriptMgr::OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
-    return m_pOnQuestRewarded != nullptr && m_pOnQuestRewarded(pPlayer, pCreature, pQuest);
-}
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
 
-bool ScriptMgr::OnQuestRewarded(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest)
-{
-    return m_pOnGOQuestRewarded != nullptr && m_pOnGOQuestRewarded(pPlayer, pGameObject, pQuest);
+    if (!pTempScript || !pTempScript->pQuestRewardedNPC)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pQuestRewardedNPC(pPlayer, pCreature, pQuest);
 }
 
 uint32 ScriptMgr::GetDialogStatus(const Player* pPlayer, const Creature* pCreature) const
 {
-    if (!m_pGetNPCDialogStatus)
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pDialogStatusNPC)
         return DIALOG_STATUS_UNDEFINED;
 
-    return m_pGetNPCDialogStatus(pPlayer, pCreature);
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pDialogStatusNPC(pPlayer, pCreature);
 }
 
-uint32 ScriptMgr::GetDialogStatus(const Player* pPlayer, const GameObject* pGameObject) const
+uint32 ScriptMgr::GetDialogStatus(const Player* pPlayer, const GameObject* pGo) const
 {
-    if (!m_pGetGODialogStatus)
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pDialogStatusGO)
         return DIALOG_STATUS_UNDEFINED;
 
-    return m_pGetGODialogStatus(pPlayer, pGameObject);
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pDialogStatusGO(pPlayer, pGo);
 }
 
-bool ScriptMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGameObject)
+bool ScriptMgr::OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest)
 {
-    return m_pOnGOUse != nullptr && m_pOnGOUse(pPlayer, pGameObject);
+    Script* pTempScript = m_scripts[pItem->GetProto()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pQuestAcceptItem)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pQuestAcceptItem(pPlayer, pItem, pQuest);
 }
 
-bool ScriptMgr::OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
+bool ScriptMgr::OnGameObjectUse(Player* pPlayer, GameObject* pGo)
 {
-    return m_pOnItemUse != nullptr && m_pOnItemUse(pPlayer, pItem, targets);
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pGOUse)
+        return false;
+
+    return pTempScript->pGOUse(pPlayer, pGo);
+}
+
+bool ScriptMgr::OnQuestAccept(Player* pPlayer, GameObject* pGo, const Quest* pQuest)
+{
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pQuestAcceptGO)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pQuestAcceptGO(pPlayer, pGo, pQuest);
+}
+
+bool ScriptMgr::OnQuestRewarded(Player* pPlayer, GameObject* pGo, Quest const* pQuest)
+{
+    Script* pTempScript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pQuestRewardedGO)
+        return false;
+
+    pPlayer->PlayerTalkClass->ClearMenus();
+
+    return pTempScript->pQuestRewardedGO(pPlayer, pGo, pQuest);
 }
 
 bool ScriptMgr::OnAreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 {
-    return m_pOnAreaTrigger != nullptr && m_pOnAreaTrigger(pPlayer, atEntry);
+    Script* pTempScript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
+
+    if (!pTempScript || !pTempScript->pAreaTrigger)
+        return false;
+
+    return pTempScript->pAreaTrigger(pPlayer, atEntry);
 }
 
-bool ScriptMgr::OnProcessEvent(uint32 eventId, Object* pSource, Object* pTarget, bool isStart)
+bool ScriptMgr::OnProcessEvent(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsStart)
 {
-    return m_pOnProcessEvent != nullptr && m_pOnProcessEvent(eventId, pSource, pTarget, isStart);
+    Script* pTempScript = m_scripts[GetEventIdScriptId(uiEventId)];
+
+    if (!pTempScript || !pTempScript->pProcessEventId)
+        return false;
+
+    // bIsStart may be false, when event is from taxi node events (arrival=false, departure=true)
+    return pTempScript->pProcessEventId(uiEventId, pSource, pTarget, bIsStart);
+}
+
+CreatureAI* ScriptMgr::GetCreatureAI(Creature* pCreature)
+{
+    Script* pTempScript = m_scripts[pCreature->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->GetAI)
+        return nullptr;
+
+    return pTempScript->GetAI(pCreature);
+}
+
+bool ScriptMgr::OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
+{
+    Script* pTempScript = m_scripts[pItem->GetProto()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pItemUse)
+        return false;
+
+    return pTempScript->pItemUse(pPlayer, pItem, targets);
 }
 
 bool ScriptMgr::OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid)
 {
-    return m_pOnEffectDummyCreature != nullptr && m_pOnEffectDummyCreature(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
+    Script* pTempScript = m_scripts[pTarget->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pEffectDummyNPC)
+        return false;
+
+    return pTempScript->pEffectDummyNPC(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
 }
 
 bool ScriptMgr::OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, GameObject* pTarget, ObjectGuid originalCasterGuid)
 {
-    return m_pOnEffectDummyGO != nullptr && m_pOnEffectDummyGO(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
+    Script* pTempScript = m_scripts[pTarget->GetGOInfo()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pEffectDummyGO)
+        return false;
+
+    return pTempScript->pEffectDummyGO(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
 }
 
 bool ScriptMgr::OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Item* pTarget, ObjectGuid originalCasterGuid)
 {
-    return m_pOnEffectDummyItem != nullptr && m_pOnEffectDummyItem(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
+    Script* pTempScript = m_scripts[pTarget->GetProto()->ScriptId];
+
+    if (!pTempScript || !pTempScript->pEffectDummyItem)
+        return false;
+
+    return pTempScript->pEffectDummyItem(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
 }
 
 bool ScriptMgr::OnEffectScriptEffect(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid)
 {
-    return m_pOnEffectScriptEffectCreature != nullptr && m_pOnEffectScriptEffectCreature(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
+    Script* pTempScript = m_scripts[pTarget->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pEffectScriptEffectNPC)
+        return false;
+
+    return pTempScript->pEffectScriptEffectNPC(pCaster, spellId, effIndex, pTarget, originalCasterGuid);
 }
 
-bool ScriptMgr::OnAuraDummy(Aura const* pAura, bool apply)
+bool ScriptMgr::OnAuraDummy(Aura const* pAura, bool bApply)
 {
-    return m_pOnAuraDummy != nullptr && m_pOnAuraDummy(pAura, apply);
+    Script* pTempScript = m_scripts[((Creature*)pAura->GetTarget())->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->pEffectAuraDummy)
+        return false;
+
+    return pTempScript->pEffectAuraDummy(pAura, bApply);
+}
+
+InstanceData* ScriptMgr::CreateInstanceData(Map* pMap)
+{
+    Script* pTempScript = m_scripts[pMap->GetScriptId()];
+
+    if (!pTempScript || !pTempScript->GetInstanceData)
+        return nullptr;
+
+    return pTempScript->GetInstanceData(pMap);
 }
 
 ScriptLoadResult ScriptMgr::LoadScriptLibrary(const char* libName)
 {
-    UnloadScriptLibrary();
-
-    std::string name = libName;
-    name = MANGOS_SCRIPT_PREFIX + name + MANGOS_SCRIPT_SUFFIX;
-
-    m_hScriptLib = MANGOS_LOAD_LIBRARY(name.c_str());
-
-    if (!m_hScriptLib)
-        return SCRIPT_LOAD_ERR_NOT_FOUND;
-
-#   define GET_SCRIPT_HOOK_PTR(P,N)             \
-        GetScriptHookPtr((P), (N));             \
-        if (!(P))                               \
-        {                                       \
-            /* prevent call before init */      \
-            m_pOnFreeScriptLibrary = nullptr;      \
-            UnloadScriptLibrary();              \
-            return SCRIPT_LOAD_ERR_WRONG_API;   \
-        }
-
-    GET_SCRIPT_HOOK_PTR(m_pOnInitScriptLibrary,        "InitScriptLibrary");
-    GET_SCRIPT_HOOK_PTR(m_pOnFreeScriptLibrary,        "FreeScriptLibrary");
-
-    GET_SCRIPT_HOOK_PTR(m_pGetCreatureAI,              "GetCreatureAI");
-    GET_SCRIPT_HOOK_PTR(m_pCreateInstanceData,         "CreateInstanceData");
-
-    GET_SCRIPT_HOOK_PTR(m_pOnGossipHello,              "GossipHello");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOGossipHello,            "GOGossipHello");
-    GET_SCRIPT_HOOK_PTR(m_pOnGossipSelect,             "GossipSelect");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOGossipSelect,           "GOGossipSelect");
-    GET_SCRIPT_HOOK_PTR(m_pOnGossipSelectWithCode,     "GossipSelectWithCode");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOGossipSelectWithCode,   "GOGossipSelectWithCode");
-    GET_SCRIPT_HOOK_PTR(m_pOnQuestAccept,              "QuestAccept");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOQuestAccept,            "GOQuestAccept");
-    GET_SCRIPT_HOOK_PTR(m_pOnItemQuestAccept,          "ItemQuestAccept");
-    GET_SCRIPT_HOOK_PTR(m_pOnQuestRewarded,            "QuestRewarded");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOQuestRewarded,          "GOQuestRewarded");
-    GET_SCRIPT_HOOK_PTR(m_pGetNPCDialogStatus,         "GetNPCDialogStatus");
-    GET_SCRIPT_HOOK_PTR(m_pGetGODialogStatus,          "GetGODialogStatus");
-    GET_SCRIPT_HOOK_PTR(m_pOnGOUse,                    "GOUse");
-    GET_SCRIPT_HOOK_PTR(m_pOnItemUse,                  "ItemUse");
-    GET_SCRIPT_HOOK_PTR(m_pOnAreaTrigger,              "AreaTrigger");
-    GET_SCRIPT_HOOK_PTR(m_pOnProcessEvent,             "ProcessEvent");
-    GET_SCRIPT_HOOK_PTR(m_pOnEffectDummyCreature,      "EffectDummyCreature");
-    GET_SCRIPT_HOOK_PTR(m_pOnEffectDummyGO,            "EffectDummyGameObject");
-    GET_SCRIPT_HOOK_PTR(m_pOnEffectDummyItem,          "EffectDummyItem");
-    GET_SCRIPT_HOOK_PTR(m_pOnEffectScriptEffectCreature, "EffectScriptEffectCreature");
-    GET_SCRIPT_HOOK_PTR(m_pOnAuraDummy,                "AuraDummy");
-
-#   undef GET_SCRIPT_HOOK_PTR
-
-    m_pOnInitScriptLibrary();
     return SCRIPT_LOAD_OK;
 }
 
 void ScriptMgr::UnloadScriptLibrary()
 {
-    if (!m_hScriptLib)
-        return;
 
-    if (m_pOnFreeScriptLibrary)
-        m_pOnFreeScriptLibrary();
-
-    MANGOS_CLOSE_LIBRARY(m_hScriptLib);
-    m_hScriptLib = nullptr;
-
-    m_pOnInitScriptLibrary      = nullptr;
-    m_pOnFreeScriptLibrary      = nullptr;
-
-    m_pGetCreatureAI            = nullptr;
-    m_pCreateInstanceData       = nullptr;
-
-    m_pOnGossipHello            = nullptr;
-    m_pOnGOGossipHello          = nullptr;
-    m_pOnGossipSelect           = nullptr;
-    m_pOnGOGossipSelect         = nullptr;
-    m_pOnGossipSelectWithCode   = nullptr;
-    m_pOnGOGossipSelectWithCode = nullptr;
-    m_pOnQuestAccept            = nullptr;
-    m_pOnGOQuestAccept          = nullptr;
-    m_pOnItemQuestAccept        = nullptr;
-    m_pOnQuestRewarded          = nullptr;
-    m_pOnGOQuestRewarded        = nullptr;
-    m_pGetNPCDialogStatus       = nullptr;
-    m_pGetGODialogStatus        = nullptr;
-    m_pOnGOUse                  = nullptr;
-    m_pOnItemUse                = nullptr;
-    m_pOnAreaTrigger            = nullptr;
-    m_pOnProcessEvent           = nullptr;
-    m_pOnEffectDummyCreature    = nullptr;
-    m_pOnEffectDummyGO          = nullptr;
-    m_pOnEffectDummyItem        = nullptr;
-    m_pOnEffectScriptEffectCreature = nullptr;
-    m_pOnAuraDummy              = nullptr;
 }
+
+void ScriptMgr::LoadDatabase()
+{
+	std::string strSD2DBinfo = SD2Config.GetStringDefault("WorldDatabaseInfo");
+
+	if (strSD2DBinfo.empty())
+	{
+		script_error_log("Missing Scriptdev2 database info from configuration file. Load database aborted.");
+		return;
+	}
+
+	// Initialize connection to DB
+	if (SD2Database.Initialize(strSD2DBinfo.c_str()))
+	{
+		outstring_log("SD2: ScriptDev2 database initialized.");
+		outstring_log("");
+
+		// Extract DB-Name
+		std::string::size_type n = strSD2DBinfo.rfind(';');
+		std::string dbname;
+		if (n != std::string::npos && n + 1 != std::string::npos)
+			dbname = strSD2DBinfo.substr(n + 1);
+		else
+			dbname = "SD2_Database";
+		dbname.append(".script_waypoint");
+		SetExternalWaypointTable(dbname.c_str());
+
+		// Load content
+		// pSystemMgr.LoadVersion(); // currently we are not checking for version; function to be completely removed in the future
+		pSystemMgr.LoadScriptTexts();
+		pSystemMgr.LoadScriptTextsCustom();
+		pSystemMgr.LoadScriptGossipTexts();
+		pSystemMgr.LoadScriptWaypoints();
+	}
+	else
+	{
+		script_error_log("Unable to connect to Database. Load database aborted.");
+		return;
+	}
+
+	SD2Database.HaltDelayThread();
+}
+
+void ScriptMgr::InitScriptLibrary()
+{
+	// ScriptDev2 startup
+	outstring_log("");
+	outstring_log(" MMM  MMM    MM");
+	outstring_log("M  MM M  M  M  M");
+	outstring_log("MM    M   M   M");
+	outstring_log(" MMM  M   M  M");
+	outstring_log("   MM M   M MMMM");
+	outstring_log("MM  M M  M ");
+	outstring_log(" MMM  MMM  http://www.scriptdev2.com");
+	outstring_log("");
+
+	// Get configuration file
+	bool configFailure = false;
+	if (!SD2Config.SetSource(_MANGOSD_CONFIG))
+		configFailure = true;
+	else
+		outstring_log("SD2: Using configuration file %s", _MANGOSD_CONFIG);
+
+	// Set SD2 Error Log File
+	std::string sd2LogFile = SD2Config.GetStringDefault("SD2ErrorLogFile", "SD2Errors.log");
+	setScriptLibraryErrorFile(sd2LogFile.c_str(), "SD2");
+
+	if (configFailure)
+		script_error_log("Unable to open configuration file. Database will be unaccessible. Configuration values will use default.");
+
+	outstring_log("");
+
+	// Load database (must be called after SD2Config.SetSource).
+	LoadDatabase();
+
+	outstring_log("SD2: Loading C++ scripts");
+	BarGoLink bar(1);
+	bar.step();
+	outstring_log("");
+
+	// Resize script ids to needed ammount of assigned ScriptNames (from core)
+	m_scripts.resize(GetScriptIdsCount(), nullptr);
+
+	FillSpellSummary();
+
+	AddScripts();
+
+	// Check existance scripts for all registered by core script names
+	for (uint32 i = 1; i < GetScriptIdsCount(); ++i)
+	{
+		if (!m_scripts[i])
+			script_error_log("No script found for ScriptName '%s'.", GetScriptName(i));
+	}
+
+	outstring_log(">> Loaded %i C++ Scripts.", num_sc_scripts);
+}
+
 
 void ScriptMgr::CollectPossibleEventIds(std::set<uint32>& eventIds)
 {
@@ -2613,4 +2728,143 @@ void SetExternalWaypointTable(char const* tableName)
 bool AddWaypointFromExternal(uint32 entry, int32 pathId, uint32 pointId, float x, float y, float z, float o, uint32 waittime)
 {
     return sWaypointMgr.AddExternalNode(entry, pathId, pointId, x, y, z, o, waittime);
+}
+
+
+DatabaseType SD2Database;
+std::string  strSD2Version;
+
+SystemMgr::SystemMgr()
+{
+}
+
+SystemMgr& SystemMgr::Instance()
+{
+	static SystemMgr pSysMgr;
+	return pSysMgr;
+}
+
+#ifdef WIN32
+#define MANGOS_DLL_EXPORT extern "C" __declspec(dllexport)
+#elif defined( __GNUC__ )
+#define MANGOS_DLL_EXPORT extern "C"
+#else
+#define MANGOS_DLL_EXPORT extern "C" export
+#endif
+
+#ifndef _SD2VERSION
+#define _SD2VERSION "Revision [" SD2_REVISION_NR "] (" REVISION_ID ") " REVISION_DATE " " REVISION_TIME
+#endif
+
+#if PLATFORM == PLATFORM_WINDOWS
+#ifdef _WIN64
+#define _FULLSD2VERSION _SD2VERSION " (Win64)"
+#else
+#define _FULLSD2VERSION _SD2VERSION " (Win32)"
+#endif
+#else
+#define _FULLSD2VERSION _SD2VERSION " (Unix)"
+#endif
+
+void SystemMgr::LoadVersion()
+{
+	// Get Version information
+	QueryResult* pResult = SD2Database.PQuery("SELECT version FROM sd2_db_version LIMIT 1");
+
+	if (pResult)
+	{
+		Field* pFields = pResult->Fetch();
+
+		strSD2Version = pFields[0].GetCppString();
+
+		delete pResult;
+	}
+	else
+		script_error_log("Missing `sd2_db_version` information.");
+
+	// Setup version info and display it
+	if (strSD2Version.empty())
+		strSD2Version.append("ScriptDev2 ");
+
+	strSD2Version.append(_FULLSD2VERSION);
+
+	outstring_log("Loading %s", strSD2Version.c_str());
+	outstring_log("");
+}
+
+void SystemMgr::LoadScriptTexts()
+{
+	outstring_log("SD2: Loading Script Texts...");
+	LoadMangosStrings(SD2Database, "script_texts", TEXT_SOURCE_TEXT_START, TEXT_SOURCE_TEXT_END, true);
+}
+
+void SystemMgr::LoadScriptTextsCustom()
+{
+	outstring_log("SD2: Loading Custom Texts...");
+	LoadMangosStrings(SD2Database, "custom_texts", TEXT_SOURCE_CUSTOM_START, TEXT_SOURCE_CUSTOM_END, true);
+}
+
+void SystemMgr::LoadScriptGossipTexts()
+{
+	outstring_log("SD2: Loading Gossip Texts...");
+	LoadMangosStrings(SD2Database, "gossip_texts", TEXT_SOURCE_GOSSIP_START, TEXT_SOURCE_GOSSIP_END);
+}
+
+void SystemMgr::LoadScriptWaypoints()
+{
+	uint64 uiCreatureCount = 0;
+
+	// Load Waypoints
+	QueryResult* pResult = SD2Database.PQuery("SELECT COUNT(entry) FROM script_waypoint GROUP BY entry");
+	if (pResult)
+	{
+		uiCreatureCount = pResult->GetRowCount();
+		delete pResult;
+	}
+
+	outstring_log("SD2: Loading Script Waypoints for " UI64FMTD " creature(s)...", uiCreatureCount);
+
+	pResult = SD2Database.PQuery("SELECT entry, pointid, location_x, location_y, location_z, waittime FROM script_waypoint ORDER BY entry, pointid");
+
+	if (pResult)
+	{
+		BarGoLink bar(pResult->GetRowCount());
+		uint32 uiNodeCount = 0;
+
+		do
+		{
+			bar.step();
+			Field* pFields = pResult->Fetch();
+
+			uint32 uiEntry = pFields[0].GetUInt32();
+			int32 pathId = 1; // pFields[X].GetInt32();
+			uint32 pointId = pFields[1].GetUInt32();
+			uint32 delay = pFields[5].GetUInt32();
+
+			CreatureInfo const* pCInfo = GetCreatureTemplateStore(uiEntry);
+			if (!pCInfo)
+			{
+				error_db_log("SD2: DB table script_waypoint has waypoint for nonexistent creature entry %u", uiEntry);
+				continue;
+			}
+
+
+			if (AddWaypointFromExternal(uiEntry, pathId, pointId, pFields[2].GetFloat(), pFields[3].GetFloat(), pFields[4].GetFloat(), 100, delay))
+				m_pathInfo[uiEntry][pathId].lastWaypoint = pointId;
+
+			++uiNodeCount;
+		} while (pResult->NextRow());
+
+		delete pResult;
+
+		outstring_log("");
+		outstring_log(">> Loaded %u Script Waypoint nodes.", uiNodeCount);
+	}
+	else
+	{
+		BarGoLink bar(1);
+		bar.step();
+		outstring_log("");
+		outstring_log(">> Loaded 0 Script Waypoints. DB table `script_waypoint` is empty.");
+	}
 }

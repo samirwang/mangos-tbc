@@ -22,6 +22,7 @@
 #include "Common.h"
 #include "ObjectGuid.h"
 #include "DBCEnums.h"
+#include "Config\Config.h"
 
 #include <atomic>
 
@@ -553,6 +554,9 @@ class ScriptMgr
         void LoadAreaTriggerScripts();
         void LoadEventIdScripts();
 
+		void InitScriptLibrary();
+		void LoadDatabase();
+
         uint32 GetAreaTriggerScriptId(uint32 triggerId) const;
         uint32 GetEventIdScriptId(uint32 eventId) const;
 
@@ -618,34 +622,7 @@ class ScriptMgr
         // atomic op counter for active scripts amount
         std::atomic_long m_scheduledScripts;
 
-        void (MANGOS_IMPORT* m_pOnInitScriptLibrary)();
-        void (MANGOS_IMPORT* m_pOnFreeScriptLibrary)();
-
-        CreatureAI* (MANGOS_IMPORT* m_pGetCreatureAI)(Creature*);
-        InstanceData* (MANGOS_IMPORT* m_pCreateInstanceData)(Map*);
-
-        bool (MANGOS_IMPORT* m_pOnGossipHello)(Player*, Creature*);
-        bool (MANGOS_IMPORT* m_pOnGOGossipHello)(Player*, GameObject*);
-        bool (MANGOS_IMPORT* m_pOnGossipSelect)(Player*, Creature*, uint32, uint32);
-        bool (MANGOS_IMPORT* m_pOnGOGossipSelect)(Player*, GameObject*, uint32, uint32);
-        bool (MANGOS_IMPORT* m_pOnGossipSelectWithCode)(Player*, Creature*, uint32, uint32, const char*);
-        bool (MANGOS_IMPORT* m_pOnGOGossipSelectWithCode)(Player*, GameObject*, uint32, uint32, const char*);
-        bool (MANGOS_IMPORT* m_pOnQuestAccept)(Player*, Creature*, Quest const*);
-        bool (MANGOS_IMPORT* m_pOnGOQuestAccept)(Player*, GameObject*, Quest const*);
-        bool (MANGOS_IMPORT* m_pOnItemQuestAccept)(Player*, Item*, Quest const*);
-        bool (MANGOS_IMPORT* m_pOnQuestRewarded)(Player*, Creature*, Quest const*);
-        bool (MANGOS_IMPORT* m_pOnGOQuestRewarded)(Player*, GameObject*, Quest const*);
-        uint32(MANGOS_IMPORT* m_pGetNPCDialogStatus)(const Player*, const Creature*);
-        uint32(MANGOS_IMPORT* m_pGetGODialogStatus)(const Player*, const GameObject*);
-        bool (MANGOS_IMPORT* m_pOnGOUse)(Player*, GameObject*);
-        bool (MANGOS_IMPORT* m_pOnItemUse)(Player*, Item*, SpellCastTargets const&);
-        bool (MANGOS_IMPORT* m_pOnAreaTrigger)(Player*, AreaTriggerEntry const*);
-        bool (MANGOS_IMPORT* m_pOnProcessEvent)(uint32, Object*, Object*, bool);
-        bool (MANGOS_IMPORT* m_pOnEffectDummyCreature)(Unit*, uint32, SpellEffectIndex, Creature*, ObjectGuid);
-        bool (MANGOS_IMPORT* m_pOnEffectDummyGO)(Unit*, uint32, SpellEffectIndex, GameObject*, ObjectGuid);
-        bool (MANGOS_IMPORT* m_pOnEffectDummyItem)(Unit*, uint32, SpellEffectIndex, Item*, ObjectGuid);
-        bool (MANGOS_IMPORT* m_pOnEffectScriptEffectCreature)(Unit*, uint32, SpellEffectIndex, Creature*, ObjectGuid);
-        bool (MANGOS_IMPORT* m_pOnAuraDummy)(Aura const*, bool);
+		Config SD2Config;
 };
 
 // Starters for events
@@ -660,5 +637,147 @@ MANGOS_DLL_SPEC char const* GetScriptName(uint32 id);
 MANGOS_DLL_SPEC uint32 GetScriptIdsCount();
 MANGOS_DLL_SPEC void SetExternalWaypointTable(char const* tableName);
 MANGOS_DLL_SPEC bool AddWaypointFromExternal(uint32 entry, int32 pathId, uint32 pointId, float x, float y, float z, float o, uint32 waittime);
+
+// *********************************************************
+// ************** Some defines used globally ***************
+
+// Basic defines
+#define VISIBLE_RANGE       (166.0f)                        // MAX visible range (size of grid)
+#define DEFAULT_TEXT        "<ScriptDev2 Text Entry Missing!>"
+
+/* Escort Factions
+* TODO: find better namings and definitions.
+* N=Neutral, A=Alliance, H=Horde.
+* NEUTRAL or FRIEND = Hostility to player surroundings (not a good definition)
+* ACTIVE or PASSIVE = Hostility to environment surroundings.
+*/
+enum EscortFaction
+{
+	FACTION_ESCORT_A_NEUTRAL_PASSIVE = 10,
+	FACTION_ESCORT_H_NEUTRAL_PASSIVE = 33,
+	FACTION_ESCORT_N_NEUTRAL_PASSIVE = 113,
+
+	FACTION_ESCORT_A_NEUTRAL_ACTIVE = 231,
+	FACTION_ESCORT_H_NEUTRAL_ACTIVE = 232,
+	FACTION_ESCORT_N_NEUTRAL_ACTIVE = 250,
+
+	FACTION_ESCORT_N_FRIEND_PASSIVE = 290,
+	FACTION_ESCORT_N_FRIEND_ACTIVE = 495,
+
+	FACTION_ESCORT_A_PASSIVE = 774,
+	FACTION_ESCORT_H_PASSIVE = 775,
+
+	FACTION_ESCORT_N_ACTIVE = 1986,
+	FACTION_ESCORT_H_ACTIVE = 2046
+};
+
+// *********************************************************
+// ************* Some structures used globally *************
+
+struct Script
+{
+	Script() :
+		pGossipHello(nullptr), pGossipHelloGO(nullptr), pGossipSelect(nullptr), pGossipSelectGO(nullptr),
+		pGossipSelectWithCode(nullptr), pGossipSelectGOWithCode(nullptr),
+		pDialogStatusNPC(nullptr), pDialogStatusGO(nullptr),
+		pQuestAcceptNPC(nullptr), pQuestAcceptGO(nullptr), pQuestAcceptItem(nullptr),
+		pQuestRewardedNPC(nullptr), pQuestRewardedGO(nullptr),
+		pGOUse(nullptr), pItemUse(nullptr), pAreaTrigger(nullptr), pProcessEventId(nullptr),
+		pEffectDummyNPC(nullptr), pEffectDummyGO(nullptr), pEffectDummyItem(nullptr), pEffectScriptEffectNPC(nullptr),
+		pEffectAuraDummy(nullptr), GetAI(nullptr), GetInstanceData(nullptr)
+	{}
+
+	std::string Name;
+
+	bool(*pGossipHello)(Player*, Creature*);
+	bool(*pGossipHelloGO)(Player*, GameObject*);
+	bool(*pGossipSelect)(Player*, Creature*, uint32, uint32);
+	bool(*pGossipSelectGO)(Player*, GameObject*, uint32, uint32);
+	bool(*pGossipSelectWithCode)(Player*, Creature*, uint32, uint32, const char*);
+	bool(*pGossipSelectGOWithCode)(Player*, GameObject*, uint32, uint32, const char*);
+	uint32(*pDialogStatusNPC)(const Player*, const Creature*);
+	uint32(*pDialogStatusGO)(const Player*, const GameObject*);
+	bool(*pQuestAcceptNPC)(Player*, Creature*, Quest const*);
+	bool(*pQuestAcceptGO)(Player*, GameObject*, Quest const*);
+	bool(*pQuestAcceptItem)(Player*, Item*, Quest const*);
+	bool(*pQuestRewardedNPC)(Player*, Creature*, Quest const*);
+	bool(*pQuestRewardedGO)(Player*, GameObject*, Quest const*);
+	bool(*pGOUse)(Player*, GameObject*);
+	bool(*pItemUse)(Player*, Item*, SpellCastTargets const&);
+	bool(*pAreaTrigger)(Player*, AreaTriggerEntry const*);
+	bool(*pProcessEventId)(uint32, Object*, Object*, bool);
+	bool(*pEffectDummyNPC)(Unit*, uint32, SpellEffectIndex, Creature*, ObjectGuid);
+	bool(*pEffectDummyGO)(Unit*, uint32, SpellEffectIndex, GameObject*, ObjectGuid);
+	bool(*pEffectDummyItem)(Unit*, uint32, SpellEffectIndex, Item*, ObjectGuid);
+	bool(*pEffectScriptEffectNPC)(Unit*, uint32, SpellEffectIndex, Creature*, ObjectGuid);
+	bool(*pEffectAuraDummy)(const Aura*, bool);
+
+	CreatureAI* (*GetAI)(Creature*);
+	InstanceData* (*GetInstanceData)(Map*);
+
+	void RegisterSelf(bool bReportError = true);
+};
+
+// *********************************************************
+// ************* Some functions used globally **************
+
+// Generic scripting text function
+void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget = nullptr);
+void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map* pMap, Creature* pCreatureSource = nullptr, Unit* pTarget = nullptr);
+
+
+extern DatabaseType SD2Database;
+extern std::string  strSD2Version;                          // version info: database entry and revision
+
+#define TEXT_SOURCE_RANGE -1000000                          // the amount of entries each text source has available
+
+#define TEXT_SOURCE_TEXT_START      TEXT_SOURCE_RANGE
+#define TEXT_SOURCE_TEXT_END        TEXT_SOURCE_RANGE*2 + 1
+
+#define TEXT_SOURCE_CUSTOM_START    TEXT_SOURCE_RANGE*2
+#define TEXT_SOURCE_CUSTOM_END      TEXT_SOURCE_RANGE*3 + 1
+
+#define TEXT_SOURCE_GOSSIP_START    TEXT_SOURCE_RANGE*3
+#define TEXT_SOURCE_GOSSIP_END      TEXT_SOURCE_RANGE*4 + 1
+
+#define pSystemMgr SystemMgr::Instance()
+
+struct PathInformation
+{
+	uint32 lastWaypoint;
+};
+
+class SystemMgr
+{
+public:
+	SystemMgr();
+	~SystemMgr() {}
+
+	static SystemMgr& Instance();
+
+	typedef std::map < uint32 /*entry*/, std::map < int32 /*pathId*/, PathInformation > > EntryPathInfo;
+
+	// Database
+	void LoadVersion();
+	void LoadScriptTexts();
+	void LoadScriptTextsCustom();
+	void LoadScriptGossipTexts();
+	void LoadScriptWaypoints();
+
+	PathInformation const* GetPathInfo(uint32 entry, int32 pathId) const
+	{
+		EntryPathInfo::const_iterator findEntry = m_pathInfo.find(entry);
+		if (findEntry == m_pathInfo.end())
+			return nullptr;
+		std::map<int32, PathInformation>::const_iterator findPath = findEntry->second.find(pathId);
+		if (findPath == findEntry->second.end())
+			return nullptr;
+
+		return &(findPath->second);
+	}
+
+private:
+	EntryPathInfo m_pathInfo;
+};
 
 #endif
