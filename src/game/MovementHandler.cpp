@@ -276,6 +276,9 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
     if (opcode == MSG_MOVE_FALL_LAND && plMover && !plMover->IsTaxiFlying())
         plMover->HandleFall(movementInfo);
 
+    if (plMover)
+        plMover->HandleAntiCheat(movementInfo, opcode);
+
     /* process position-change */
     HandleMoverRelocation(movementInfo);
 

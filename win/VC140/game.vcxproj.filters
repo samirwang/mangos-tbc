@@ -40,6 +40,9 @@
     <Filter Include="AI">
       <UniqueIdentifier>{fec503db-493c-43c0-96dd-8c0321d71407}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Anticheat">
+      <UniqueIdentifier>{0496eb60-ebdc-474d-85c7-775c3affb8fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\game\AccountMgr.cpp">
@@ -529,6 +532,42 @@
     <ClCompile Include="..\..\src\game\AI\GuardianAI.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_fly.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_gravity.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_jump.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_nofall.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_speed.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_teleport.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_test.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_tptoplane.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_wallclimb.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_walljump.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\game\AntiCheat_waterwalking.cpp">
+      <Filter>Anticheat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\game\AccountMgr.h">
@@ -1008,6 +1047,42 @@
     </ClInclude>
     <ClInclude Include="..\..\src\game\AI\GuardianAI.h">
       <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_fly.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_gravity.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_jump.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_nofall.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_speed.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_teleport.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_test.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_tptoplane.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_wallclimb.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_walljump.h">
+      <Filter>Anticheat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\game\AntiCheat_waterwalking.h">
+      <Filter>Anticheat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

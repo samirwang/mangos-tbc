@@ -1,0 +1,123 @@
+#include "AntiCheat_speed.h"
+#include "Player.h"
+#include "World.h"
+#include "Map.h"
+#include "MapManager.h"
+
+AntiCheat_speed::AntiCheat_speed(Player* player) : AntiCheat(player)
+{
+}
+
+bool AntiCheat_speed::HandleMovement(MovementInfo& moveInfo, Opcodes opcode, bool cheat)
+{
+    m_MoveInfo[0] = moveInfo; // moveInfo shouldn't be used anymore then assigning it in the beginning.
+
+    float speedrounding = 100.f;
+
+    bool skipcheat = false;
+
+    if (!Initialized())
+    {
+        m_MoveInfo[1] = m_MoveInfo[0];
+        m_MoveInfo[2] = m_MoveInfo[0];
+
+        m_Knockback = false;
+        m_FlySpeed = 0.f;
+
+        return false;
+    }
+
+    UpdateFlySpeed();
+
+    if (opcode == MSG_MOVE_FALL_LAND || !isFalling(m_MoveInfo[0]))
+        m_Knockback = false;
+
+    if (GetDiff() < 50 || GetDistance3D() < 0.5f)
+        return false;
+
+    bool onTransport = isTransport(m_MoveInfo[0]) && isTransport(m_MoveInfo[1]);
+
+    float allowedspeed = GetAllowedSpeed();
+
+    bool threed = isFlying() || isSwimming();
+
+    float travelspeed = floor(((onTransport ? GetTransportDist(threed) : GetDistance(threed)) / GetVirtualDiffInSec()) * speedrounding) / speedrounding;
+
+    bool cheating = false;
+
+    if (isFalling())
+    {
+        if (m_MoveInfo[0].GetJumpInfo().xyspeed > allowedspeed)
+            cheating = true;
+    }
+    else
+    {
+        if (travelspeed > allowedspeed)
+            cheating = true;
+    }
+
+    if (isTransport(m_MoveInfo[0]) && !verifyTransportCoords(m_MoveInfo[0]))
+        cheating = false;
+
+    if (!cheat && cheating)
+    {
+        // if (m_Player->GetSession()->GetSecurity() > SEC_PLAYER)
+        // {
+        //     m_Player->BoxChat << "----------------------------" << "\n";
+        //     m_Player->BoxChat << "xyspeed: " << m_MoveInfo[0].GetJumpInfo().xyspeed << "\n";
+        //     m_Player->BoxChat << "velocity: " << m_MoveInfo[0].GetJumpInfo().velocity << "\n";
+        //     m_Player->BoxChat << "allowedspeed: " << allowedspeed << "\n";
+        //     m_Player->BoxChat << "travelspeed: " << travelspeed << "\n";
+        //     m_Player->BoxChat << "SPEEDCHEAT" << "\n";
+        // }
+
+        const Position* p = m_MoveInfo[2].GetPos();
+
+        m_Player->TeleportTo(m_Player->GetMapId(), p->x, p->y, p->z, p->o, TELE_TO_NOT_LEAVE_COMBAT);
+
+        return SetOldMoveInfo(true);
+    }
+    else
+        m_MoveInfo[2] = m_MoveInfo[0];
+
+    return SetOldMoveInfo(false);
+}
+
+void AntiCheat_speed::HandleKnockBack(float angle, float horizontalSpeed, float verticalSpeed)
+{
+    m_Knockback = true;
+    m_KnockbackSpeed = horizontalSpeed;
+}
+
+void AntiCheat_speed::HandleRelocate(float x, float y, float z, float o)
+{
+    if (m_Player->IsTaxiFlying())
+        AntiCheat::HandleRelocate(x, y, z, o);
+}
+
+void AntiCheat_speed::UpdateFlySpeed()
+{
+    bool hasFlightAuras = false;
+
+    bool back = m_MoveInfo[0].HasMovementFlag(MOVEFLAG_BACKWARD) && m_MoveInfo[1].HasMovementFlag(MOVEFLAG_BACKWARD);
+
+    for (uint8 i = SPELL_AURA_MOD_FLIGHT_SPEED; i <= SPELL_AURA_MOD_FLIGHT_SPEED_MOUNTED_NOT_STACKING; ++i)
+        if (m_Player->HasAuraType(AuraType(i)))
+            hasFlightAuras = true;
+
+    hasFlightAuras = hasFlightAuras || m_Player->HasAuraType(SPELL_AURA_FLY);
+
+    if (hasFlightAuras && isFlying())
+        m_FlySpeed = m_Player->GetSpeed(back ? MOVE_FLIGHT_BACK : MOVE_FLIGHT);
+    else if (!isFlying())
+        m_FlySpeed = 0.f;
+}
+
+float AntiCheat_speed::GetAllowedSpeed()
+{
+    float allowedspeed = GetSpeed();
+    allowedspeed = m_Knockback ? std::max(allowedspeed, GetKnockBackSpeed()) : allowedspeed;
+    allowedspeed = isFlying() ? std::max(allowedspeed, GetFlySpeed()) : allowedspeed;
+
+    return allowedspeed;
+}

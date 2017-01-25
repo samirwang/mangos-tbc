@@ -43,6 +43,31 @@ include_directories(
   ${CMAKE_BINARY_DIR}/src/shared
 )
 
+set(SRC_GRP_ANTICHEAT
+    AntiCheat.cpp
+    AntiCheat_fly.cpp
+    AntiCheat_fly.h
+    AntiCheat_gravity.cpp
+    AntiCheat_gravity.h
+    AntiCheat.h
+    AntiCheat_jump.cpp
+    AntiCheat_jump.h
+    AntiCheat_speed.cpp
+    AntiCheat_speed.h
+    AntiCheat_teleport.cpp
+    AntiCheat_teleport.h
+    AntiCheat_test.cpp
+    AntiCheat_test.h
+    AntiCheat_tptoplane.cpp
+    AntiCheat_tptoplane.h
+    AntiCheat_wallclimb.cpp
+    AntiCheat_wallclimb.h
+    AntiCheat_walljump.cpp
+    AntiCheat_walljump.h
+    AntiCheat_waterwalking.cpp
+    AntiCheat_waterwalking.h
+)
+
 set(SRC_GRP_AI
     AI/AggressorAI.cpp
     AI/AggressorAI.h
@@ -405,6 +430,7 @@ set(SRC_GRP_WORLD_HANDLERS
 )
 
 set(LIBRARY_SRCS
+    ${SRC_GRP_ANTICHEAT}
     ${SRC_GRP_AI}
     ${SRC_GRP_AHBOT}
     ${SRC_GRP_BATTLEGROUND}
@@ -420,6 +446,11 @@ set(LIBRARY_SRCS
     ${SRC_GRP_WORLD_HANDLERS}
     pchdef.cpp
     pchdef.h
+)
+
+source_group("Anticheat"
+  FILES
+    ${SRC_GRP_ANTICHEAT}
 )
 
 source_group("AI"

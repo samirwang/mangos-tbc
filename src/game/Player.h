@@ -908,6 +908,8 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
+class AntiCheat;
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
         friend class WorldSession;
@@ -917,6 +919,25 @@ class MANGOS_DLL_SPEC Player : public Unit
         explicit Player(WorldSession* session);
         ~Player();
 
+    // AntiCheat
+public:
+    typedef std::vector<AntiCheat*> AntiCheatStorage;
+
+    bool HandleAntiCheat(MovementInfo& moveInfo, Opcodes opcode);
+    void HandleKnockBack(float angle, float horizontalSpeed, float verticalSpeed);
+    void HandleRelocate(float x, float y, float z, float o);
+    void HandleTeleport(uint32 map, float x, float y, float z, float o);
+    void HandleUpdate(uint32 update_diff, uint32 p_time);
+    void AddAntiCheatModule(AntiCheat* antiCheat);
+    void SetGMFly(bool value) { m_GMFly = value; }
+    bool GetGMFly() { return m_GMFly; }
+    bool AddAura(uint32 spellid);
+private:
+    AntiCheatStorage m_AntiCheatStorage;
+    bool m_GMFly;
+    // !AntiCheat
+
+    public:
         void CleanupsBeforeDelete() override;
 
         static UpdateMask updateVisualBits;

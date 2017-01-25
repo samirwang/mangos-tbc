@@ -63,6 +63,18 @@
 #include "SQLStorages.h"
 #include "LootMgr.h"
 
+#include "AntiCheat.h"
+#include "AntiCheat_speed.h"
+#include "AntiCheat_teleport.h"
+#include "AntiCheat_fly.h"
+#include "AntiCheat_jump.h"
+#include "AntiCheat_gravity.h"
+#include "AntiCheat_waterwalking.h"
+#include "AntiCheat_wallclimb.h"
+#include "AntiCheat_walljump.h"
+#include "AntiCheat_tptoplane.h"
+#include "AntiCheat_test.h"
+
 #include <cmath>
 
 #define ZONE_UPDATE_INTERVAL (1*IN_MILLISECONDS)
@@ -389,8 +401,96 @@ void TradeData::SetAccepted(bool state, bool crosssend /*= false*/)
 
 UpdateMask Player::updateVisualBits;
 
+bool Player::HandleAntiCheat(MovementInfo& moveInfo, Opcodes opcode)
+{
+    bool cheat = false;
+
+    for (auto& i : m_AntiCheatStorage)
+        if (i->HandleMovement(moveInfo, opcode, cheat))
+            cheat = true;
+
+    return cheat;
+}
+
+void Player::HandleKnockBack(float angle, float horizontalSpeed, float verticalSpeed)
+{
+    for (auto& i : m_AntiCheatStorage)
+        i->HandleKnockBack(angle, horizontalSpeed, verticalSpeed);
+}
+
+void Player::HandleRelocate(float x, float y, float z, float o)
+{
+    for (auto& i : m_AntiCheatStorage)
+        i->HandleRelocate(x, y, z, o);
+}
+
+void Player::HandleTeleport(uint32 map, float x, float y, float z, float o)
+{
+    for (auto& i : m_AntiCheatStorage)
+        i->HandleTeleport(map, x, y, z, o);
+}
+
+void Player::HandleUpdate(uint32 update_diff, uint32 p_time)
+{
+    for (auto& i : m_AntiCheatStorage)
+        i->HandleUpdate(update_diff, p_time);
+}
+
+void Player::AddAntiCheatModule(AntiCheat* antiCheat)
+{
+    m_AntiCheatStorage.push_back(antiCheat);
+}
+
+bool Player::AddAura(uint32 spellid)
+{
+    SpellEntry const* spellInfo = sSpellTemplate.LookupEntry<SpellEntry>(spellid);
+    if (!spellInfo)
+        return false;
+
+    if (!IsSpellAppliesAura(spellInfo, (1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) &&
+        !IsSpellHaveEffect(spellInfo, SPELL_EFFECT_PERSISTENT_AREA_AURA))
+    {
+        return false;
+    }
+
+    SpellAuraHolder* holder = CreateSpellAuraHolder(spellInfo, this, this);
+
+    for (uint32 i = 0; i < MAX_EFFECT_INDEX; ++i)
+    {
+        uint8 eff = spellInfo->Effect[i];
+        if (eff >= TOTAL_SPELL_EFFECTS)
+            continue;
+        if (IsAreaAuraEffect(eff) ||
+            eff == SPELL_EFFECT_APPLY_AURA ||
+            eff == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+        {
+            Aura* aur = CreateAura(spellInfo, SpellEffectIndex(i), nullptr, holder, this);
+            holder->AddAura(aur, SpellEffectIndex(i));
+        }
+    }
+
+    AddSpellAuraHolder(holder);
+
+    return true;
+}
+
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
+    // AntiCheat
+    new AntiCheat_speed(this);
+    new AntiCheat_teleport(this);
+    new AntiCheat_fly(this);
+    new AntiCheat_jump(this);
+    new AntiCheat_gravity(this);
+    new AntiCheat_waterwalking(this);
+    new AntiCheat_wallclimb(this);
+    new AntiCheat_walljump(this);
+    new AntiCheat_tptoplane(this);
+    //new AntiCheat_test(this);
+
+    m_GMFly = false;
+    // !AntiCheat
+
     m_transport = nullptr;
 
     m_speakTime = 0;
@@ -563,6 +663,9 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_
 
 Player::~Player()
 {
+    for (auto& i : m_AntiCheatStorage)
+        delete i;
+
     CleanupsBeforeDelete();
 
     // it must be unloaded already in PlayerLogout and accessed only for loggined player
@@ -1841,6 +1944,9 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         else                                                // !map->CanEnter(this)
             return false;
     }
+
+    HandleTeleport(mapid, x, y, z, orientation);
+
     return true;
 }
 
@@ -20595,6 +20701,8 @@ void Player::KnockBackFrom(Unit* target, float horizontalSpeed, float verticalSp
 {
     float angle = this == target ? GetOrientation() + M_PI_F : target->GetAngle(this);
     GetSession()->SendKnockBack(angle, horizontalSpeed, verticalSpeed);
+
+    HandleKnockBack(angle, horizontalSpeed, verticalSpeed);
 }
 
 AreaLockStatus Player::GetAreaTriggerLockStatus(AreaTrigger const* at, uint32& miscRequirement)

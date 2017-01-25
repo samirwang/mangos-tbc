@@ -981,6 +981,9 @@ void WorldObject::Relocate(float x, float y, float z, float orientation)
 
     if (isType(TYPEMASK_UNIT))
         ((Unit*)this)->m_movementInfo.ChangePosition(x, y, z, orientation);
+
+    if (isType(TYPEMASK_PLAYER))
+        ((Player*)this)->HandleRelocate(x, y, z, orientation);
 }
 
 void WorldObject::Relocate(float x, float y, float z)
@@ -991,6 +994,9 @@ void WorldObject::Relocate(float x, float y, float z)
 
     if (isType(TYPEMASK_UNIT))
         ((Unit*)this)->m_movementInfo.ChangePosition(x, y, z, GetOrientation());
+
+    if (isType(TYPEMASK_PLAYER))
+        ((Player*)this)->HandleRelocate(x, y, z, GetOrientation());
 }
 
 void WorldObject::SetOrientation(float orientation)
