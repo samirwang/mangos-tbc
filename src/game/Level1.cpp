@@ -1555,6 +1555,14 @@ bool ChatHandler::HandleTeleCommand(char* args)
     return HandleGoHelper(_player, tele->mapId, tele->position_x, tele->position_y, &tele->position_z, &tele->orientation);
 }
 
+bool ChatHandler::HandleFlightPathCommand(char* args)
+{
+    m_session->GetPlayer()->GetMotionMaster()->MoveCustomPath();
+
+    return true;
+}
+
+
 bool ChatHandler::HandleLookupAreaCommand(char* args)
 {
     if (!*args)

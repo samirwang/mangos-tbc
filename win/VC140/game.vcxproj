@@ -395,6 +395,7 @@
     <ClCompile Include="..\..\src\game\Creature.cpp" />
     <ClCompile Include="..\..\src\game\CreatureLinkingMgr.cpp" />
     <ClCompile Include="..\..\src\game\Custom.cpp" />
+    <ClCompile Include="..\..\src\game\CustomFlightPathMovementGenerator.cpp" />
     <ClCompile Include="..\..\src\game\DBCStores.cpp" />
     <ClCompile Include="..\..\src\game\debugcmds.cpp" />
     <ClCompile Include="..\..\src\game\DuelHandler.cpp" />
@@ -576,6 +577,7 @@
     <ClInclude Include="..\..\src\game\Creature.h" />
     <ClInclude Include="..\..\src\game\CreatureLinkingMgr.h" />
     <ClInclude Include="..\..\src\game\Custom.h" />
+    <ClInclude Include="..\..\src\game\CustomFlightPathMovementGenerator.h" />
     <ClInclude Include="..\..\src\game\DBCEnums.h" />
     <ClInclude Include="..\..\src\game\DBCfmt.h" />
     <ClInclude Include="..\..\src\game\DBCStores.h" />

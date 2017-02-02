@@ -25,6 +25,7 @@
 #include "TargetedMovementGenerator.h"
 #include "WaypointMovementGenerator.h"
 #include "RandomMovementGenerator.h"
+#include "CustomFlightPathMovementGenerator.h"
 #include "movement/MoveSpline.h"
 #include "movement/MoveSplineInit.h"
 #include "Map.h"
@@ -417,6 +418,12 @@ void MotionMaster::MoveTaxiFlight(uint32 path, uint32 pathnode)
         sLog.outError("%s attempt taxi to (Path %u node %u)",
                       m_owner->GetGuidStr().c_str(), path, pathnode);
     }
+}
+
+void MotionMaster::MoveCustomPath()
+{
+    CustomFlightPathMovementGenerator* mgen = new CustomFlightPathMovementGenerator();
+    Mutate(mgen);
 }
 
 void MotionMaster::MoveDistract(uint32 timer)
