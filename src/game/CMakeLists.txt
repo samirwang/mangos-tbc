@@ -71,6 +71,8 @@ set(SRC_GRP_CUSTOM
     AntiCheat_waterwalking.h
     CPlayer.cpp
     CPlayer.h
+    CustomFlightPathMovementGenerator.cpp
+    CustomFlightPathMovementGenerator.h
 )
 
 set(SRC_GRP_AI
