@@ -9,6 +9,8 @@ public:
     Custom();
     ~Custom();
 
+    void LoadFlightPaths();
+
     uint32 GetAutoItemPrice(uint32 itemid);
 };
 

@@ -1,5 +1,6 @@
 #include "Custom.h"
 #include "ObjectMgr.h"
+#include "CustomFlightPathMovementGenerator.h"
 
 Custom::Custom()
 {
@@ -7,6 +8,11 @@ Custom::Custom()
 
 Custom::~Custom()
 {
+}
+
+void Custom::LoadFlightPaths()
+{
+
 }
 
 uint32 Custom::GetAutoItemPrice(uint32 itemid)

@@ -73,6 +73,8 @@ set(SRC_GRP_CUSTOM
     CPlayer.h
     CustomFlightPathMovementGenerator.cpp
     CustomFlightPathMovementGenerator.h
+    Custom.cpp
+    Custom.h
 )
 
 set(SRC_GRP_AI

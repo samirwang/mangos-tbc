@@ -83,12 +83,5 @@ void CustomFlightPathMovementGenerator::Reset(Player& player)
 
 bool CustomFlightPathMovementGenerator::Update(Player& player, const uint32& /*diff*/)
 {
-    uint32 curpoint = (uint32)player.movespline->currentPathIdx();
-    uint32 totpoint = (uint32)m_Nodes.size();
-
-    //player.ToCPlayer()->BoxChat << "Finalized: " << (player.movespline->Finalized() ? "true" : "false") << "\n";
-    //player.ToCPlayer()->BoxChat << "curpoint: " << curpoint << "\n";
-    //player.ToCPlayer()->BoxChat << "totpoint: " << totpoint << "\n";
-
     return !player.movespline->Finalized();
 }
