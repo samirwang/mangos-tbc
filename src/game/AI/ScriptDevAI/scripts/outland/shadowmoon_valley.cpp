@@ -1663,6 +1663,7 @@ struct npc_shadowlord_deathwailAI : public ScriptedAI
         }
 
         if (Player* player = m_creature->GetMap()->GetPlayer(m_playerGuid)) // can find player
+        {
             if (Group* group = player->GetGroup()) // player in group
             {
                 for (GroupReference* ref = group->GetFirstMember(); ref != nullptr; ref = ref->next())
@@ -1677,6 +1678,7 @@ struct npc_shadowlord_deathwailAI : public ScriptedAI
                 if (player->isAlive() && m_cHOFVisualTrigger && m_cHOFVisualTrigger->IsWithinDistInMap(player, MAX_PLAYER_DISTANCE))
                     return true;
             }
+        }
 
         return false;
     }
