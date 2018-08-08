@@ -1308,6 +1308,8 @@ struct npc_draenei_tomb_guardian : public ScriptedAI
             {
                 ResetEvent();
             }
+            default:
+                break;
         }
     }
 

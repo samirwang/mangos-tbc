@@ -2323,6 +2323,8 @@ Unit* Creature::SelectAttackingTarget(AttackingTarget target, uint32 position, S
                 std::advance(itr2, position);
             return *itr2;
         }
+        default:
+            break;
     }
 
     return nullptr;
@@ -2361,6 +2363,8 @@ void Creature::SelectAttackingTargets(std::vector<Unit*>& selectedTargets, Attac
             }
             break;
         }
+        default:
+            break;
     }
 }
 
