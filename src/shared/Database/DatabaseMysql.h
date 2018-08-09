@@ -25,9 +25,7 @@
 #include "Database.h"
 #include "Policies/Singleton.h"
 
-#ifdef _WIN32
-#include <mysql/mysql.h>
-#elif __APPLE__
+#if defined(_WIN32) || defined(__APPLE__)
 #include <mysql/mysql.h>
 #else
 #include <mysql.h>
