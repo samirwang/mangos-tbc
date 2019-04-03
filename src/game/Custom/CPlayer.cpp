@@ -4,6 +4,8 @@
 #include "Spells/SpellAuras.h"
 #include "Spells/SpellMgr.h"
 #include "Spells/Spell.h"
+#include "Globals/ObjectMgr.h"
+#include "World/World.h"
 #include "AntiCheat/AntiCheat.h"
 #include "AntiCheat/AntiCheat_speed.h"
 #include "AntiCheat/AntiCheat_teleport.h"
@@ -22,17 +24,28 @@
 
 CPlayer::CPlayer(WorldSession* session) : Player(session)
 {
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_speed(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_teleport(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_fly(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_jump(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_gravity(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_waterwalking(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_wallclimb(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_walljump(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_tptoplane(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_nofall(this)));
-    antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_time(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_SPEEDCHEAT))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_speed(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_TELEPORT))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_teleport(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_FLY))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_fly(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_JUMP))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_jump(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_GRAVITY))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_gravity(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_WATERWALKING))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_waterwalking(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_WALLCLIMBING))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_wallclimb(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_WALLJUMPING))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_walljump(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_TELE2PLANE))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_tptoplane(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_NOFALL))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_nofall(this)));
+    if (sWorld.getConfig(CONFIG_BOOL_ANTICHEAT_TIME))
+        antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_time(this)));
     //antiCheatStorage.push_back(AntiCheatPtr(new AntiCheat_test(this)));
 
     m_GMFly = false;
@@ -148,4 +161,128 @@ bool CPlayer::AddAura(uint32 spellid)
 bool CPlayer::TeleportToPos(uint32 mapid, const Position* pos, uint32 options, AreaTrigger const* at)
 {
 	return TeleportTo(mapid, pos->x, pos->y, pos->z, pos->o, options, at);
+}
+
+void CPlayer::CFJoinBattleGround()
+{
+    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+        return;
+
+    if (NativeTeam())
+        return;
+
+    SetByteValue(UNIT_FIELD_BYTES_0, 0, getFRace());
+    setFaction(getFFaction());
+    ReplaceRacials(false);
+    FakeDisplayID();
+
+    sWorld.InvalidatePlayerDataToAllClient(this->GetObjectGuid());
+}
+
+void CPlayer::CFLeaveBattleGround()
+{
+    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+        return;
+
+    SetByteValue(UNIT_FIELD_BYTES_0, 0, getORace());
+    setFaction(getOFaction());
+    ReplaceRacials(true);
+    InitDisplayIds();
+
+    sWorld.InvalidatePlayerDataToAllClient(GetObjectGuid());
+}
+
+void CPlayer::FakeDisplayID()
+{
+    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED))
+        return;
+
+    PlayerInfo const* info = sObjectMgr.GetPlayerInfo(getRace(), getClass());
+    if (!info)
+        for (uint32 i = 1; i <= CLASS_DRUID; i++)
+            if ((info = sObjectMgr.GetPlayerInfo(getRace(), i)))
+                break;
+
+    if (!info)
+    {
+        sLog.outError("Player %u has incorrect race/class pair. Can't init display ids.", GetGUIDLow());
+        return;
+    }
+
+    SetObjectScale(DEFAULT_OBJECT_SCALE);
+
+    uint8 gender = getGender();
+    switch (gender)
+    {
+    case GENDER_FEMALE:
+        SetDisplayId(info->displayId_f);
+        SetNativeDisplayId(info->displayId_f);
+        break;
+    case GENDER_MALE:
+        SetDisplayId(info->displayId_m);
+        SetNativeDisplayId(info->displayId_m);
+        break;
+    default:
+        sLog.outError("Invalid gender %u for player", gender);
+        return;
+    }
+}
+
+void CPlayer::ReplaceRacials(bool native)
+{
+    if (!sWorld.getConfig(CONFIG_BOOL_CFBG_ENABLED) ||
+        sWorld.getConfig(CONFIG_BOOL_CFBG_REPLACERACIALS))
+        return;
+
+    // SpellId, Original Team Spell
+    auto spells = std::unordered_map<uint32, bool>();
+
+    for (auto& i : sObjectMgr.GetPlayerInfo(getORace(), getClass())->spell)
+        if (auto spell = sSpellTemplate.LookupEntry<SpellEntry>(i))
+                if (spell->Effect[0] != SPELL_EFFECT_LANGUAGE)
+                    spells[spell->Id] = true;
+
+    for (auto& i : sObjectMgr.GetPlayerInfo(getFRace(), getClass())->spell)
+        if (auto spell = sSpellTemplate.LookupEntry<SpellEntry>(i))
+                if (spell->Effect[0] != SPELL_EFFECT_LANGUAGE)
+                    spells[spell->Id] = false;
+
+    for (auto& i : spells)
+    {
+        if (i.second == native)
+            learnSpell(i.first, true);
+        else
+            this->removeSpell(i.first);
+    }
+}
+
+void CPlayer::SetFakeValues()
+{
+    m_oRace = GetByteValue(UNIT_FIELD_BYTES_0, 0);
+    m_oFaction = GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
+
+    m_fRace = 0;
+
+    while (m_fRace == 0)
+    {
+        for (uint8 i = RACE_HUMAN; i <= RACE_DRAENEI; ++i)
+        {
+            if (i == RACE_GOBLIN)
+                continue;
+
+            PlayerInfo const* info = sObjectMgr.GetPlayerInfo(i, getClass());
+            if (!info || Player::TeamForRace(i) == GetOTeam())
+                continue;
+
+            if (urand(0, 5) == 0)
+                m_fRace = i;
+        }
+    }
+
+    m_fFaction = Player::getFactionForRace(m_fRace);
+}
+
+Team Player::GetTeam() const
+{
+    return ToCPlayer()->GetTeam();
 }

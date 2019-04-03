@@ -71,12 +71,43 @@ public:
     std::stringstream WideChat;
     std::stringstream BothChat;
 
-    // Hooked Player functions
+    // Virtualised Player functions
 public:
     void Update(uint32 update_diff) override;
 
     // Misc
 public:
     bool AddAura(uint32 spellid);
-	bool TeleportToPos(uint32 mapid, const Position* pos, uint32 options = 0, AreaTrigger const* at = nullptr);
+    bool TeleportToPos(uint32 mapid, const Position* pos, uint32 options = 0, AreaTrigger const* at = nullptr);
+
+    // CFBG
+public:
+    Team GetTeam() const
+    {
+        if (GetBattleGround() && GetBattleGround()->isBattleGround())
+            return m_bgData.bgTeam ? m_bgData.bgTeam : GetOTeam();
+
+        return GetOTeam();
+    }
+
+    bool NativeTeam() const { return GetTeam() == GetOTeam(); }
+    uint8 getFRace() const { return m_fRace; }
+    uint8 getORace() const { return m_oRace; }
+    uint32 getOFaction() const { return m_oFaction; }
+    uint32 getFFaction() const { return m_fFaction; }
+
+    void CFJoinBattleGround();
+
+    void CFLeaveBattleGround();
+
+    void FakeDisplayID();
+    void ReplaceRacials(bool native);
+
+    void SetFakeValues();
+
+private:
+    uint8 m_fRace;
+    uint8 m_oRace;
+    uint32 m_fFaction;
+    uint32 m_oFaction;
 };
